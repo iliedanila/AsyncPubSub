@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:playground/playground.xcodeproj">
+      location = "group:nodeLib/nodeLib.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:nodeLib/nodeLib.xcodeproj">
+      location = "group:playground/playground.xcodeproj">
    </FileRef>
 </Workspace>
