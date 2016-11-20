@@ -10,7 +10,10 @@
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
-class NetworkNode;
+namespace MeshNetwork
+{
+    
+class Node;
 class Connection;
 typedef std::shared_ptr<Connection> SharedConnection;
 
@@ -18,7 +21,7 @@ typedef std::shared_ptr<Connection> SharedConnection;
 class Connection : public std::enable_shared_from_this<Connection>
 {
 public:
-    Connection(NetworkNode& _node,
+    Connection(Node& _node,
                boost::asio::io_service&,
                tcp::socket&&,
                std::function<void(std::shared_ptr<Connection>)>);
@@ -39,9 +42,11 @@ private:
     tcp::socket socket;
     std::function<void(std::shared_ptr<Connection>)> closeHandler;
     
-    NetworkNode& node;
+    Node& node;
     BinaryMessage readMessage;
     BinaryMessage writeMessage;
 };
+    
+}
 
 #endif /* connection_hpp */

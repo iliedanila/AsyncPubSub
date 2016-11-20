@@ -10,18 +10,22 @@
 
 #include "allMessages.hpp"
 #include "connection.hpp"
+#include "nodeErrors.hpp"
 
 using namespace boost::asio::ip;
 
 typedef std::shared_ptr<tcp::acceptor> SharedAcceptor;
 typedef std::pair<std::string, std::size_t> NodeDistance;
 
-class NetworkNode
+namespace MeshNetwork
+{
+
+class Node
 {
 public:
-    NetworkNode(std::string&&,
-                boost::asio::io_service&);
-    ~NetworkNode();
+    Node(std::string,
+         boost::asio::io_service&);
+    ~Node();
     
     void Accept(unsigned short);
     void Connect(std::string, unsigned short);
@@ -33,7 +37,9 @@ public:
     
     bool IsNodeAccessible( const std::string& nodeName );
     
-    void SendMessage(std::string destination, std::string message);
+    void SendMessage(std::string destination,
+                     std::string buffer,
+                     std::function< void(SendError)> callback);
     
 private:
     friend struct MessageVisitor;
@@ -70,5 +76,7 @@ private:
     tcp::socket accept_socket;
     boost::asio::io_service& io_service;
 };
+    
+}
 
 #endif /* node_hpp */

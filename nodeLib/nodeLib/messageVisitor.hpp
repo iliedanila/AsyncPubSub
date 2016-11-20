@@ -7,9 +7,12 @@
 #include "connection.hpp"
 #include "node.hpp"
 
+namespace MeshNetwork
+{
+
 struct MessageVisitor : public boost::static_visitor<>
 {
-    MessageVisitor(NetworkNode& _node, SharedConnection _connection)
+    MessageVisitor(Node& _node, SharedConnection _connection)
     :
         node(_node),
         connection(_connection)
@@ -23,7 +26,9 @@ struct MessageVisitor : public boost::static_visitor<>
     
 private:
     SharedConnection connection;
-    NetworkNode& node;
+    Node& node;
 };
+    
+}
 
 #endif /* messageVisitor_h */

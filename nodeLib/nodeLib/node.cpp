@@ -9,7 +9,10 @@
 
 using namespace boost::asio::ip;
 
-NetworkNode::NetworkNode(std::string&& _name,
+namespace MeshNetwork
+{
+
+Node::Node(std::string _name,
                          boost::asio::io_service& _io_service)
 :
     name(std::move(_name)),
@@ -18,10 +21,10 @@ NetworkNode::NetworkNode(std::string&& _name,
     connect_socket(_io_service)
 {}
 
-NetworkNode::~NetworkNode()
+Node::~Node()
 {}
 
-void NetworkNode::Accept(unsigned short _port)
+void Node::Accept(unsigned short _port)
 {
     tcp::endpoint endpoint(tcp::v4(), _port);
     
@@ -38,7 +41,7 @@ void NetworkNode::Accept(unsigned short _port)
                               {
                                   auto connection = AddConnection(std::move(accept_socket));
                                   
-                                  connection->Read(std::bind(&NetworkNode::OnRead,
+                                  connection->Read(std::bind(&Node::OnRead,
                                                              this,
                                                              std::placeholders::_1,
                                                              std::placeholders::_2));
@@ -54,7 +57,7 @@ void NetworkNode::Accept(unsigned short _port)
                           });
 }
 
-void NetworkNode::Connect(std::string host,
+void Node::Connect(std::string host,
                           unsigned short port)
 {
     tcp::resolver resolver(io_service);
@@ -70,7 +73,7 @@ void NetworkNode::Connect(std::string host,
                                    {
                                        auto connection = AddConnection(std::move(connect_socket));
 
-                                       connection->Read(std::bind(&NetworkNode::OnRead,
+                                       connection->Read(std::bind(&Node::OnRead,
                                                                   this,
                                                                   std::placeholders::_1,
                                                                   std::placeholders::_2));
@@ -85,7 +88,7 @@ void NetworkNode::Connect(std::string host,
                                });
 }
 
-void NetworkNode::Close()
+void Node::Close()
 {
     for (auto connection : connections)
     {
@@ -94,7 +97,7 @@ void NetworkNode::Close()
     connections.clear();
 }
 
-std::vector<std::string> NetworkNode::GetAccessibleNodes()
+std::vector<std::string> Node::GetAccessibleNodes()
 {
     std::vector<std::string> nodeList;
     for ( auto keyValue : nodeDistances )
@@ -104,17 +107,19 @@ std::vector<std::string> NetworkNode::GetAccessibleNodes()
     return nodeList;
 }
 
-bool NetworkNode::IsNodeAccessible( const std::string& nodeName )
+bool Node::IsNodeAccessible( const std::string& nodeName )
 {
     return nodeDistances.find(nodeName) != nodeDistances.end();
 }
 
-void NetworkNode::SendMessage(std::string destination, std::string message)
+void Node::SendMessage(std::string destination,
+                              std::string buffer,
+                              std::function< void(SendError)> callback)
 {
     
 }
 
-void NetworkNode::CloseConnection(SharedConnection connectionDown)
+void Node::CloseConnection(SharedConnection connectionDown)
 {
     RoutingMessage nodesDown;
     std::vector<std::string> toDelete;
@@ -138,11 +143,11 @@ void NetworkNode::CloseConnection(SharedConnection connectionDown)
     
     for (auto connection : connections)
     {
-        connection->Write(nodesDown, std::bind(&NetworkNode::OnWrite, this));
+        connection->Write(nodesDown, std::bind(&Node::OnWrite, this));
     }
 }
 
-void NetworkNode::SendRoutingToNewConnection(SharedConnection connection)
+void Node::SendRoutingToNewConnection(SharedConnection connection)
 {
     RoutingMessage message;
     message.AddNodeDistance(std::make_pair(name, 0));
@@ -151,16 +156,16 @@ void NetworkNode::SendRoutingToNewConnection(SharedConnection connection)
     {
         message.AddNodeDistance(nodeDistance);
     }
-    connection->Write(message, std::bind(&NetworkNode::OnWrite, this));
+    connection->Write(message, std::bind(&Node::OnWrite, this));
 }
 
-SharedConnection NetworkNode::AddConnection(
+SharedConnection Node::AddConnection(
     boost::asio::ip::tcp::socket&& _socket)
 {
     auto connection = std::make_shared<Connection>(*this,
                                                    io_service,
                                                    std::move(_socket),
-                                                   std::bind(&NetworkNode::CloseConnection,
+                                                   std::bind(&Node::CloseConnection,
                                                              this,
                                                              std::placeholders::_1));
     
@@ -168,17 +173,17 @@ SharedConnection NetworkNode::AddConnection(
     return connection;
 }
 
-void NetworkNode::OnRead(MessageVariant _message, SharedConnection _connection)
+void Node::OnRead(MessageVariant _message, SharedConnection _connection)
 {
     boost::apply_visitor(MessageVisitor(*this, _connection), _message);
 }
 
-void NetworkNode::OnWrite()
+void Node::OnWrite()
 {
 }
 
 template <>
-void NetworkNode::HandleMessage(RoutingMessage& _message, SharedConnection _connection)
+void Node::HandleMessage(RoutingMessage& _message, SharedConnection _connection)
 {
     RoutingMessage reply;
     RoutingMessage forward;
@@ -189,7 +194,7 @@ void NetworkNode::HandleMessage(RoutingMessage& _message, SharedConnection _conn
     if (reply.NodeDistances().size() > 0 ||
         reply.FailedNodes().size() > 0)
     {
-        _connection->Write(reply, std::bind(&NetworkNode::OnWrite, this));
+        _connection->Write(reply, std::bind(&Node::OnWrite, this));
     }
     
     if (forward.NodeDistances().size() > 0 ||
@@ -199,19 +204,19 @@ void NetworkNode::HandleMessage(RoutingMessage& _message, SharedConnection _conn
         {
             if (conn != _connection)
             {
-                conn->Write(forward, std::bind(&NetworkNode::OnWrite, this));
+                conn->Write(forward, std::bind(&Node::OnWrite, this));
             }
         }
     }
 }
 
 template<>
-void NetworkNode::HandleMessage(DataMessage& _message, SharedConnection _connection)
+void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
 {
     
 }
 
-void NetworkNode::ProcessAddNodePaths(RoutingMessage& message,
+void Node::ProcessAddNodePaths(RoutingMessage& message,
                                       RoutingMessage& reply,
                                       RoutingMessage& forward,
                                       SharedConnection connection)
@@ -243,7 +248,7 @@ void NetworkNode::ProcessAddNodePaths(RoutingMessage& message,
     }
 }
 
-void NetworkNode::ProcessFailedNodes(RoutingMessage& message,
+void Node::ProcessFailedNodes(RoutingMessage& message,
                                      RoutingMessage& reply,
                                      RoutingMessage& forward,
                                      SharedConnection connection)
@@ -266,4 +271,6 @@ void NetworkNode::ProcessFailedNodes(RoutingMessage& message,
             }
         }
     }
+}
+    
 }

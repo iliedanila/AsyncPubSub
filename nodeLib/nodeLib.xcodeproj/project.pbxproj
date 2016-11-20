@@ -20,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		4B042ABB1DE1B0F500E1C461 /* libnodeLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libnodeLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B22A0C71DE2128700E876B3 /* nodeErrors.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = nodeErrors.hpp; sourceTree = "<group>"; };
 		4BE910011DE1F2AC004A39C2 /* allMessages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = allMessages.hpp; sourceTree = "<group>"; };
 		4BE910021DE1F2AC004A39C2 /* binaryMessage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = binaryMessage.hpp; sourceTree = "<group>"; };
 		4BE910031DE1F2AC004A39C2 /* connection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = connection.cpp; sourceTree = "<group>"; };
@@ -72,6 +73,7 @@
 				4BE910071DE1F2AC004A39C2 /* node.cpp */,
 				4BE910081DE1F2AC004A39C2 /* node.hpp */,
 				4BE910091DE1F2AC004A39C2 /* routingMessage.hpp */,
+				4B22A0C71DE2128700E876B3 /* nodeErrors.hpp */,
 			);
 			path = nodeLib;
 			sourceTree = "<group>";

@@ -15,9 +15,10 @@ int main(int argc, const char * argv[])
 {
     boost::asio::io_service io_service;
     
-    NetworkNode node1("node1", io_service);
-    NetworkNode node2("node2", io_service);
-    NetworkNode node3("node3", io_service);
+    
+    MeshNetwork::Node node1("node1", io_service);
+    MeshNetwork::Node node2("node2", io_service);
+    MeshNetwork::Node node3("node3", io_service);
 
     node1.Accept(7001);
     node2.Connect("localhost", 7001);
