@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B042ABF1DE1B0F500E1C461 /* nodeLib.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B042ABE1DE1B0F500E1C461 /* nodeLib.hpp */; };
-		4B042AC11DE1B0F500E1C461 /* nodeLibPriv.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B042AC01DE1B0F500E1C461 /* nodeLibPriv.hpp */; };
-		4B042AC31DE1B0F500E1C461 /* nodeLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B042AC21DE1B0F500E1C461 /* nodeLib.cpp */; };
 		4BE9100A1DE1F2AC004A39C2 /* allMessages.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BE910011DE1F2AC004A39C2 /* allMessages.hpp */; };
 		4BE9100B1DE1F2AC004A39C2 /* binaryMessage.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BE910021DE1F2AC004A39C2 /* binaryMessage.hpp */; };
 		4BE9100C1DE1F2AC004A39C2 /* connection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BE910031DE1F2AC004A39C2 /* connection.cpp */; };
@@ -23,9 +20,6 @@
 
 /* Begin PBXFileReference section */
 		4B042ABB1DE1B0F500E1C461 /* libnodeLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libnodeLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B042ABE1DE1B0F500E1C461 /* nodeLib.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = nodeLib.hpp; sourceTree = "<group>"; };
-		4B042AC01DE1B0F500E1C461 /* nodeLibPriv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = nodeLibPriv.hpp; sourceTree = "<group>"; };
-		4B042AC21DE1B0F500E1C461 /* nodeLib.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = nodeLib.cpp; sourceTree = "<group>"; };
 		4BE910011DE1F2AC004A39C2 /* allMessages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = allMessages.hpp; sourceTree = "<group>"; };
 		4BE910021DE1F2AC004A39C2 /* binaryMessage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = binaryMessage.hpp; sourceTree = "<group>"; };
 		4BE910031DE1F2AC004A39C2 /* connection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = connection.cpp; sourceTree = "<group>"; };
@@ -78,9 +72,6 @@
 				4BE910071DE1F2AC004A39C2 /* node.cpp */,
 				4BE910081DE1F2AC004A39C2 /* node.hpp */,
 				4BE910091DE1F2AC004A39C2 /* routingMessage.hpp */,
-				4B042ABE1DE1B0F500E1C461 /* nodeLib.hpp */,
-				4B042AC01DE1B0F500E1C461 /* nodeLibPriv.hpp */,
-				4B042AC21DE1B0F500E1C461 /* nodeLib.cpp */,
 			);
 			path = nodeLib;
 			sourceTree = "<group>";
@@ -100,10 +91,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B042ABF1DE1B0F500E1C461 /* nodeLib.hpp in Headers */,
 				4BE9100D1DE1F2AC004A39C2 /* connection.hpp in Headers */,
 				4BE9100B1DE1F2AC004A39C2 /* binaryMessage.hpp in Headers */,
-				4B042AC11DE1B0F500E1C461 /* nodeLibPriv.hpp in Headers */,
 				4BE910111DE1F2AC004A39C2 /* node.hpp in Headers */,
 				4BE9100E1DE1F2AC004A39C2 /* dataMessage.hpp in Headers */,
 				4BE9100A1DE1F2AC004A39C2 /* allMessages.hpp in Headers */,
@@ -169,7 +158,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B042AC31DE1B0F500E1C461 /* nodeLib.cpp in Sources */,
 				4BE9100C1DE1F2AC004A39C2 /* connection.cpp in Sources */,
 				4BE910101DE1F2AC004A39C2 /* node.cpp in Sources */,
 			);

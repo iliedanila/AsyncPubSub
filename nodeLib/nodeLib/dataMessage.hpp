@@ -1,11 +1,3 @@
-//
-//  dataMessage.hpp
-//  node_lib
-//
-//  Created by Ilie Danila on 17/11/2016.
-//  Copyright © 2016 Ilie Danila. All rights reserved.
-//
-
 #ifndef dataMessage_h
 #define dataMessage_h
 
