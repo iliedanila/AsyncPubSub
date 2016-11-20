@@ -8,6 +8,9 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/utility.hpp>
 
+namespace MeshNetwork
+{
+
 class RoutingMessage
 {
 public:
@@ -40,5 +43,7 @@ private:
     std::vector<std::pair<std::string, std::size_t>> nodeDistances;
     std::vector<std::string> failedNodes;
 };
+    
+}
 
 #endif /* routingMessage_hpp */

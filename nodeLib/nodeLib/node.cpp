@@ -116,7 +116,25 @@ void Node::SendMessage(std::string destination,
                               std::string buffer,
                               std::function< void(SendError)> callback)
 {
+    if (IsNodeAccessible(destination))
+    {
+        auto namePath = nodePaths.find(destination);
+        auto connection = namePath->second;
+        
+        DataMessage message(name, destination, buffer);
+        
+        messageCallback = callback;
+        connection->Write(message, std::bind(&Node::OnWrite, this));
+    }
+    else
+    {
+        callback(eNoPath);
+    }
+}
     
+void Node::AcceptMessages(std::function<void (std::string, std::string)> callback)
+{
+    messageAcceptor = callback;
 }
 
 void Node::CloseConnection(SharedConnection connectionDown)
@@ -213,7 +231,53 @@ void Node::HandleMessage(RoutingMessage& _message, SharedConnection _connection)
 template<>
 void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
 {
+    if (_message.destinationNodeName == name)
+    {
+        if (messageAcceptor)
+        {
+            messageAcceptor(_message.sourceNodeName, _message.buffer);
+            DataMessageAck message(name, _message.sourceNodeName, eSuccess);
+            _connection->Write(message, std::bind(&Node::OnWrite, this));
+
+        }
+        else
+        {
+            DataMessageAck message(_message.sourceNodeName, name, eNodeNotAccepting);
+            _connection->Write(message, std::bind(&Node::OnWrite, this));
+        }
+    }
+    else
+    {
+        if (IsNodeAccessible(_message.destinationNodeName))
+        {
+            auto namePath = nodePaths.find(_message.destinationNodeName);
+            auto connection = namePath->second;
+            connection->Write(_message, std::bind(&Node::OnWrite, this));
+        }
+        else
+        {
+            DataMessageAck message(_message.sourceNodeName, name, eNoPath);
+            _connection->Write(message, std::bind(&Node::OnWrite, this));
+        }
+    }
+}
     
+template<>
+void Node::HandleMessage(DataMessageAck& _message, SharedConnection _connection)
+{
+    if (_message.destinationNodeName == name)
+    {
+        messageCallback(_message.error);
+    }
+    else
+    {
+        if (IsNodeAccessible(_message.destinationNodeName))
+        {
+            auto namePath = nodePaths.find(_message.destinationNodeName);
+            auto connection = namePath->second;
+            connection->Write(_message, std::bind(&Node::OnWrite, this));
+        }
+    }
 }
 
 void Node::ProcessAddNodePaths(RoutingMessage& message,

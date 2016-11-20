@@ -4,7 +4,13 @@
 #include <boost/variant.hpp>
 #include "routingMessage.hpp"
 #include "dataMessage.hpp"
+#include "dataMessageAck.hpp"
 
-typedef boost::variant< RoutingMessage, DataMessage > MessageVariant;
+namespace MeshNetwork
+{
+
+typedef boost::variant< RoutingMessage, DataMessage, DataMessageAck > MessageVariant;
+    
+}
 
 #endif /* allMessages_h */

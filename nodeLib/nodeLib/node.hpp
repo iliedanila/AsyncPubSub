@@ -10,7 +10,7 @@
 
 #include "allMessages.hpp"
 #include "connection.hpp"
-#include "nodeErrors.hpp"
+#include "sendError.hpp"
 
 using namespace boost::asio::ip;
 
@@ -40,6 +40,8 @@ public:
     void SendMessage(std::string destination,
                      std::string buffer,
                      std::function< void(SendError)> callback);
+    
+    void AcceptMessages(std::function< void(std::string, std::string) > callback);
     
 private:
     friend struct MessageVisitor;
@@ -72,6 +74,10 @@ private:
     std::map<std::string, SharedConnection> nodePaths;
     
     std::unique_ptr<tcp::acceptor> acceptor;
+    
+    std::function<void(std::string, std::string)> messageAcceptor;
+    std::function<void(SendError)> messageCallback;
+    
     tcp::socket connect_socket;
     tcp::socket accept_socket;
     boost::asio::io_service& io_service;

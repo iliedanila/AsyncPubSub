@@ -7,36 +7,40 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/utility.hpp>
 
+namespace MeshNetwork
+{
+
 class DataMessage
 {
 public:
     DataMessage() {}
     ~DataMessage() {}
     
-    DataMessage(std::string source, std::string destination, std::string msg)
+    DataMessage(std::string source, std::string destination, std::string buff)
     :
         sourceNodeName(std::move(source)),
         destinationNodeName(std::move(destination)),
-        message(std::move(msg))
+        buffer(std::move(buff))
     {}
     
 private:
     friend class boost::serialization::access;
-    friend class NetworkNode;
+    friend class Node;
     
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & sourceNodeName;
         ar & destinationNodeName;
-        ar & message;
+        ar & buffer;
     }
 
 private:
     std::string sourceNodeName;
     std::string destinationNodeName;
-    std::string message;
+    std::string buffer;
 };
 
+}
 
 #endif /* dataMessage_h */

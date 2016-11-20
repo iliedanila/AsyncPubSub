@@ -19,8 +19,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B036FC81DE2413600EA851C /* dataMessageAck.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = dataMessageAck.hpp; sourceTree = "<group>"; };
 		4B042ABB1DE1B0F500E1C461 /* libnodeLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libnodeLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B22A0C71DE2128700E876B3 /* nodeErrors.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = nodeErrors.hpp; sourceTree = "<group>"; };
+		4B22A0C71DE2128700E876B3 /* sendError.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sendError.hpp; sourceTree = "<group>"; };
 		4BE910011DE1F2AC004A39C2 /* allMessages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = allMessages.hpp; sourceTree = "<group>"; };
 		4BE910021DE1F2AC004A39C2 /* binaryMessage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = binaryMessage.hpp; sourceTree = "<group>"; };
 		4BE910031DE1F2AC004A39C2 /* connection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = connection.cpp; sourceTree = "<group>"; };
@@ -69,11 +70,12 @@
 				4BE910031DE1F2AC004A39C2 /* connection.cpp */,
 				4BE910041DE1F2AC004A39C2 /* connection.hpp */,
 				4BE910051DE1F2AC004A39C2 /* dataMessage.hpp */,
+				4B036FC81DE2413600EA851C /* dataMessageAck.hpp */,
 				4BE910061DE1F2AC004A39C2 /* messageVisitor.hpp */,
 				4BE910071DE1F2AC004A39C2 /* node.cpp */,
 				4BE910081DE1F2AC004A39C2 /* node.hpp */,
 				4BE910091DE1F2AC004A39C2 /* routingMessage.hpp */,
-				4B22A0C71DE2128700E876B3 /* nodeErrors.hpp */,
+				4B22A0C71DE2128700E876B3 /* sendError.hpp */,
 			);
 			path = nodeLib;
 			sourceTree = "<group>";
