@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs/nodes/v14
+/Debug
+/nodeLib/Debug/nodeLib.tlog
+/nodeLib/Debug
+/playground/Debug
+/nodes.VC.VC.opendb

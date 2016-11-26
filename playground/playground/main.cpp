@@ -7,7 +7,7 @@
 #include "../../nodeLib/nodeLib/node.hpp"
 
 using namespace boost::asio;
-using namespace boost::asio::ip;
+using namespace ip;
 using namespace std::chrono_literals;
 
 
@@ -30,13 +30,16 @@ int main(int argc, const char * argv[])
                       io_service.run();
                   });
     
-    std::this_thread::sleep_for(1s);
+	node3.AcceptMessages([](std::string sourceNode, std::string buffer) {
+		std::cout << "Message from " << sourceNode << ": " << buffer << "\n";
+	});
+
+	while( !node2.IsNodeAccessible("node3") )
+	{
+		std::this_thread::sleep_for(20ms);
+	}
     
-    node3.AcceptMessages([](std::string sourceNode, std::string buffer){
-        std::cout << "Message from " << sourceNode << ": " << buffer << "\n";
-    });
-    
-    node2.SendMessage("node3", "hello buddy", [](MeshNetwork::SendError error){
+    node2.SndMessage("node3", "hello buddy", [](MeshNetwork::SendError error){
         if (error == MeshNetwork::eSuccess)
         {
             std::cout << "Message successfully sent.\n";

@@ -112,7 +112,7 @@ bool Node::IsNodeAccessible( const std::string& nodeName )
     return nodeDistances.find(nodeName) != nodeDistances.end();
 }
 
-void Node::SendMessage(std::string destination,
+void Node::SndMessage(std::string destination,
                               std::string buffer,
                               std::function< void(SendError)> callback)
 {

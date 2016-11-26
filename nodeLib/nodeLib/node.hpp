@@ -37,7 +37,7 @@ public:
     
     bool IsNodeAccessible( const std::string& nodeName );
     
-    void SendMessage(std::string destination,
+    void SndMessage(std::string destination,
                      std::string buffer,
                      std::function< void(SendError)> callback);
     
