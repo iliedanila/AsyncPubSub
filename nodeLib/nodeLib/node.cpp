@@ -94,7 +94,14 @@ void Node::Close()
     {
         connection->Close();
     }
+    if (acceptor)
+    {
+        acceptor->cancel();
+    }
+    
     connections.clear();
+    nodeDistances.clear();
+    nodePaths.clear();
 }
 
 std::vector<std::string> Node::GetAccessibleNodes()

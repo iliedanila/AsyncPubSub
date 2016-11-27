@@ -1,8 +1,10 @@
 #include <iostream>
+#include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
 #include <functional>
 #include <thread>
 #include <chrono>
+
 
 #include "../../nodeLib/nodeLib/node.hpp"
 
@@ -53,11 +55,23 @@ int main(int argc, const char * argv[])
     char consoleCommand[commandSize];
     
     std::cout << "Insert command: \n";
+    bool exit = false;
     
-    while(std::cin.getline(consoleCommand, commandSize))
+    do
     {
-        std::cout << consoleCommand << "\n";
-    }
+        std::cin.getline(consoleCommand, commandSize);
+        std::string command(consoleCommand);
+        if (boost::algorithm::starts_with(command, "exit"))
+        {
+            exit = true;
+            node1.Close();
+            node2.Close();
+            node3.Close();
+
+            io_service.stop();
+            t.join();
+        }
+    } while (!exit);
     
     return 0;
 }
