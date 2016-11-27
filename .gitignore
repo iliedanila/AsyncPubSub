@@ -8,3 +8,6 @@
 /nodeLib/Debug
 /playground/Debug
 /nodes.VC.VC.opendb
+/nodeLib/Release
+/playground/Release
+/Release
