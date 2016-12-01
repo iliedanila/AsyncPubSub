@@ -12,3 +12,5 @@
 /playground/Release
 /Release
 /nodes.VC.db
+/nodeLib/nodeLib.vcxproj.filters
+/playground/playground.vcxproj.filters
