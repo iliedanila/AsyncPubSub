@@ -8,7 +8,7 @@
 #include "binaryMessage.hpp"
 
 using namespace boost::asio;
-using namespace boost::asio::ip;
+using namespace ip;
 
 namespace MeshNetwork
 {
@@ -22,7 +22,7 @@ class Connection : public std::enable_shared_from_this<Connection>
 {
 public:
     Connection(Node& _node,
-               boost::asio::io_service&,
+               io_service&,
                tcp::socket&&,
                std::function<void(std::shared_ptr<Connection>)>);
     ~Connection();

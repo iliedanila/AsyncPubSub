@@ -3,7 +3,6 @@
 
 #include <boost/asio.hpp>
 #include <functional>
-#include <sstream>
 #include <vector>
 #include <set>
 #include <map>

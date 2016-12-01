@@ -4,7 +4,6 @@
 #include "messageVisitor.hpp"
 
 #include <string>
-#include <iostream>
 #include <functional>
 
 using namespace boost::asio::ip;

@@ -31,6 +31,10 @@ int main(int argc, const char * argv[])
                   {
                       io_service.run();
                   });
+
+
+	// Test 1
+	// -------------------------------------------------------------------------
     
 	node3.AcceptMessages([](std::string sourceNode, std::string buffer) {
 		std::cout << "Message from " << sourceNode << ": " << buffer << "\n";
@@ -47,6 +51,11 @@ int main(int argc, const char * argv[])
             std::cout << "Message successfully sent.\n";
         }
     });
+
+	// Test 2
+	// -------------------------------------------------------------------------
+
+	node1.Close();
     
     
     // Receive console commands here.
