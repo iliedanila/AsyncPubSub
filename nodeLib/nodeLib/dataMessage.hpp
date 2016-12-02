@@ -1,11 +1,7 @@
 #ifndef dataMessage_h
 #define dataMessage_h
 
-#include <string>
 #include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/utility.hpp>
 
 namespace MeshNetwork
 {

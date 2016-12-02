@@ -244,7 +244,6 @@ void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
             messageAcceptor(_message.sourceNodeName, _message.buffer);
             DataMessageAck message(name, _message.sourceNodeName, eSuccess);
             _connection->Write(message, std::bind(&Node::OnWrite, this));
-
         }
         else
         {

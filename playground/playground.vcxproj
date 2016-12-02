@@ -124,7 +124,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="playground\highLevelNode.cpp" />
     <ClCompile Include="playground\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="playground\allMessages.hpp" />
+    <ClInclude Include="playground\highLevelNode.hpp" />
+    <ClInclude Include="playground\highLevelVisitor.hpp" />
+    <ClInclude Include="playground\logMessage.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,6 +7,7 @@
 
 
 #include "../../nodeLib/nodeLib/node.hpp"
+#include "HighLevelNode.hpp"
 
 using namespace boost::asio;
 using namespace ip;
@@ -16,7 +17,6 @@ using namespace std::chrono_literals;
 int main(int argc, const char * argv[])
 {
     boost::asio::io_service io_service;
-    
     
     MeshNetwork::Node node1("node1", io_service);
     MeshNetwork::Node node2("node2", io_service);
@@ -55,8 +55,23 @@ int main(int argc, const char * argv[])
 	// Test 2
 	// -------------------------------------------------------------------------
 
-	node1.Close();
-    
+	MeshNetwork::Node logger("logger", io_service);
+	MeshNetwork::Node broker("broker", io_service);
+	MeshNetwork::Node sender("sender", io_service);
+
+	broker.Accept(7777);
+	logger.Connect("localhost", 7777);
+	sender.Connect("localhost", 7777);
+
+	HighLevelNode hl_logger(logger);
+	HighLevelNode hl_sender(sender);
+
+	while (!sender.IsNodeAccessible("logger"))
+	{
+		std::this_thread::sleep_for(20ms);
+	}
+
+	hl_sender.SendHLMessage("logger", LogMessage("Log from main."));
     
     // Receive console commands here.
     // Post them to the above thread.

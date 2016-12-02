@@ -1,6 +1,5 @@
 #ifndef BINARY_MESSAGE_HPP
 #define BINARY_MESSAGE_HPP
-#pragma GCC visibility push(hidden)
 
 #include <cstdio>
 #include <cstdlib>
