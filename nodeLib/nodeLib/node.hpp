@@ -40,7 +40,7 @@ public:
                      std::string buffer,
                      std::function< void(SendError)> callback);
     
-    void AcceptMessages(std::function< void(std::string, std::string) > callback);
+    void AcceptMessages(std::function< void(DataMessage) > callback);
     
 private:
     friend struct MessageVisitor;
@@ -74,7 +74,7 @@ private:
     
     std::unique_ptr<tcp::acceptor> acceptor;
     
-    std::function<void(std::string, std::string)> messageAcceptor;
+    std::function<void(DataMessage)> messageAcceptor;
     std::function<void(SendError)> messageCallback;
     
     tcp::socket connect_socket;

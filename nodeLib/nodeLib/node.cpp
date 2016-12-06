@@ -134,7 +134,7 @@ void Node::SndMessage(std::string destination,
     }
 }
     
-void Node::AcceptMessages(std::function<void (std::string, std::string)> callback)
+void Node::AcceptMessages(std::function<void (DataMessage)> callback)
 {
     messageAcceptor = callback;
 }
@@ -233,11 +233,13 @@ void Node::HandleMessage(RoutingMessage& _message, SharedConnection _connection)
 template<>
 void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
 {
+	_message.distance++;
+
     if (_message.destinationNodeName == name)
     {
         if (messageAcceptor)
         {
-            messageAcceptor(_message.sourceNodeName, _message.buffer);
+            messageAcceptor(_message);
             DataMessageAck message(name, _message.sourceNodeName, eSuccess);
             _connection->Write(message, std::bind(&Node::OnWrite, this));
         }

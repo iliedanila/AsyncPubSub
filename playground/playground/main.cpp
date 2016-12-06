@@ -36,8 +36,8 @@ int main(int argc, const char * argv[])
 	// Test 1
 	// -------------------------------------------------------------------------
     
-	node3.AcceptMessages([](std::string sourceNode, std::string buffer) {
-		std::cout << "Message from " << sourceNode << ": " << buffer << "\n";
+	node3.AcceptMessages([](MeshNetwork::DataMessage message) {
+		std::cout << "Message from " << message.Source() << ": " << message.Buffer() << "\n";
 	});
 
 	while( !node2.IsNodeAccessible("node3") )

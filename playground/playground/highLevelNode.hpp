@@ -1,9 +1,10 @@
 #ifndef HIGH_LEVEL_NODE_HPP
 #define HIGH_LEVEL_NODE_HPP
 
-#include <string>
 #include "allMessages.hpp"
 #include "../../nodeLib/nodeLib/sendError.hpp"
+#include "../../nodeLib/nodeLib/allMessages.hpp"
+
 #include <functional>
 
 namespace MeshNetwork {
@@ -20,11 +21,11 @@ public:
 
 	void SendHLMessage(std::string destinationNode,
 		MessageVariant message,
-		std::function< void(MeshNetwork::SendError)> callback);
-
+		std::function< void(MeshNetwork::SendError)> callback) const;
 private:
 	friend struct HighLevelVisitor;
-	void HandleIncomingMessage(std::string sourceNode, std::string buffer);
+
+	void HandleIncomingMessage(MeshNetwork::DataMessage message);
 	void DefaultSendMessageCallback(MeshNetwork::SendError error);
 
 	template <typename MessageT>

@@ -11,8 +11,7 @@ HighLevelNode::HighLevelNode(MeshNetwork::Node& _node)
 {
 	node.AcceptMessages(std::bind(&HighLevelNode::HandleIncomingMessage,
 		this,
-		std::placeholders::_1,
-		std::placeholders::_2));
+		std::placeholders::_1));
 }
 
 void HighLevelNode::SendHLMessage(
@@ -29,7 +28,7 @@ void HighLevelNode::SendHLMessage(
 void HighLevelNode::SendHLMessage(
 	std::string destinationNode,
 	MessageVariant message,
-	std::function< void(MeshNetwork::SendError)> callback)
+	std::function< void(MeshNetwork::SendError)> callback) const
 {
 	std::stringstream ss;
 	boost::archive::binary_oarchive oarchive(ss);
@@ -38,15 +37,16 @@ void HighLevelNode::SendHLMessage(
 	node.SndMessage(destinationNode, ss.str(), callback);
 }
 
-void HighLevelNode::HandleIncomingMessage(std::string sourceNode, std::string buffer)
+void HighLevelNode::HandleIncomingMessage(MeshNetwork::DataMessage message)
 {
-	std::stringstream ss(std::move(buffer));
+	std::cout << "HandleIncomingMessage distance: " << message.Distance() << "\n";
+	std::stringstream ss(std::move(message.Buffer()));
 	boost::archive::binary_iarchive iarchive(ss);
 
-	MessageVariant message;
-	iarchive >> message;
+	MessageVariant messageV;
+	iarchive >> messageV;
 
-	boost::apply_visitor(HighLevelVisitor(*this), message);
+	boost::apply_visitor(HighLevelVisitor(*this), messageV);
 }
 
 void HighLevelNode::DefaultSendMessageCallback(MeshNetwork::SendError error)
