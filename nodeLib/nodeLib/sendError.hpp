@@ -1,7 +1,7 @@
 #ifndef nodeErrors_hpp
 #define nodeErrors_hpp
 
-namespace MeshNetwork
+namespace NetworkLayer
 {
     enum SendError
     {

@@ -7,7 +7,7 @@
 
 
 #include "../../nodeLib/nodeLib/node.hpp"
-#include "HighLevelNode.hpp"
+#include "node.hpp"
 
 using namespace boost::asio;
 using namespace ip;
@@ -18,9 +18,9 @@ int main(int argc, const char * argv[])
 {
     boost::asio::io_service io_service;
     
-    MeshNetwork::Node node1("node1", io_service);
-    MeshNetwork::Node node2("node2", io_service);
-    MeshNetwork::Node node3("node3", io_service);
+    NetworkLayer::Node node1("node1", io_service);
+    NetworkLayer::Node node2("node2", io_service);
+    NetworkLayer::Node node3("node3", io_service);
 
     node1.Accept(7001);
     node2.Connect("localhost", 7001);
@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
 	// Test 1
 	// -------------------------------------------------------------------------
     
-	node3.AcceptMessages([](MeshNetwork::DataMessage message) {
+    node3.AcceptMessages([](NetworkLayer::DataMessage message) {
 		std::cout << "Message from " << message.Source() << ": " << message.Buffer() << "\n";
 	});
 
@@ -45,8 +45,8 @@ int main(int argc, const char * argv[])
 		std::this_thread::sleep_for(20ms);
 	}
     
-    node2.SndMessage("node3", "hello buddy", [](MeshNetwork::SendError error){
-        if (error == MeshNetwork::eSuccess)
+    node2.SndMessage("node3", "hello buddy", [](NetworkLayer::SendError error){
+        if (error == NetworkLayer::eSuccess)
         {
             std::cout << "Message successfully sent.\n";
         }
@@ -55,23 +55,23 @@ int main(int argc, const char * argv[])
 	// Test 2
 	// -------------------------------------------------------------------------
 
-	MeshNetwork::Node logger("logger", io_service);
-	MeshNetwork::Node broker("broker", io_service);
-	MeshNetwork::Node sender("sender", io_service);
+	NetworkLayer::Node logger("logger", io_service);
+	NetworkLayer::Node broker("broker", io_service);
+	NetworkLayer::Node sender("sender", io_service);
 
 	broker.Accept(7777);
 	logger.Connect("localhost", 7777);
 	sender.Connect("localhost", 7777);
 
-	HighLevelNode hl_logger(logger);
-	HighLevelNode hl_sender(sender);
+	LogicalLayer::Node hl_logger(logger);
+    LogicalLayer::Node hl_sender(sender);
 
 	while (!sender.IsNodeAccessible("logger"))
 	{
 		std::this_thread::sleep_for(20ms);
 	}
 
-	hl_sender.SendHLMessage("logger", LogMessage("Log from main."));
+    hl_sender.SendMessage("logger", LogicalLayer::LogMessage("Log from main."));
     
     // Receive console commands here.
     // Post them to the above thread.

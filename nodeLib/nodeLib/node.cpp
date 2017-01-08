@@ -8,7 +8,7 @@
 
 using namespace boost::asio::ip;
 
-namespace MeshNetwork
+namespace NetworkLayer
 {
 
 Node::Node(std::string _name,

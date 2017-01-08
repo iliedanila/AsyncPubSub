@@ -3,7 +3,7 @@
 
 #include <boost/archive/binary_oarchive.hpp>
 
-namespace MeshNetwork
+namespace NetworkLayer
 {
 
 class DataMessage

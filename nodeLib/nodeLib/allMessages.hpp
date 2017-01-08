@@ -6,7 +6,7 @@
 #include "dataMessage.hpp"
 #include "dataMessageAck.hpp"
 
-namespace MeshNetwork
+namespace NetworkLayer
 {
 
 typedef boost::variant< RoutingMessage, DataMessage, DataMessageAck > MessageVariant;

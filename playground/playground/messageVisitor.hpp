@@ -2,11 +2,14 @@
 #define HIGH_LEVEL_VISITOR_HPP
 #include <boost/variant/static_visitor.hpp>
 
-class HighLevelNode;
-
-struct HighLevelVisitor : public boost::static_visitor<>
+namespace LogicalLayer
 {
-	HighLevelVisitor(HighLevelNode& _node)
+
+class Node;
+
+struct MessageVisitor : public boost::static_visitor<>
+{
+	MessageVisitor(Node& _node)
 	:
 		node(_node)
 	{}
@@ -18,7 +21,9 @@ struct HighLevelVisitor : public boost::static_visitor<>
 	}
 
 private:
-	HighLevelNode& node;
+	Node& node;
 };
+    
+}
 
 #endif

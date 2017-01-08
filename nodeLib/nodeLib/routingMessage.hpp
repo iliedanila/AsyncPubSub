@@ -6,7 +6,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/utility.hpp>
 
-namespace MeshNetwork
+namespace NetworkLayer
 {
 
 class RoutingMessage

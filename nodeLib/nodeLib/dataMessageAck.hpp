@@ -5,39 +5,39 @@
 
 #include "sendError.hpp"
 
-namespace MeshNetwork
+namespace NetworkLayer
 {
     
-    class DataMessageAck
+class DataMessageAck
+{
+public:
+    DataMessageAck() {}
+    ~DataMessageAck() {}
+    
+    DataMessageAck(std::string source, std::string destination, SendError _error)
+    :
+        sourceNodeName(std::move(source)),
+        destinationNodeName(std::move(destination)),
+        error(_error)
+    {}
+    
+private:
+    friend class boost::serialization::access;
+    friend class Node;
+    
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
     {
-    public:
-        DataMessageAck() {}
-        ~DataMessageAck() {}
-        
-        DataMessageAck(std::string source, std::string destination, SendError _error)
-        :
-            sourceNodeName(std::move(source)),
-            destinationNodeName(std::move(destination)),
-            error(_error)
-        {}
-        
-    private:
-        friend class boost::serialization::access;
-        friend class Node;
-        
-        template<class Archive>
-        void serialize(Archive & ar, const unsigned int version)
-        {
-            ar & sourceNodeName;
-            ar & destinationNodeName;
-            ar & error;
-        }
-        
-    private:
-        std::string sourceNodeName;
-        std::string destinationNodeName;
-        SendError error;
-    };
+        ar & sourceNodeName;
+        ar & destinationNodeName;
+        ar & error;
+    }
+    
+private:
+    std::string sourceNodeName;
+    std::string destinationNodeName;
+    SendError error;
+};
     
 }
 

@@ -7,7 +7,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/serialization/variant.hpp>
 
-namespace MeshNetwork
+namespace NetworkLayer
 {
 
 Connection::Connection(Node& _node,
@@ -20,7 +20,6 @@ Connection::Connection(Node& _node,
     socket(std::move(_socket)),
     closeHandler(_closeHandler)
 {
-    
 }
 
 Connection::~Connection()

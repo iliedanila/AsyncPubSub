@@ -16,7 +16,7 @@ using namespace boost::asio::ip;
 typedef std::shared_ptr<tcp::acceptor> SharedAcceptor;
 typedef std::pair<std::string, std::size_t> NodeDistance;
 
-namespace MeshNetwork
+namespace NetworkLayer
 {
 
 class Node

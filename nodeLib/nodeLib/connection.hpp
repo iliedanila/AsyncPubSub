@@ -10,7 +10,7 @@
 using namespace boost::asio;
 using namespace ip;
 
-namespace MeshNetwork
+namespace NetworkLayer
 {
     
 class Node;

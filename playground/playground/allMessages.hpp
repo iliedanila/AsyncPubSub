@@ -3,6 +3,11 @@
 #include <boost/variant/variant.hpp>
 #include "logMessage.hpp"
 
+namespace LogicalLayer
+{
+
 typedef boost::variant<LogMessage> MessageVariant;
+    
+}
 
 #endif

@@ -5,6 +5,9 @@
 #include <cstdlib>
 #include <cstring>
 
+namespace NetworkLayer
+{
+
 class BinaryMessage
 {
 public:
@@ -77,5 +80,7 @@ private:
     char data_[header_length + max_body_length];
     std::size_t body_length_;
 };
+    
+}
 
 #endif // BINARY_MESSAGE_HPP

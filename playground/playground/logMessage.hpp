@@ -3,6 +3,9 @@
 #include <string>
 #include <boost/serialization/access.hpp>
 
+namespace LogicalLayer
+{
+
 class LogMessage
 {
 public:
@@ -27,5 +30,7 @@ private:
 	friend class boost::serialization::access;
 	std::string log;
 };
+    
+}
 
 #endif
