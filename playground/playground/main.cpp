@@ -7,7 +7,7 @@
 
 
 #include "../../nodeLib/nodeLib/node.hpp"
-#include "../../LogicalLayer/node.hpp"
+#include "../../LogicalLayer/LogicalLayer/node.hpp"
 
 using namespace boost::asio;
 using namespace ip;
@@ -71,7 +71,7 @@ int main(int argc, const char * argv[])
 		std::this_thread::sleep_for(20ms);
 	}
 
-    hl_sender.SendMessage("logger", LogicalLayer::LogMessage("Log from main."));
+    hl_sender.SndMessage("logger", LogicalLayer::LogMessage("Log from main."));
     
     // Receive console commands here.
     // Post them to the above thread.

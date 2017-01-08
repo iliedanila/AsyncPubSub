@@ -1,7 +1,7 @@
 #include <boost/serialization/variant.hpp>
 
 #include "node.hpp"
-#include "../nodeLib/nodeLib/node.hpp"
+#include "../../nodeLib/nodeLib/node.hpp"
 #include <iostream>
 #include "messageVisitor.hpp"
 
@@ -18,7 +18,7 @@ Node::Node(NetworkLayer::Node& _node)
                             std::placeholders::_1));
 }
 
-void Node::SendMessage(
+void Node::SndMessage(
 	std::string destinationNode, 
 	MessageVariant message)
 {
@@ -26,10 +26,10 @@ void Node::SendMessage(
 	auto defaultSendMessageCallback = 
 		std::bind(&Node::DefaultSendMessageCallback, this, std::placeholders::_1);
 
-	SendMessage(destinationNode, message, defaultSendMessageCallback);
+	SndMessage(destinationNode, message, defaultSendMessageCallback);
 }
 
-void Node::SendMessage(
+void Node::SndMessage(
 	std::string destinationNode,
 	MessageVariant message,
 	std::function< void(NetworkLayer::SendError)> callback) const

@@ -2,8 +2,8 @@
 #define HIGH_LEVEL_NODE_HPP
 
 #include "allMessages.hpp"
-#include "../nodeLib/nodeLib/sendError.hpp"
-#include "../nodeLib/nodeLib/allMessages.hpp"
+#include "../../nodeLib/nodeLib/sendError.hpp"
+#include "../../nodeLib/nodeLib/allMessages.hpp"
 
 #include <functional>
 
@@ -19,11 +19,11 @@ class Node
 public:
 	Node(NetworkLayer::Node& _node);
 
-	void SendMessage(
+	void SndMessage(
                      std::string destinationNode,
                      MessageVariant message);
 
-	void SendMessage(
+	void SndMessage(
                      std::string destinationNode,
                      MessageVariant message,
                      std::function< void(NetworkLayer::SendError)> callback) const;
