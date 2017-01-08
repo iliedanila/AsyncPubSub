@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
@@ -15,3 +15,6 @@
 /nodeLib/nodeLib.vcxproj.filters
 /playground/playground.vcxproj.filters
 /nodes.xcworkspace/xcuserdata/ilie.xcuserdatad
+nodes.xcworkspace/xcuserdata/ilie.xcuserdatad/UserInterfaceState.xcuserstate
+
+nodes.xcworkspace/xcuserdata/ilie.xcuserdatad/UserInterfaceState.xcuserstate
