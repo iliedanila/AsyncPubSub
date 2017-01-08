@@ -2,8 +2,8 @@
 #define HIGH_LEVEL_NODE_HPP
 
 #include "allMessages.hpp"
-#include "../../nodeLib/nodeLib/sendError.hpp"
-#include "../../nodeLib/nodeLib/allMessages.hpp"
+#include "../nodeLib/nodeLib/sendError.hpp"
+#include "../nodeLib/nodeLib/allMessages.hpp"
 
 #include <functional>
 

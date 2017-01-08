@@ -1,7 +1,7 @@
 #include <boost/serialization/variant.hpp>
 
 #include "node.hpp"
-#include "../../nodeLib/nodeLib/node.hpp"
+#include "../nodeLib/nodeLib/node.hpp"
 #include <iostream>
 #include "messageVisitor.hpp"
 

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		4B042AD61DE1B22C00E1C461 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B042AD51DE1B22C00E1C461 /* main.cpp */; };
 		4B042ADE1DE1B29800E1C461 /* libnodeLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B042ADD1DE1B29800E1C461 /* libnodeLib.a */; };
-		4BCB3D111DF1023F00A9CA6B /* node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BCB3D0D1DF1023F00A9CA6B /* node.cpp */; };
+		4B5C44711E22C3A2000C41C9 /* libLogicalLayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5C44701E22C3A2000C41C9 /* libLogicalLayer.a */; };
 		4BE910141DE1F3FD004A39C2 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE910131DE1F3FD004A39C2 /* libboost_system.a */; };
 		4BE9101E1DE1F7B1004A39C2 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE910151DE1F426004A39C2 /* libboost_serialization.a */; };
 /* End PBXBuildFile section */
@@ -30,11 +30,7 @@
 		4B042AD21DE1B22C00E1C461 /* playground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playground; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B042AD51DE1B22C00E1C461 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		4B042ADD1DE1B29800E1C461 /* libnodeLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnodeLib.a; path = "../../../Library/Developer/Xcode/DerivedData/nodes-alfiwcqexteccwguxbekptvstvjf/Build/Products/Debug/libnodeLib.a"; sourceTree = "<group>"; };
-		4BCB3D0C1DF1023F00A9CA6B /* allMessages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = allMessages.hpp; sourceTree = "<group>"; };
-		4BCB3D0D1DF1023F00A9CA6B /* node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = node.cpp; sourceTree = "<group>"; };
-		4BCB3D0E1DF1023F00A9CA6B /* node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = node.hpp; sourceTree = "<group>"; };
-		4BCB3D0F1DF1023F00A9CA6B /* messageVisitor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = messageVisitor.hpp; sourceTree = "<group>"; };
-		4BCB3D101DF1023F00A9CA6B /* logMessage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = logMessage.hpp; sourceTree = "<group>"; };
+		4B5C44701E22C3A2000C41C9 /* libLogicalLayer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLogicalLayer.a; path = "../../../Library/Developer/Xcode/DerivedData/nodes-alfiwcqexteccwguxbekptvstvjf/Build/Products/Debug/libLogicalLayer.a"; sourceTree = "<group>"; };
 		4BE910131DE1F3FD004A39C2 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../../boost/lib/libboost_system.a; sourceTree = "<group>"; };
 		4BE910151DE1F426004A39C2 /* libboost_serialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_serialization.a; path = ../../boost/lib/libboost_serialization.a; sourceTree = "<group>"; };
 		4BE9101A1DE1F5A9004A39C2 /* libboost_serialization.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_serialization.dylib; path = ../../boost/lib/libboost_serialization.dylib; sourceTree = "<group>"; };
@@ -45,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B5C44711E22C3A2000C41C9 /* libLogicalLayer.a in Frameworks */,
 				4BE9101E1DE1F7B1004A39C2 /* libboost_serialization.a in Frameworks */,
 				4B042ADE1DE1B29800E1C461 /* libnodeLib.a in Frameworks */,
 				4BE910141DE1F3FD004A39C2 /* libboost_system.a in Frameworks */,
@@ -74,11 +71,6 @@
 		4B042AD41DE1B22C00E1C461 /* playground */ = {
 			isa = PBXGroup;
 			children = (
-				4BCB3D0C1DF1023F00A9CA6B /* allMessages.hpp */,
-				4BCB3D0D1DF1023F00A9CA6B /* node.cpp */,
-				4BCB3D0E1DF1023F00A9CA6B /* node.hpp */,
-				4BCB3D0F1DF1023F00A9CA6B /* messageVisitor.hpp */,
-				4BCB3D101DF1023F00A9CA6B /* logMessage.hpp */,
 				4B042AD51DE1B22C00E1C461 /* main.cpp */,
 			);
 			path = playground;
@@ -87,6 +79,7 @@
 		4B042ADC1DE1B29700E1C461 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4B5C44701E22C3A2000C41C9 /* libLogicalLayer.a */,
 				4BE9101A1DE1F5A9004A39C2 /* libboost_serialization.dylib */,
 				4BE910151DE1F426004A39C2 /* libboost_serialization.a */,
 				4BE910131DE1F3FD004A39C2 /* libboost_system.a */,
@@ -152,7 +145,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BCB3D111DF1023F00A9CA6B /* node.cpp in Sources */,
 				4B042AD61DE1B22C00E1C461 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

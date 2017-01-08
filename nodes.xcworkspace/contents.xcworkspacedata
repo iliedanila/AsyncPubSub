@@ -5,6 +5,9 @@
       location = "group:nodeLib/nodeLib.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:LogicalLayer/LogicalLayer.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:playground/playground.xcodeproj">
    </FileRef>
 </Workspace>
