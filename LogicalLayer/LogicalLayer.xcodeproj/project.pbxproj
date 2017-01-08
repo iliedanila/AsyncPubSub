@@ -7,21 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B5C44681E22BFB6000C41C9 /* allMessages.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B5C44631E22BFB6000C41C9 /* allMessages.hpp */; };
-		4B5C44691E22BFB6000C41C9 /* node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C44641E22BFB6000C41C9 /* node.cpp */; };
-		4B5C446A1E22BFB6000C41C9 /* node.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B5C44651E22BFB6000C41C9 /* node.hpp */; };
-		4B5C446B1E22BFB6000C41C9 /* messageVisitor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B5C44661E22BFB6000C41C9 /* messageVisitor.hpp */; };
-		4B5C446C1E22BFB6000C41C9 /* logMessage.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B5C44671E22BFB6000C41C9 /* logMessage.hpp */; };
+		4B9A9E501E22FC53006621CC /* allMessages.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4B1E22FC53006621CC /* allMessages.hpp */; };
+		4B9A9E511E22FC53006621CC /* logMessage.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4C1E22FC53006621CC /* logMessage.hpp */; };
+		4B9A9E521E22FC53006621CC /* messageVisitor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */; };
+		4B9A9E531E22FC53006621CC /* node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B9A9E4E1E22FC53006621CC /* node.cpp */; };
+		4B9A9E541E22FC53006621CC /* node.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4F1E22FC53006621CC /* node.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		4B5C445C1E22BF8E000C41C9 /* libLogicalLayer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libLogicalLayer.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B5C44631E22BFB6000C41C9 /* allMessages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = allMessages.hpp; sourceTree = "<group>"; };
-		4B5C44641E22BFB6000C41C9 /* node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = node.cpp; sourceTree = "<group>"; };
-		4B5C44651E22BFB6000C41C9 /* node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = node.hpp; sourceTree = "<group>"; };
-		4B5C44661E22BFB6000C41C9 /* messageVisitor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = messageVisitor.hpp; sourceTree = "<group>"; };
-		4B5C44671E22BFB6000C41C9 /* logMessage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = logMessage.hpp; sourceTree = "<group>"; };
 		4B5C446E1E22C2F6000C41C9 /* libnodeLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnodeLib.a; path = "../../../Library/Developer/Xcode/DerivedData/nodes-alfiwcqexteccwguxbekptvstvjf/Build/Products/Debug/libnodeLib.a"; sourceTree = "<group>"; };
+		4B9A9E4B1E22FC53006621CC /* allMessages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = allMessages.hpp; path = LogicalLayer/allMessages.hpp; sourceTree = "<group>"; };
+		4B9A9E4C1E22FC53006621CC /* logMessage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = logMessage.hpp; path = LogicalLayer/logMessage.hpp; sourceTree = "<group>"; };
+		4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = messageVisitor.hpp; path = LogicalLayer/messageVisitor.hpp; sourceTree = "<group>"; };
+		4B9A9E4E1E22FC53006621CC /* node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = node.cpp; path = LogicalLayer/node.cpp; sourceTree = "<group>"; };
+		4B9A9E4F1E22FC53006621CC /* node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = node.hpp; path = LogicalLayer/node.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,11 +38,7 @@
 		4B5C44531E22BF8E000C41C9 = {
 			isa = PBXGroup;
 			children = (
-				4B5C44631E22BFB6000C41C9 /* allMessages.hpp */,
-				4B5C44641E22BFB6000C41C9 /* node.cpp */,
-				4B5C44651E22BFB6000C41C9 /* node.hpp */,
-				4B5C44661E22BFB6000C41C9 /* messageVisitor.hpp */,
-				4B5C44671E22BFB6000C41C9 /* logMessage.hpp */,
+				4B9A9E4A1E22FC3D006621CC /* LogicalLayer */,
 				4B5C445D1E22BF8E000C41C9 /* Products */,
 				4B5C446D1E22C2F6000C41C9 /* Frameworks */,
 			);
@@ -64,6 +60,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		4B9A9E4A1E22FC3D006621CC /* LogicalLayer */ = {
+			isa = PBXGroup;
+			children = (
+				4B9A9E4B1E22FC53006621CC /* allMessages.hpp */,
+				4B9A9E4C1E22FC53006621CC /* logMessage.hpp */,
+				4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */,
+				4B9A9E4E1E22FC53006621CC /* node.cpp */,
+				4B9A9E4F1E22FC53006621CC /* node.hpp */,
+			);
+			name = LogicalLayer;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -71,10 +79,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B5C446A1E22BFB6000C41C9 /* node.hpp in Headers */,
-				4B5C446B1E22BFB6000C41C9 /* messageVisitor.hpp in Headers */,
-				4B5C44681E22BFB6000C41C9 /* allMessages.hpp in Headers */,
-				4B5C446C1E22BFB6000C41C9 /* logMessage.hpp in Headers */,
+				4B9A9E541E22FC53006621CC /* node.hpp in Headers */,
+				4B9A9E501E22FC53006621CC /* allMessages.hpp in Headers */,
+				4B9A9E521E22FC53006621CC /* messageVisitor.hpp in Headers */,
+				4B9A9E511E22FC53006621CC /* logMessage.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +143,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B5C44691E22BFB6000C41C9 /* node.cpp in Sources */,
+				4B9A9E531E22FC53006621CC /* node.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +276,7 @@
 				4B5C44621E22BF8E000C41C9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
