@@ -43,7 +43,7 @@ void Node::SndMessage(
 
 void Node::HandleIncomingMessage(NetworkLayer::DataMessage message)
 {
-	std::cout << "HandleIncomingMessage distance: " << message.Distance() << "\n";
+	std::cout << node.Name() << " HandleIncomingMessage distance: " << message.Distance() << "\n";
 	std::stringstream ss(std::move(message.Buffer()));
 	boost::archive::binary_iarchive iarchive(ss);
 
@@ -59,7 +59,7 @@ void Node::DefaultSendMessageCallback(NetworkLayer::SendError error)
 	{
 	case NetworkLayer::eSuccess:
 		{
-		std::cout << "Success.\n";
+		std::cout << node.Name() << " Success.\n";
 		}
 		break;
 	case NetworkLayer::eNoPath:
@@ -80,7 +80,7 @@ void Node::DefaultSendMessageCallback(NetworkLayer::SendError error)
 template <>
 void Node::HandleMessage(LogMessage& message)
 {
-	std::cout << message.Log() << "\n";
+	std::cout << node.Name() << " " << message.Log() << "\n";
 }
     
 } // namespace LogicalLayer

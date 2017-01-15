@@ -245,7 +245,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /Users/ilie/workspace/boost/lib;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -254,7 +254,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /Users/ilie/workspace/boost/lib;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

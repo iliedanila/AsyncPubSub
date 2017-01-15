@@ -36,6 +36,8 @@ public:
     
     bool IsNodeAccessible( const std::string& nodeName );
     
+    void RegisterNodeAccessibility(std::function<void(std::string, bool)> callback);
+    
     void SndMessage(std::string destination,
                      std::string buffer,
                      std::function< void(SendError)> callback);
@@ -76,6 +78,7 @@ private:
     
     std::function<void(DataMessage)> messageAcceptor;
     std::function<void(SendError)> messageCallback;
+    std::function<void(std::string, bool)> nodeAccessibilityCallback;
     
     tcp::socket connect_socket;
     tcp::socket accept_socket;
