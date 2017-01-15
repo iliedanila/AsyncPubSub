@@ -242,7 +242,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				EXECUTABLE_PREFIX = lib;
-				"HEADER_SEARCH_PATHS[arch=*]" = /Users/ilie/workspace/boost/include;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -252,7 +252,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				EXECUTABLE_PREFIX = lib;
-				"HEADER_SEARCH_PATHS[arch=*]" = /Users/ilie/workspace/boost/include;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

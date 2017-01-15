@@ -244,7 +244,7 @@
 		4B042ADA1DE1B22C00E1C461 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"HEADER_SEARCH_PATHS[arch=*]" = /Users/ilie/workspace/boost/include;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
 				"LIBRARY_SEARCH_PATHS[arch=*]" = /Users/ilie/workspace/boost/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -253,7 +253,7 @@
 		4B042ADB1DE1B22C00E1C461 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"HEADER_SEARCH_PATHS[arch=*]" = /Users/ilie/workspace/boost/include;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
 				"LIBRARY_SEARCH_PATHS[arch=*]" = /Users/ilie/workspace/boost/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
