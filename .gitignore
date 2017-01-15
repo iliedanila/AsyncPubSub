@@ -22,3 +22,5 @@ nodes.xcworkspace/xcuserdata/ilie.xcuserdatad/UserInterfaceState.xcuserstate
 *.xcuserstate
 /LogicalLayer/Debug
 /LogicalLayer/Release
+
+*.xcuserstate
