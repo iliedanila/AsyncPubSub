@@ -20,13 +20,13 @@ public:
 	Node(NetworkLayer::Node& _node);
 
 	void SndMessage(
-                     std::string destinationNode,
-                     MessageVariant message);
+		std::string destinationNode,
+		MessageVariant message);
 
 	void SndMessage(
-                     std::string destinationNode,
-                     MessageVariant message,
-                     std::function< void(NetworkLayer::SendError)> callback) const;
+		std::string destinationNode,
+        MessageVariant message,
+        std::function< void(NetworkLayer::SendError)> callback) const;
     
 private:
 	friend struct MessageVisitor;

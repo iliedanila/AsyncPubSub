@@ -82,7 +82,11 @@ void Connection::ReadHeader(std::function<void(MessageVariant, std::shared_ptr<C
                                 {
                                     std::cout << "Error reading header: " << error.value() << " " << error.message()
                                     << " on node " << node.Name() << "\n";
-                                    if (error.value() == ENOENT || error.value() == ECANCELED)
+                                    if (error.value() == ENOENT || 
+										error.value() == ECANCELED ||
+										error.value() == ERROR_CONNECTION_ABORTED ||
+										error.value() == ERROR_OPERATION_ABORTED ||
+										error.value() == WSAECONNRESET)
                                     {
                                         closeHandler(shared_from_this());
                                     }

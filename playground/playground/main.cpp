@@ -53,7 +53,7 @@ int main(int argc, const char * argv[])
     char consoleCommand[commandSize];
     
     std::cout << "Insert command: \n";
-    bool exit = false;
+	auto exit = false;
     
     do
     {
@@ -66,7 +66,7 @@ int main(int argc, const char * argv[])
             broker.Close();
             sender.Close();
 
-            io_service.stop();
+//            io_service.stop();
             t.join();
         }
     } while (!exit);
