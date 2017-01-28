@@ -5,6 +5,7 @@
 
 #include <string>
 #include <functional>
+#include <iostream>
 
 using namespace boost::asio::ip;
 
@@ -17,7 +18,8 @@ Node::Node(std::string _name,
     name(std::move(_name)),
     io_service(_io_service),
     accept_socket(_io_service),
-    connect_socket(_io_service)
+    connect_socket(_io_service),
+    closing(false)
 {}
 
 Node::~Node()
@@ -49,10 +51,13 @@ void Node::Accept(unsigned short _port)
                               }
                               else
                               {
-//                                  std::cout << name << " error accepting: "
-//                                    << error.message() << "\n";
+                                  std::cout << name << " error accepting: "
+                                    << error.message() << "\n";
                               }
-                              Accept(_port);
+                              if(!closing)
+                              {
+                                  Accept(_port);
+                              }
                           });
 }
 
@@ -81,14 +86,15 @@ void Node::Connect(std::string host,
                                    }
                                    else
                                    {
-//                                       std::cout << name << " error connecting: "
-//                                       << error.message() << "\n";
+                                       std::cout << name << " error connecting: "
+                                       << error.message() << "\n";
                                    }
                                });
 }
 
 void Node::Close()
 {
+    closing = true;
     for (auto connection : connections)
     {
         connection->Close();
@@ -165,6 +171,11 @@ void Node::CloseConnection(SharedConnection connectionDown)
     
     connectionDown->Close();
     connections.erase(connectionDown);
+    
+    if(closing)
+    {
+        return;
+    }
     
     for (auto connection : connections)
     {

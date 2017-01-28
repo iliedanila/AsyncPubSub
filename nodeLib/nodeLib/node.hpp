@@ -76,6 +76,7 @@ private:
     
     std::unique_ptr<tcp::acceptor> acceptor;
     
+    bool closing;
     std::function<void(DataMessage)> messageAcceptor;
     std::function<void(SendError)> messageCallback;
     std::function<void(std::string, bool)> nodeAccessibilityCallback;
