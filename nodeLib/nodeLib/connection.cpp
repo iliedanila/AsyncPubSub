@@ -80,16 +80,14 @@ void Connection::ReadHeader(std::function<void(MessageVariant, std::shared_ptr<C
                                 }
                                 else
                                 {
-                                    std::cout << "Error reading header: " << error.value() << " " << error.message()
-                                    << " on node " << node.Name() << "\n";
-                                    if (error.value() == ENOENT || 
-										error.value() == ECANCELED ||
-										error.value() == ERROR_CONNECTION_ABORTED ||
-										error.value() == ERROR_OPERATION_ABORTED ||
-										error.value() == WSAECONNRESET)
-                                    {
-                                        closeHandler(shared_from_this());
-                                    }
+                                    std::cout   << "Error reading header: "
+                                                << error.value()
+                                                << " "
+                                                << error.message()
+                                                << " on node "
+                                                << node.Name()
+                                                << "\n";
+                                    closeHandler(shared_from_this());
                                 }
 
                             });
@@ -118,12 +116,14 @@ void Connection::ReadBody(std::function<void(MessageVariant, std::shared_ptr<Con
                                 }
                                 else
                                 {
-                                    std::cout << "Error reading body: " << error.value() << " " << error.message()
-                                    << " on node " << node.Name() << "\n";
-                                    if (error.value() == 2)
-                                    {
-                                        closeHandler(shared_from_this());
-                                    }
+                                    std::cout   << "Error reading body: "
+                                                << error.value()
+                                                << " "
+                                                << error.message()
+                                                << " on node "
+                                                << node.Name()
+                                                << "\n";
+                                    closeHandler(shared_from_this());
                                 }
                             });
 }
