@@ -15,10 +15,10 @@ Connection::Connection(Node& _node,
                        tcp::socket&& _socket,
                        std::function<void(std::shared_ptr<Connection>)> _closeHandler)
 :
-    node(_node),
     io_service(_io_service),
     socket(std::move(_socket)),
-    closeHandler(_closeHandler)
+    closeHandler(_closeHandler),
+    node(_node)
 {
     std::cout << "Connection() in node " << node.Name() << "\n";
 }
