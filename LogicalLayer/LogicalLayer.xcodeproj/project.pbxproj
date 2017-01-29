@@ -12,6 +12,12 @@
 		4B9A9E521E22FC53006621CC /* messageVisitor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */; };
 		4B9A9E531E22FC53006621CC /* node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B9A9E4E1E22FC53006621CC /* node.cpp */; };
 		4B9A9E541E22FC53006621CC /* node.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4F1E22FC53006621CC /* node.hpp */; };
+		4BF2AC8E1E3E7A77004366E5 /* broker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2AC881E3E7A77004366E5 /* broker.cpp */; };
+		4BF2AC8F1E3E7A77004366E5 /* broker.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BF2AC891E3E7A77004366E5 /* broker.hpp */; };
+		4BF2AC901E3E7A77004366E5 /* publisher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2AC8A1E3E7A77004366E5 /* publisher.cpp */; };
+		4BF2AC911E3E7A77004366E5 /* publisher.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BF2AC8B1E3E7A77004366E5 /* publisher.hpp */; };
+		4BF2AC921E3E7A77004366E5 /* subscriber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2AC8C1E3E7A77004366E5 /* subscriber.cpp */; };
+		4BF2AC931E3E7A77004366E5 /* subscriber.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BF2AC8D1E3E7A77004366E5 /* subscriber.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +28,12 @@
 		4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = messageVisitor.hpp; path = LogicalLayer/messageVisitor.hpp; sourceTree = "<group>"; };
 		4B9A9E4E1E22FC53006621CC /* node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = node.cpp; path = LogicalLayer/node.cpp; sourceTree = "<group>"; };
 		4B9A9E4F1E22FC53006621CC /* node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = node.hpp; path = LogicalLayer/node.hpp; sourceTree = "<group>"; };
+		4BF2AC881E3E7A77004366E5 /* broker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = broker.cpp; path = LogicalLayer/broker.cpp; sourceTree = "<group>"; };
+		4BF2AC891E3E7A77004366E5 /* broker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = broker.hpp; path = LogicalLayer/broker.hpp; sourceTree = "<group>"; };
+		4BF2AC8A1E3E7A77004366E5 /* publisher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = publisher.cpp; path = LogicalLayer/publisher.cpp; sourceTree = "<group>"; };
+		4BF2AC8B1E3E7A77004366E5 /* publisher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = publisher.hpp; path = LogicalLayer/publisher.hpp; sourceTree = "<group>"; };
+		4BF2AC8C1E3E7A77004366E5 /* subscriber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = subscriber.cpp; path = LogicalLayer/subscriber.cpp; sourceTree = "<group>"; };
+		4BF2AC8D1E3E7A77004366E5 /* subscriber.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = subscriber.hpp; path = LogicalLayer/subscriber.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +75,12 @@
 		4B9A9E4A1E22FC3D006621CC /* LogicalLayer */ = {
 			isa = PBXGroup;
 			children = (
+				4BF2AC881E3E7A77004366E5 /* broker.cpp */,
+				4BF2AC891E3E7A77004366E5 /* broker.hpp */,
+				4BF2AC8A1E3E7A77004366E5 /* publisher.cpp */,
+				4BF2AC8B1E3E7A77004366E5 /* publisher.hpp */,
+				4BF2AC8C1E3E7A77004366E5 /* subscriber.cpp */,
+				4BF2AC8D1E3E7A77004366E5 /* subscriber.hpp */,
 				4B9A9E4B1E22FC53006621CC /* allMessages.hpp */,
 				4B9A9E4C1E22FC53006621CC /* logMessage.hpp */,
 				4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */,
@@ -80,6 +98,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B9A9E541E22FC53006621CC /* node.hpp in Headers */,
+				4BF2AC911E3E7A77004366E5 /* publisher.hpp in Headers */,
+				4BF2AC931E3E7A77004366E5 /* subscriber.hpp in Headers */,
+				4BF2AC8F1E3E7A77004366E5 /* broker.hpp in Headers */,
 				4B9A9E501E22FC53006621CC /* allMessages.hpp in Headers */,
 				4B9A9E521E22FC53006621CC /* messageVisitor.hpp in Headers */,
 				4B9A9E511E22FC53006621CC /* logMessage.hpp in Headers */,
@@ -143,7 +164,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BF2AC8E1E3E7A77004366E5 /* broker.cpp in Sources */,
+				4BF2AC901E3E7A77004366E5 /* publisher.cpp in Sources */,
 				4B9A9E531E22FC53006621CC /* node.cpp in Sources */,
+				4BF2AC921E3E7A77004366E5 /* subscriber.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
