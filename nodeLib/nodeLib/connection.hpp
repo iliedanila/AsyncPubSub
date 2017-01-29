@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "allMessages.hpp"
-#include "binaryMessage.hpp"
+#include "node.hpp"
 
 using namespace boost::asio;
 using namespace ip;
@@ -13,7 +13,6 @@ using namespace ip;
 namespace NetworkLayer
 {
     
-class Node;
 class Connection;
 typedef std::shared_ptr<Connection> SharedConnection;
 
@@ -34,17 +33,13 @@ public:
     void Close();
     
 private:
-    void ReadHeader(std::function<void(MessageVariant, std::shared_ptr<Connection>)>);
-    void ReadBody(std::function<void(MessageVariant, std::shared_ptr<Connection>)>);
-
-private:
     boost::asio::io_service& io_service;
     tcp::socket socket;
     std::function<void(std::shared_ptr<Connection>)> closeHandler;
     
     Node& node;
-    BinaryMessage readMessage;
-    BinaryMessage writeMessage;
+    char readMessage[Node::MaxMessageSize];
+    char writeMessage[Node::MaxMessageSize];
 };
     
 }

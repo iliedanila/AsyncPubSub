@@ -65,8 +65,6 @@ int main(int argc, const char * argv[])
             logger.Close();
             broker.Close();
             sender.Close();
-
-//            io_service.stop();
             t.join();
         }
     } while (!exit);

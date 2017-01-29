@@ -8,7 +8,7 @@
 #include <map>
 
 #include "allMessages.hpp"
-#include "connection.hpp"
+//#include "connection.hpp"
 #include "sendError.hpp"
 
 using namespace boost::asio::ip;
@@ -18,6 +18,9 @@ typedef std::pair<std::string, std::size_t> NodeDistance;
 
 namespace NetworkLayer
 {
+    
+class Connection;
+typedef std::shared_ptr<Connection> SharedConnection;
 
 class Node
 {
@@ -25,6 +28,8 @@ public:
     Node(std::string,
          boost::asio::io_service&);
     ~Node();
+    
+    static const int MaxMessageSize = 2048;
     
     void Accept(unsigned short);
     void Connect(std::string, unsigned short);

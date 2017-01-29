@@ -30,7 +30,37 @@ Connection::~Connection()
 
 void Connection::Read(std::function<void(MessageVariant, std::shared_ptr<Connection> )> _callback)
 {
-    ReadHeader(_callback);
+    auto self(shared_from_this());
+    boost::asio::async_read(socket,
+                            boost::asio::buffer(readMessage, Node::MaxMessageSize),
+                            [this, self, _callback]
+                            (const boost::system::error_code& error, std::size_t /*length*/)
+                            {
+                                if( !error)
+                                {
+                                    std::string content(readMessage, Node::MaxMessageSize);
+                                    std::stringstream ss(content);
+                                    boost::archive::binary_iarchive iarchive(ss);
+                                    
+                                    MessageVariant message;
+                                    iarchive >> message;
+                                    
+                                    _callback(message, self);
+                                    Read(_callback);
+                                }
+                                else
+                                {
+                                    std::cout   << "Error reading body: "
+                                    << error.value()
+                                    << " "
+                                    << error.message()
+                                    << " on node "
+                                    << node.Name()
+                                    << "\n";
+                                    closeHandler(shared_from_this());
+                                }
+                            });
+
 }
 
 void Connection::Write(MessageVariant _message, std::function<void()> _callback)
@@ -40,12 +70,8 @@ void Connection::Write(MessageVariant _message, std::function<void()> _callback)
     boost::archive::binary_oarchive oarchive(ss);
     oarchive << _message;
 
-    writeMessage.body_length(ss.str().size());
-    std::memcpy(writeMessage.body(), ss.str().c_str(), writeMessage.body_length());
-    writeMessage.encode_header();
-    
     boost::asio::async_write(socket,
-                             boost::asio::buffer(writeMessage.data(), writeMessage.length()),
+                             boost::asio::buffer(ss.str().c_str(), Node::MaxMessageSize),
                              [self, _callback]
                              (boost::system::error_code error, std::size_t lenght)
                              {
@@ -65,67 +91,4 @@ void Connection::Close()
     socket.close();
 }
 
-void Connection::ReadHeader(std::function<void(MessageVariant, std::shared_ptr<Connection>)> _callback)
-{
-    auto self(shared_from_this());
-    boost::asio::async_read(socket,
-                            boost::asio::buffer(readMessage.data(), BinaryMessage::header_length),
-                            [this, self, _callback]
-                            (const boost::system::error_code& error,
-                             std::size_t bytes_transferred)
-                            {
-                                if (!error && readMessage.decode_header())
-                                {
-                                    ReadBody(_callback);
-                                }
-                                else
-                                {
-                                    std::cout   << "Error reading header: "
-                                                << error.value()
-                                                << " "
-                                                << error.message()
-                                                << " on node "
-                                                << node.Name()
-                                                << "\n";
-                                    closeHandler(shared_from_this());
-                                }
-
-                            });
-}
-
-void Connection::ReadBody(std::function<void(MessageVariant, std::shared_ptr<Connection>)> _callback)
-{
-    auto self(shared_from_this());
-    boost::asio::async_read(socket,
-                            boost::asio::buffer(readMessage.body(), readMessage.body_length()),
-                            [this, self, _callback]
-                            (const boost::system::error_code& error, std::size_t /*length*/)
-                            {
-                                if( !error)
-                                {
-                                    std::string content(readMessage.body(), readMessage.body_length());
-                                    std::stringstream ss(content);
-                                    boost::archive::binary_iarchive iarchive(ss);
-                                    
-                                    MessageVariant message;
-                                    iarchive >> message;
-
-                                    _callback(message, self);
-                                    ReadHeader(_callback);
-
-                                }
-                                else
-                                {
-                                    std::cout   << "Error reading body: "
-                                                << error.value()
-                                                << " "
-                                                << error.message()
-                                                << " on node "
-                                                << node.Name()
-                                                << "\n";
-                                    closeHandler(shared_from_this());
-                                }
-                            });
-}
-    
 }
