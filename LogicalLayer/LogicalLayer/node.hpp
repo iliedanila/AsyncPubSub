@@ -17,7 +17,7 @@ namespace LogicalLayer
 class Node
 {
 public:
-	Node(NetworkLayer::Node& _node);
+	explicit Node(NetworkLayer::Node& _node);
 
 	void SndMessage(
 		std::string destinationNode,
@@ -37,7 +37,6 @@ private:
 	template <typename MessageT>
 	void HandleMessage(MessageT& message);
 
-private:
 	NetworkLayer::Node& node;
 };
     

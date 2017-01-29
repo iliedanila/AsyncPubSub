@@ -9,7 +9,7 @@ class Node;
 
 struct MessageVisitor : public boost::static_visitor<>
 {
-	MessageVisitor(Node& _node)
+	explicit MessageVisitor(Node& _node)
 	:
 		node(_node)
 	{}

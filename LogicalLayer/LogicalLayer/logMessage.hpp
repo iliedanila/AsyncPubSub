@@ -12,7 +12,7 @@ public:
 	LogMessage() {}
 	~LogMessage() {}
 
-	LogMessage(std::string _log)
+	explicit LogMessage(std::string _log)
 	:
 		log(std::move(_log))
 	{}
