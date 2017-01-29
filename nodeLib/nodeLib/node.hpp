@@ -27,9 +27,7 @@ class Node
 public:
 	static const int MaxMessageSize = 2048;
 
-	Node(
-		std::string _name,
-		io_service& _io_service);
+	Node(std::string _name,	io_service& _io_service);
     ~Node();
     
     void Accept(unsigned short _port);
@@ -42,7 +40,7 @@ public:
     
     bool IsNodeAccessible(const std::string& nodeName);
     
-    void RegisterNodeAccessibility(std::function<void(std::string, bool)> callback);
+    void NotifyNewNodeStatus(std::function<void(std::string, bool)> callback);
     
     void SndMessage(
 		std::string destination,
@@ -89,7 +87,7 @@ private:
     bool closing;
     std::function<void(DataMessage)> messageAcceptor;
     std::function<void(SendError)> messageCallback;
-    std::function<void(std::string, bool)> nodeAccessibilityCallback;
+    std::function<void(std::string, bool)> notifyNewNodeStatusCallback;
     
     tcp::socket connect_socket;
     tcp::socket accept_socket;

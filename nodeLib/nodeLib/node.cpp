@@ -124,9 +124,9 @@ bool Node::IsNodeAccessible(const std::string& nodeName)
     return nodeDistances.find(nodeName) != nodeDistances.end();
 }
     
-void Node::RegisterNodeAccessibility(std::function<void (std::string, bool)> callback)
+void Node::NotifyNewNodeStatus(std::function<void (std::string, bool)> callback)
 {
-    nodeAccessibilityCallback = callback;
+    notifyNewNodeStatusCallback = callback;
 }
 
 void Node::SndMessage(
@@ -323,9 +323,9 @@ void Node::ProcessAddNodePaths(
             nodePaths.insert(std::make_pair(nodeDistance.first, connection));
             
             // notify node owner of new node accessible.
-            if(nodeAccessibilityCallback)
+            if(notifyNewNodeStatusCallback)
             {
-                nodeAccessibilityCallback(nodeDistance.first, true);
+                notifyNewNodeStatusCallback(nodeDistance.first, true);
             }
         }
         else if (it->second > nodeDistance.second + 1)
@@ -362,9 +362,9 @@ void Node::ProcessFailedNodes(
                 forward.AddFailedNode(node);
                 
                 // notify node owner of failed node
-                if(nodeAccessibilityCallback)
+                if(notifyNewNodeStatusCallback)
                 {
-                    nodeAccessibilityCallback(node, false);
+                    notifyNewNodeStatusCallback(node, false);
                 }
             }
             else

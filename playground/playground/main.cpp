@@ -31,7 +31,7 @@ int main(int argc, const char * argv[])
 	LogicalLayer::Node hl_logger(logger);
     LogicalLayer::Node hl_sender(sender);
     
-    sender.RegisterNodeAccessibility(
+    sender.NotifyNewNodeStatus(
 		[&hl_sender]
 		(std::string nodeName, bool isAccessible)
 		{

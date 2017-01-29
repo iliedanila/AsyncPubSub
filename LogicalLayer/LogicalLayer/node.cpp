@@ -13,9 +13,10 @@ Node::Node(NetworkLayer::Node& _node)
 	node(_node)
 {
 	node.AcceptMessages(
-                        std::bind(&Node::HandleIncomingMessage,
-                            this,
-                            std::placeholders::_1));
+		std::bind(
+			&Node::HandleIncomingMessage,
+			this,
+			std::placeholders::_1));
 }
 
 void Node::SndMessage(

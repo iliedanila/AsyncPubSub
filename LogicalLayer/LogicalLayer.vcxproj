@@ -124,12 +124,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="LogicalLayer\allMessages.hpp" />
+    <ClInclude Include="LogicalLayer\broker.hpp" />
     <ClInclude Include="LogicalLayer\logMessage.hpp" />
     <ClInclude Include="LogicalLayer\messageVisitor.hpp" />
     <ClInclude Include="LogicalLayer\node.hpp" />
+    <ClInclude Include="LogicalLayer\publisher.hpp" />
+    <ClInclude Include="LogicalLayer\subscriber.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LogicalLayer\broker.cpp" />
     <ClCompile Include="LogicalLayer\node.cpp" />
+    <ClCompile Include="LogicalLayer\publisher.cpp" />
+    <ClCompile Include="LogicalLayer\subscriber.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
