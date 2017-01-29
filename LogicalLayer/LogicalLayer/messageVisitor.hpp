@@ -5,11 +5,10 @@
 namespace LogicalLayer
 {
 
-class Node;
-
+template<class NodeT>
 struct MessageVisitor : public boost::static_visitor<>
 {
-	explicit MessageVisitor(Node& _node)
+	explicit MessageVisitor(NodeT& _node)
 	:
 		node(_node)
 	{}
@@ -21,7 +20,7 @@ struct MessageVisitor : public boost::static_visitor<>
 	}
 
 private:
-	Node& node;
+	NodeT& node;
 };
     
 }

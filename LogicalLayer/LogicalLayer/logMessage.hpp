@@ -1,7 +1,10 @@
 #ifndef LOG_MESSAGE_HPP
 #define LOG_MESSAGE_HPP
+
 #include <string>
 #include <boost/serialization/access.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 
 namespace LogicalLayer
 {

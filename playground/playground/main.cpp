@@ -7,6 +7,7 @@
 
 #include "../../nodeLib/nodeLib/node.hpp"
 #include "../../LogicalLayer/LogicalLayer/node.hpp"
+#include "../../LogicalLayer/LogicalLayer/broker.hpp"
 
 using namespace boost::asio;
 using namespace ip;
@@ -30,6 +31,7 @@ int main(int argc, const char * argv[])
 
 	LogicalLayer::Node hl_logger(logger);
     LogicalLayer::Node hl_sender(sender);
+	LogicalLayer::Broker hl_broker(broker);
     
     sender.NotifyNewNodeStatus(
 		[&hl_sender]

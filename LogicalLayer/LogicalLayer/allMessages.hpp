@@ -1,12 +1,14 @@
 #ifndef ALL_MESSAGES_HPP
 #define ALL_MESSAGES_HPP
-#include <boost/variant/variant.hpp>
+
 #include "logMessage.hpp"
+#include "brokerIdentity.hpp"
+#include <boost/variant/variant.hpp>
 
 namespace LogicalLayer
 {
 
-typedef boost::variant<LogMessage> MessageVariant;
+typedef boost::variant<LogMessage, BrokerIdentity> MessageVariant;
     
 }
 

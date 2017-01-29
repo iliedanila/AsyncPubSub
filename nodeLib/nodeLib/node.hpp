@@ -48,6 +48,8 @@ public:
         std::function< void(SendError)> callback);
     
     void AcceptMessages(std::function< void(DataMessage) > callback);
+
+	io_service& IOService() const { return io_service; }
     
 private:
     friend struct MessageVisitor;
@@ -91,7 +93,7 @@ private:
     
     tcp::socket connect_socket;
     tcp::socket accept_socket;
-    boost::asio::io_service& io_service;
+    io_service& io_service;
 };
     
 }

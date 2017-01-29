@@ -51,10 +51,10 @@ void Node::HandleIncomingMessage(NetworkLayer::DataMessage message)
 	MessageVariant messageV;
 	iarchive >> messageV;
 
-	boost::apply_visitor(MessageVisitor(*this), messageV);
+	boost::apply_visitor(MessageVisitor<Node>(*this), messageV);
 }
 
-void Node::DefaultSendMessageCallback(NetworkLayer::SendError error)
+void Node::DefaultSendMessageCallback(NetworkLayer::SendError error) const
 {
 	switch (error)
 	{
@@ -82,6 +82,12 @@ template <>
 void Node::HandleMessage(LogMessage& message)
 {
 	std::cout << node.Name() << " " << message.Log() << "\n";
+}
+
+template <>
+void Node::HandleMessage(BrokerIdentity& message)
+{
+	std::cout << node.Name() << " " << message.NodeName() << "\n";
 }
     
 } // namespace LogicalLayer

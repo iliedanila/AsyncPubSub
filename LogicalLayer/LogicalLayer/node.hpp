@@ -6,6 +6,7 @@
 #include "../../nodeLib/nodeLib/allMessages.hpp"
 
 #include <functional>
+#include "messageVisitor.hpp"
 
 namespace NetworkLayer {
 	class Node;
@@ -29,10 +30,10 @@ public:
         std::function< void(NetworkLayer::SendError)> callback) const;
     
 private:
-	friend struct MessageVisitor;
+	friend struct MessageVisitor<Node>;
 
 	void HandleIncomingMessage(NetworkLayer::DataMessage message);
-	void DefaultSendMessageCallback(NetworkLayer::SendError error);
+	void DefaultSendMessageCallback(NetworkLayer::SendError error) const;
 
 	template <typename MessageT>
 	void HandleMessage(MessageT& message);
