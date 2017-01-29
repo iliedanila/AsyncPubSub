@@ -1,6 +1,7 @@
 #ifndef dataMessage_h
 #define dataMessage_h
 
+#include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
 namespace NetworkLayer
@@ -9,8 +10,10 @@ namespace NetworkLayer
 class DataMessage
 {
 public:
-    DataMessage() {}
-    ~DataMessage() {}
+    DataMessage(): distance(0)
+	{}
+
+	~DataMessage() {}
     
     DataMessage(std::string source, std::string destination, std::string buff)
     :

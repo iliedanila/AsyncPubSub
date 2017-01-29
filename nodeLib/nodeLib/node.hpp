@@ -8,10 +8,10 @@
 #include <map>
 
 #include "allMessages.hpp"
-//#include "connection.hpp"
 #include "sendError.hpp"
 
-using namespace boost::asio::ip;
+using namespace boost::asio;
+using namespace ip;
 
 typedef std::shared_ptr<tcp::acceptor> SharedAcceptor;
 typedef std::pair<std::string, std::size_t> NodeDistance;
@@ -25,27 +25,29 @@ typedef std::shared_ptr<Connection> SharedConnection;
 class Node
 {
 public:
-    Node(std::string,
-         boost::asio::io_service&);
+	static const int MaxMessageSize = 2048;
+
+	Node(
+		std::string _name,
+		io_service& _io_service);
     ~Node();
     
-    static const int MaxMessageSize = 2048;
-    
-    void Accept(unsigned short);
-    void Connect(std::string, unsigned short);
+    void Accept(unsigned short _port);
+    void Connect(std::string _host, unsigned short _port);
     
     std::string Name() const { return name; }
     void Close();
     
     std::vector<std::string> GetAccessibleNodes();
     
-    bool IsNodeAccessible( const std::string& nodeName );
+    bool IsNodeAccessible(const std::string& nodeName);
     
     void RegisterNodeAccessibility(std::function<void(std::string, bool)> callback);
     
-    void SndMessage(std::string destination,
-                     std::string buffer,
-                     std::function< void(SendError)> callback);
+    void SndMessage(
+		std::string destination,
+        std::string data,
+        std::function< void(SendError)> callback);
     
     void AcceptMessages(std::function< void(DataMessage) > callback);
     
@@ -65,16 +67,19 @@ private:
     template <typename MessageT>
     void HandleMessage(MessageT&, SharedConnection);
     
-    void ProcessAddNodePaths(RoutingMessage&,
-                             RoutingMessage&,
-                             RoutingMessage&,
-                             SharedConnection);
-    void ProcessFailedNodes(RoutingMessage&,
-                            RoutingMessage&,
-                            RoutingMessage&,
-                            SharedConnection);
-private:
-    std::string name;
+    void ProcessAddNodePaths(
+		RoutingMessage& message,
+		RoutingMessage& reply,
+		RoutingMessage& forward,
+		SharedConnection connection);
+
+    void ProcessFailedNodes(
+		RoutingMessage& message,
+		RoutingMessage& reply,
+		RoutingMessage& forward,
+		SharedConnection connection);
+
+	std::string name;
     std::set<SharedConnection> connections;
     std::map<std::string, std::size_t> nodeDistances;
     std::map<std::string, SharedConnection> nodePaths;

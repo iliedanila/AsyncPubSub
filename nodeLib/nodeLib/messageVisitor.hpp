@@ -3,8 +3,6 @@
 
 #include <boost/variant.hpp>
 
-#include "allMessages.hpp"
-#include "connection.hpp"
 #include "node.hpp"
 
 namespace NetworkLayer
@@ -14,8 +12,8 @@ struct MessageVisitor : public boost::static_visitor<>
 {
     MessageVisitor(Node& _node, SharedConnection _connection)
     :
-        node(_node),
-        connection(_connection)
+        connection(_connection),
+        node(_node)
     {}
     
     template <typename MessageT>

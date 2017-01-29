@@ -2,6 +2,7 @@
 #define dataMessageAck_hpp
 
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 
 #include "sendError.hpp"
 
@@ -11,8 +12,12 @@ namespace NetworkLayer
 class DataMessageAck
 {
 public:
-    DataMessageAck() {}
-    ~DataMessageAck() {}
+	DataMessageAck()
+	:
+		error()
+	{}
+
+	~DataMessageAck() {}
     
     DataMessageAck(std::string source, std::string destination, SendError _error)
     :

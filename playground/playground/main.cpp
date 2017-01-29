@@ -5,7 +5,6 @@
 #include <thread>
 #include <chrono>
 
-
 #include "../../nodeLib/nodeLib/node.hpp"
 #include "../../LogicalLayer/LogicalLayer/node.hpp"
 
@@ -32,18 +31,21 @@ int main(int argc, const char * argv[])
 	LogicalLayer::Node hl_logger(logger);
     LogicalLayer::Node hl_sender(sender);
     
-    sender.RegisterNodeAccessibility([&hl_sender](std::string nodeName, bool isAccessible)
-    {
-        if(nodeName == "logger" && isAccessible == true)
-        {
-            hl_sender.SndMessage("logger", LogicalLayer::LogMessage("Log from main."));
-        }
-    });
+    sender.RegisterNodeAccessibility(
+		[&hl_sender]
+		(std::string nodeName, bool isAccessible)
+		{
+			if(nodeName == "logger" && isAccessible == true)
+			{
+				hl_sender.SndMessage("logger", LogicalLayer::LogMessage("Log from main."));
+			}
+		});
     
-    std::thread t([&io_service]
-                  {
-                      io_service.run();
-                  });
+    std::thread t(
+		[&io_service]
+        {
+            io_service.run();
+        });
     
     // -------------------------------------------------------------------------
     

@@ -16,10 +16,10 @@ Node::Node(std::string _name,
                          boost::asio::io_service& _io_service)
 :
     name(std::move(_name)),
-    io_service(_io_service),
-    accept_socket(_io_service),
+    closing(false),
     connect_socket(_io_service),
-    closing(false)
+    accept_socket(_io_service),
+    io_service(_io_service)
 {}
 
 Node::~Node()
@@ -34,62 +34,66 @@ void Node::Accept(unsigned short _port)
         acceptor = std::make_unique<tcp::acceptor>(io_service, endpoint);
     }
     
-    acceptor->async_accept(accept_socket,
-                          [this, _port]
-                          (const boost::system::error_code& error)
-                          {
-                              if (!error)
-                              {
-                                  auto connection = AddConnection(std::move(accept_socket));
+    acceptor->async_accept(
+		accept_socket,
+        [this, _port]
+        (const boost::system::error_code& error)
+        {
+            if (!error)
+            {
+                auto connection = AddConnection(std::move(accept_socket));
                                   
-                                  connection->Read(std::bind(&Node::OnRead,
-                                                             this,
-                                                             std::placeholders::_1,
-                                                             std::placeholders::_2));
+                connection->Read(std::bind(
+					&Node::OnRead,
+                    this,
+                    std::placeholders::_1,
+                    std::placeholders::_2));
                                   
-                                  SendRoutingToNewConnection(connection);
-                              }
-                              else
-                              {
-                                  std::cout << name << " error accepting: "
-                                    << error.message() << "\n";
-                              }
-                              if(!closing)
-                              {
-                                  Accept(_port);
-                              }
-                          });
+                SendRoutingToNewConnection(connection);
+            }
+            else
+            {
+                std::cout << name << " error accepting: "
+                << error.message() << "\n";
+            }
+            if(!closing)
+            {
+                Accept(_port);
+            }
+        });
 }
 
-void Node::Connect(std::string host,
-                          unsigned short port)
+void Node::Connect(
+	std::string host,
+    unsigned short port)
 {
     tcp::resolver resolver(io_service);
-    auto endpoint = resolver.resolve({ host, std::to_string(port)});
+    auto endpoint = resolver.resolve({host, std::to_string(port)});
     
-    boost::asio::async_connect(connect_socket,
-                               endpoint,
-                               [this]
-                               (const boost::system::error_code& error,
-                                boost::asio::ip::tcp::resolver::iterator)
-                               {
-                                   if (!error)
-                                   {
-                                       auto connection = AddConnection(std::move(connect_socket));
+    boost::asio::async_connect(
+		connect_socket,
+        endpoint,
+        [this]
+        (const boost::system::error_code& error, tcp::resolver::iterator)
+        {
+            if (!error)
+            {
+                auto connection = AddConnection(std::move(connect_socket));
 
-                                       connection->Read(std::bind(&Node::OnRead,
-                                                                  this,
-                                                                  std::placeholders::_1,
-                                                                  std::placeholders::_2));
+                connection->Read(std::bind(
+					&Node::OnRead,
+                    this,
+                    std::placeholders::_1,
+                    std::placeholders::_2));
                                        
-                                       SendRoutingToNewConnection(connection);
-                                   }
-                                   else
-                                   {
-                                       std::cout << name << " error connecting: "
-                                       << error.message() << "\n";
-                                   }
-                               });
+                SendRoutingToNewConnection(connection);
+            }
+            else
+            {
+                std::cout << name << " error connecting: "
+                << error.message() << "\n";
+            }
+        });
 }
 
 void Node::Close()
@@ -115,26 +119,27 @@ std::vector<std::string> Node::GetAccessibleNodes()
     return nodeList;
 }
 
-bool Node::IsNodeAccessible( const std::string& nodeName )
+bool Node::IsNodeAccessible(const std::string& nodeName)
 {
     return nodeDistances.find(nodeName) != nodeDistances.end();
 }
     
-void Node::RegisterNodeAccessibility(std::function<void (std::string, bool)>callback)
+void Node::RegisterNodeAccessibility(std::function<void (std::string, bool)> callback)
 {
     nodeAccessibilityCallback = callback;
 }
 
-void Node::SndMessage(std::string destination,
-                              std::string buffer,
-                              std::function< void(SendError)> callback)
+void Node::SndMessage(
+	std::string destination,
+    std::string data,
+    std::function< void(SendError)> callback)
 {
     if (IsNodeAccessible(destination))
     {
         auto namePath = nodePaths.find(destination);
         auto connection = namePath->second;
         
-        DataMessage message(name, destination, buffer);
+        DataMessage message(name, destination, data);
         
         messageCallback = callback;
         connection->Write(message, std::bind(&Node::OnWrite, this));
@@ -195,15 +200,16 @@ void Node::SendRoutingToNewConnection(SharedConnection connection)
     connection->Write(message, std::bind(&Node::OnWrite, this));
 }
 
-SharedConnection Node::AddConnection(
-    boost::asio::ip::tcp::socket&& _socket)
+SharedConnection Node::AddConnection(tcp::socket&& socket)
 {
-    auto connection = std::make_shared<Connection>(*this,
-                                                   io_service,
-                                                   std::move(_socket),
-                                                   std::bind(&Node::CloseConnection,
-                                                             this,
-                                                             std::placeholders::_1));
+    auto connection = std::make_shared<Connection>(
+		*this,
+        io_service,
+        std::move(socket),
+        std::bind(
+			&Node::CloseConnection,
+            this,
+            std::placeholders::_1));
     
     connections.insert(connection);
     return connection;
@@ -299,10 +305,11 @@ void Node::HandleMessage(DataMessageAck& _message, SharedConnection _connection)
     }
 }
 
-void Node::ProcessAddNodePaths(RoutingMessage& message,
-                                      RoutingMessage& reply,
-                                      RoutingMessage& forward,
-                                      SharedConnection connection)
+void Node::ProcessAddNodePaths(
+	RoutingMessage& message,
+    RoutingMessage& reply,
+    RoutingMessage& forward,
+    SharedConnection connection)
 {
     for (auto nodeDistance : message.NodeDistances())
     {
@@ -337,10 +344,11 @@ void Node::ProcessAddNodePaths(RoutingMessage& message,
     }
 }
 
-void Node::ProcessFailedNodes(RoutingMessage& message,
-                                     RoutingMessage& reply,
-                                     RoutingMessage& forward,
-                                     SharedConnection connection)
+void Node::ProcessFailedNodes(
+	RoutingMessage& message,
+    RoutingMessage& reply,
+    RoutingMessage& forward,
+    SharedConnection connection)
 {
     for (auto node : message.FailedNodes())
     {
