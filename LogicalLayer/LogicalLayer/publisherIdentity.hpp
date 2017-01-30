@@ -2,6 +2,7 @@
 #define _PUBLISHER_IDENTITY_HPP_
 
 #include <vector>
+#include <string>
 #include <boost/serialization/access.hpp>
 
 namespace LogicalLayer
