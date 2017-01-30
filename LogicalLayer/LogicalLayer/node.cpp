@@ -19,7 +19,7 @@ Node::Node(NetworkLayer::Node& _node)
 			std::placeholders::_1));
 }
 
-void Node::HandleIncomingMessage(NetworkLayer::DataMessage& message)
+void Node::HandleIncomingMessage(NetworkLayer::DataMessage message)
 {
 	std::stringstream ss(std::move(message.Buffer()));
 	boost::archive::binary_iarchive iarchive(ss);

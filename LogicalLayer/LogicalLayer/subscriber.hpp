@@ -25,7 +25,7 @@ namespace LogicalLayer
 	private:
 		friend struct MessageVisitor<Subscriber>;
 
-		void HandleIncomingMessage(NetworkLayer::DataMessage& message);
+		void HandleIncomingMessage(NetworkLayer::DataMessage message);
 
 		void SendSubscription(
 			SubscriptionT& subscription, 

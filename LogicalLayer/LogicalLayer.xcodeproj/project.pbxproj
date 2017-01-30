@@ -19,6 +19,7 @@
 		4BF2AC911E3E7A77004366E5 /* publisher.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BF2AC8B1E3E7A77004366E5 /* publisher.hpp */; };
 		4BF2AC921E3E7A77004366E5 /* subscriber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BF2AC8C1E3E7A77004366E5 /* subscriber.cpp */; };
 		4BF2AC931E3E7A77004366E5 /* subscriber.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BF2AC8D1E3E7A77004366E5 /* subscriber.hpp */; };
+		4BF4ADE41E3F6D0F0010889F /* subscription.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BF4ADE31E3F6D0F0010889F /* subscription.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		4BF2AC8B1E3E7A77004366E5 /* publisher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = publisher.hpp; path = LogicalLayer/publisher.hpp; sourceTree = "<group>"; };
 		4BF2AC8C1E3E7A77004366E5 /* subscriber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = subscriber.cpp; path = LogicalLayer/subscriber.cpp; sourceTree = "<group>"; };
 		4BF2AC8D1E3E7A77004366E5 /* subscriber.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = subscriber.hpp; path = LogicalLayer/subscriber.hpp; sourceTree = "<group>"; };
+		4BF4ADE31E3F6D0F0010889F /* subscription.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = subscription.hpp; path = LogicalLayer/subscription.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 		4B9A9E4A1E22FC3D006621CC /* LogicalLayer */ = {
 			isa = PBXGroup;
 			children = (
+				4BF4ADE31E3F6D0F0010889F /* subscription.hpp */,
 				4BA7F5E61E3E9897009BBFF3 /* brokerIdentity.hpp */,
 				4BF2AC881E3E7A77004366E5 /* broker.cpp */,
 				4BF2AC891E3E7A77004366E5 /* broker.hpp */,
@@ -104,6 +107,7 @@
 				4BF2AC911E3E7A77004366E5 /* publisher.hpp in Headers */,
 				4BF2AC931E3E7A77004366E5 /* subscriber.hpp in Headers */,
 				4BF2AC8F1E3E7A77004366E5 /* broker.hpp in Headers */,
+				4BF4ADE41E3F6D0F0010889F /* subscription.hpp in Headers */,
 				4B9A9E501E22FC53006621CC /* allMessages.hpp in Headers */,
 				4B9A9E521E22FC53006621CC /* messageVisitor.hpp in Headers */,
 				4B9A9E511E22FC53006621CC /* logMessage.hpp in Headers */,

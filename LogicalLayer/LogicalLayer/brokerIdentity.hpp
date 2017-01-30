@@ -2,6 +2,7 @@
 #define _BROKER_IDENTITY_HPP_
 
 #include <boost/serialization/access.hpp>
+#include <string>
 
 namespace LogicalLayer
 {

@@ -31,7 +31,7 @@ namespace LogicalLayer
 	{
 	}
 
-	void Broker::HandleIncomingMessage(NetworkLayer::DataMessage& message)
+	void Broker::HandleIncomingMessage(NetworkLayer::DataMessage message)
 	{
 		std::stringstream ss(std::move(message.Buffer()));
 		boost::archive::binary_iarchive iarchive(ss);

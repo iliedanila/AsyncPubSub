@@ -19,7 +19,7 @@ namespace LogicalLayer
 	private:
 		friend struct MessageVisitor<Broker>;
 
-		void HandleIncomingMessage(NetworkLayer::DataMessage& message);
+		void HandleIncomingMessage(NetworkLayer::DataMessage message);
 		void BroadcastIdentity() const;
 		void SendIdentity(std::string nodeName) const;
 		void DefaultSendIdentityCallback(
