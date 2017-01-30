@@ -73,7 +73,7 @@ void Node::HandleMessage(BrokerIdentity& message)
 {
 	std::cout	<< node.Name() 
 				<< " has received broker identity: "
-				<< " " << message.NodeName() 
+				<< " " << message.Name() 
 				<< "\n";
 }
 

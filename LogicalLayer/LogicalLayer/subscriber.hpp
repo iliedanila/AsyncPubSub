@@ -33,7 +33,7 @@ namespace LogicalLayer
 		void SendAllSubscriptions(const std::string& brokerName);
 		void HandleNewBroker(BrokerIdentity& message);
 
-		void HandleBrokerSubscriptionAck(
+		void HandleBrokerAck(
 			const std::string nodeName,
 			NetworkLayer::SendError error) const;
 

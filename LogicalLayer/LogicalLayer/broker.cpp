@@ -102,7 +102,7 @@ namespace LogicalLayer
 	template <>
 	void Broker::HandleMessage(BrokerIdentity& message)
 	{
-		std::cout << node.Name() << " " << message.NodeName() << "\n";
+		std::cout << node.Name() << " " << message.Name() << "\n";
 	}
 
 	template <>
@@ -111,5 +111,11 @@ namespace LogicalLayer
 		std::cout	<< "Broker::HandleMessage - Subscription from " 
 					<< message.Subscriber()
 					<< "\n";
+	}
+
+	template <>
+	void Broker::HandleMessage(PublisherIdentity& message)
+	{
+		std::cout << node.Name() << " PublisherIdentity: " << message.Publisher() << "\n";
 	}
 }

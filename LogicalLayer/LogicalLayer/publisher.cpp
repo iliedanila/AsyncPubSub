@@ -4,6 +4,7 @@
 #include "messageVisitor.hpp"
 #include "allMessages.hpp"
 #include <boost/serialization/variant.hpp>
+#include <iostream>
 
 namespace LogicalLayer
 {
@@ -33,6 +34,15 @@ namespace LogicalLayer
 		boost::apply_visitor(MessageVisitor<Publisher>(*this), messageV);
 	}
 
+	void Publisher::HandleBrokerAck(
+		const std::string nodeName, 
+		NetworkLayer::SendError error) const
+	{
+		std::cout << "Publisher::HandleBrokerAck in node "
+			<< node.Name()
+			<< "\n";
+	}
+
 	template <>
 	void Publisher::HandleMessage(LogMessage& message)
 	{
@@ -41,11 +51,26 @@ namespace LogicalLayer
 	template <>
 	void Publisher::HandleMessage(BrokerIdentity& message)
 	{
-		// Send publisher attributes.
+		PublisherIdentity pMessage(node.Name(), identity);
+		MessageVariant messageV(pMessage);
+		std::stringstream ss;
+		boost::archive::binary_oarchive oarchive(ss);
+		oarchive << messageV;
+
+		auto callback = std::bind(
+			&Publisher::HandleBrokerAck,
+			this,
+			std::placeholders::_1,
+			std::placeholders::_2);
+
+		node.SndMessage(message.Name(), ss.str(), callback);
 	}
 
 	template <>
 	void Publisher::HandleMessage(Subscription& message)
-	{
-	}
+	{}
+
+	template <>
+	void Publisher::HandleMessage(PublisherIdentity& message)
+	{}
 }

@@ -53,7 +53,7 @@ namespace LogicalLayer
 		oarchive << messageV;
 
 		auto callback = std::bind(
-			&Subscriber::HandleBrokerSubscriptionAck,
+			&Subscriber::HandleBrokerAck,
 			this,
 			std::placeholders::_1,
 			std::placeholders::_2);
@@ -79,15 +79,15 @@ namespace LogicalLayer
 
 	void Subscriber::HandleNewBroker(BrokerIdentity& message)
 	{
-		brokers.push_back(message.NodeName());
-		SendAllSubscriptions(message.NodeName());
+		brokers.push_back(message.Name());
+		SendAllSubscriptions(message.Name());
 	}
 
-	void Subscriber::HandleBrokerSubscriptionAck(
+	void Subscriber::HandleBrokerAck(
 		const std::string nodeName, 
 		NetworkLayer::SendError error) const
 	{
-		std::cout << "Subscriber::HandleBrokerSubscriptionAck in node "
+		std::cout << "Subscriber::HandleBrokerAck in node "
 			<< node.Name()
 			<< "\n";
 	}
@@ -106,6 +106,11 @@ namespace LogicalLayer
 
 	template <>
 	void Subscriber::HandleMessage(Subscription& message)
+	{
+	}
+
+	template <>
+	void Subscriber::HandleMessage(PublisherIdentity& message)
 	{
 	}
 }

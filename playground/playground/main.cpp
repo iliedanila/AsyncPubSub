@@ -9,6 +9,7 @@
 #include "../../LogicalLayer/LogicalLayer/node.hpp"
 #include "../../LogicalLayer/LogicalLayer/broker.hpp"
 #include "../../LogicalLayer/LogicalLayer/subscriber.hpp"
+#include "../../LogicalLayer/LogicalLayer/publisher.hpp"
 
 using namespace boost::asio;
 using namespace ip;
@@ -24,15 +25,21 @@ int main(int argc, const char * argv[])
 
 	NetworkLayer::Node subscriber("subscriber", io_service);
 	NetworkLayer::Node broker("broker", io_service);
-	NetworkLayer::Node sender("sender", io_service);
+	NetworkLayer::Node publisher("publisher", io_service);
 
 	broker.Accept(7777);
 	subscriber.Connect("localhost", 7777);
-	sender.Connect("localhost", 7777);
+	publisher.Connect("localhost", 7777);
 
 	LogicalLayer::Broker hl_broker(broker);
 	LogicalLayer::Subscriber hl_subscriber(subscriber);
-	LogicalLayer::Node hl_sender(sender);
+	LogicalLayer::Publisher hl_publisher(publisher);
+
+	auto attribPair = std::make_pair("attrib", "value");
+	LogicalLayer::SubscriptionT subscription;
+	subscription.push_back(attribPair);
+
+	hl_subscriber.AddSubscription(subscription);
     
     std::thread t(
 		[&io_service]
@@ -59,7 +66,7 @@ int main(int argc, const char * argv[])
             exit = true;
 			subscriber.Close();
             broker.Close();
-            sender.Close();
+			publisher.Close();
             t.join();
         }
     } while (!exit);
