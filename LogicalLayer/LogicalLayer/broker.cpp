@@ -7,6 +7,9 @@
 #include "messageVisitor.hpp"
 #include "allMessages.hpp"
 
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 namespace LogicalLayer
 {
 	Broker::Broker(NetworkLayer::Node& _node)
@@ -56,9 +59,10 @@ namespace LogicalLayer
 	void Broker::SendIdentity(std::string nodeName) const
 	{
 		BrokerIdentity message(node.Name());
+		MessageVariant messageV(message);
 		std::stringstream ss;
 		boost::archive::binary_oarchive oarchive(ss);
-		oarchive << message;
+		oarchive << messageV;
 
 		auto callback = std::bind(
 			&Broker::DefaultSendIdentityCallback,

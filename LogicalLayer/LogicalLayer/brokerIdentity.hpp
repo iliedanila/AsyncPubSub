@@ -1,11 +1,7 @@
 #ifndef _BROKER_IDENTITY_HPP_
 #define _BROKER_IDENTITY_HPP_
 
-#include <string>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 
 namespace LogicalLayer
 {
@@ -24,7 +20,7 @@ namespace LogicalLayer
 
 	private:
 		template<class Archive>
-		void serialize(Archive & ar, const unsigned int /*version*/)
+		void serialize(Archive & ar, const unsigned int version)
 		{
 			ar & nodeName;
 		}

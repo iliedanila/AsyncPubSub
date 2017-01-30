@@ -8,7 +8,7 @@
 namespace LogicalLayer
 {
 
-typedef boost::variant<LogMessage, BrokerIdentity> MessageVariant;
+typedef boost::variant<BrokerIdentity, LogMessage> MessageVariant;
     
 }
 
