@@ -45,7 +45,7 @@ public:
     void SndMessage(
 		std::string destination,
         std::string data,
-        std::function< void(SendError)> callback);
+        std::function< void(std::string, SendError)> callback);
     
     void AcceptMessages(std::function< void(DataMessage) > callback);
 
@@ -88,7 +88,7 @@ private:
     
     bool closing;
     std::function<void(DataMessage)> messageAcceptor;
-    std::function<void(SendError)> messageCallback;
+    std::function<void(std::string, SendError)> messageCallback;
     std::function<void(std::string, bool)> notifyNewNodeStatusCallback;
     
     tcp::socket connect_socket;

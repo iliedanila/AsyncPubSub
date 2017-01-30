@@ -19,36 +19,10 @@ Node::Node(NetworkLayer::Node& _node)
 			std::placeholders::_1));
 }
 
-void Node::SndMessage(
-	std::string destinationNode, 
-	MessageVariant message)
+void Node::HandleIncomingMessage(NetworkLayer::DataMessage& message)
 {
-
-	auto defaultSendMessageCallback = 
-		std::bind(&Node::DefaultSendMessageCallback, this, std::placeholders::_1);
-
-	SndMessage(destinationNode, message, defaultSendMessageCallback);
-}
-
-void Node::SndMessage(
-	std::string destinationNode,
-	MessageVariant message,
-	std::function< void(NetworkLayer::SendError)> callback) const
-{
-	std::stringstream ss;
-	boost::archive::binary_oarchive oarchive(ss);
-//	boost::archive::text_oarchive oarchive(ss);
-	oarchive << message;
-
-	node.SndMessage(destinationNode, ss.str(), callback);
-}
-
-void Node::HandleIncomingMessage(NetworkLayer::DataMessage message)
-{
-	std::cout << node.Name() << " HandleIncomingMessage distance: " << message.Distance() << "\n";
 	std::stringstream ss(std::move(message.Buffer()));
 	boost::archive::binary_iarchive iarchive(ss);
-//	boost::archive::text_iarchive iarchive(ss);
 
 	MessageVariant messageV;
 	try
@@ -62,13 +36,15 @@ void Node::HandleIncomingMessage(NetworkLayer::DataMessage message)
 	}
 }
 
-void Node::DefaultSendMessageCallback(NetworkLayer::SendError error) const
+void Node::DefaultSendMessageCallback(
+	std::string nodeName,
+	NetworkLayer::SendError error) const
 {
 	switch (error)
 	{
 	case NetworkLayer::eSuccess:
 		{
-		std::cout << node.Name() << " Success.\n";
+		std::cout << node.Name() << " --> " << nodeName << " Success.\n";
 		}
 		break;
 	case NetworkLayer::eNoPath:
@@ -95,7 +71,16 @@ void Node::HandleMessage(LogMessage& message)
 template <>
 void Node::HandleMessage(BrokerIdentity& message)
 {
-	std::cout << node.Name() << " " << message.NodeName() << "\n";
+	std::cout	<< node.Name() 
+				<< " has received broker identity: "
+				<< " " << message.NodeName() 
+				<< "\n";
+}
+
+template <>
+void Node::HandleMessage(Subscription& message)
+{
+	std::cout << node.Name() << " Subscription" << "\n";
 }
     
 } // namespace LogicalLayer

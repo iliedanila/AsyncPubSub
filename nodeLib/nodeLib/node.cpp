@@ -132,7 +132,7 @@ void Node::NotifyNewNodeStatus(std::function<void (std::string, bool)> callback)
 void Node::SndMessage(
 	std::string destination,
     std::string data,
-    std::function< void(SendError)> callback)
+    std::function< void(std::string, SendError)> callback)
 {
     if (IsNodeAccessible(destination))
     {
@@ -146,7 +146,7 @@ void Node::SndMessage(
     }
     else
     {
-        callback(eNoPath);
+        callback(destination, eNoPath);
     }
 }
     
@@ -292,7 +292,10 @@ void Node::HandleMessage(DataMessageAck& _message, SharedConnection _connection)
 {
     if (_message.destinationNodeName == name)
     {
-        messageCallback(_message.error);
+		if(messageCallback)
+		{
+			messageCallback(_message.sourceNodeName, _message.error);
+		}
     }
     else
     {

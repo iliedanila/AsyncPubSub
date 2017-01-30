@@ -1,6 +1,5 @@
 #ifndef _LOGICAL_LAYER_BROKER_HPP_
 #define _LOGICAL_LAYER_BROKER_HPP_
-#include <string>
 #include "../../nodeLib/nodeLib/sendError.hpp"
 #include "messageVisitor.hpp"
 
@@ -20,7 +19,7 @@ namespace LogicalLayer
 	private:
 		friend struct MessageVisitor<Broker>;
 
-		void HandleIncomingMessage(NetworkLayer::DataMessage message);
+		void HandleIncomingMessage(NetworkLayer::DataMessage& message);
 		void BroadcastIdentity() const;
 		void SendIdentity(std::string nodeName) const;
 		void DefaultSendIdentityCallback(

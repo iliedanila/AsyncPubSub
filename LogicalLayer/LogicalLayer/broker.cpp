@@ -7,8 +7,8 @@
 #include "messageVisitor.hpp"
 #include "allMessages.hpp"
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
+//#include <boost/archive/text_iarchive.hpp>
+//#include <boost/archive/text_oarchive.hpp>
 
 namespace LogicalLayer
 {
@@ -31,7 +31,7 @@ namespace LogicalLayer
 	{
 	}
 
-	void Broker::HandleIncomingMessage(NetworkLayer::DataMessage message)
+	void Broker::HandleIncomingMessage(NetworkLayer::DataMessage& message)
 	{
 		std::stringstream ss(std::move(message.Buffer()));
 		boost::archive::binary_iarchive iarchive(ss);
@@ -58,8 +58,7 @@ namespace LogicalLayer
 
 	void Broker::SendIdentity(std::string nodeName) const
 	{
-		BrokerIdentity message(node.Name());
-		MessageVariant messageV(message);
+		MessageVariant messageV(BrokerIdentity(node.Name()));
 		std::stringstream ss;
 		boost::archive::binary_oarchive oarchive(ss);
 		oarchive << messageV;
@@ -67,8 +66,8 @@ namespace LogicalLayer
 		auto callback = std::bind(
 			&Broker::DefaultSendIdentityCallback,
 			this,
-			nodeName,
-			std::placeholders::_1);
+			std::placeholders::_1,
+			std::placeholders::_2);
 
 		node.SndMessage(nodeName, ss.str(), callback);
 	}
@@ -80,7 +79,7 @@ namespace LogicalLayer
 		if(error == NetworkLayer::eSuccess)
 		{
 			std::cout	<< node.Name() 
-						<< "Identity sent successfully to " 
+						<< " Identity sent successfully to " 
 						<< nodeName 
 						<< "\n";
 		}
@@ -104,5 +103,11 @@ namespace LogicalLayer
 	void Broker::HandleMessage(BrokerIdentity& message)
 	{
 		std::cout << node.Name() << " " << message.NodeName() << "\n";
+	}
+
+	template <>
+	void Broker::HandleMessage(Subscription& message)
+	{
+		std::cout << "Broker::HandleMessage - Subscription" << "\n";
 	}
 }

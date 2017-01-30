@@ -3,12 +3,13 @@
 
 #include "logMessage.hpp"
 #include "brokerIdentity.hpp"
+#include "subscription.hpp"
 #include <boost/variant/variant.hpp>
 
 namespace LogicalLayer
 {
 
-typedef boost::variant<BrokerIdentity, LogMessage> MessageVariant;
+typedef boost::variant<LogMessage, BrokerIdentity, Subscription> MessageVariant;
     
 }
 

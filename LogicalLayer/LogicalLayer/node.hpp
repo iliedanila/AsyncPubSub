@@ -19,21 +19,14 @@ class Node
 {
 public:
 	explicit Node(NetworkLayer::Node& _node);
-
-	void SndMessage(
-		std::string destinationNode,
-		MessageVariant message);
-
-	void SndMessage(
-		std::string destinationNode,
-        MessageVariant message,
-        std::function< void(NetworkLayer::SendError)> callback) const;
     
 private:
 	friend struct MessageVisitor<Node>;
 
-	void HandleIncomingMessage(NetworkLayer::DataMessage message);
-	void DefaultSendMessageCallback(NetworkLayer::SendError error) const;
+	void HandleIncomingMessage(NetworkLayer::DataMessage& message);
+	void DefaultSendMessageCallback(
+		std::string nodeName,
+		NetworkLayer::SendError error) const;
 
 	template <typename MessageT>
 	void HandleMessage(MessageT& message);

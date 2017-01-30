@@ -39,6 +39,9 @@
     <ClInclude Include="LogicalLayer\brokerIdentity.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LogicalLayer\subscription.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicalLayer\node.cpp">
