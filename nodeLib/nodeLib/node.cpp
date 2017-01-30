@@ -150,7 +150,7 @@ void Node::SndMessage(
     }
 }
     
-void Node::AcceptMessages(std::function<void (DataMessage)> callback)
+void Node::AcceptMessages(std::function<void (DataMessage&)> callback)
 {
     messageAcceptor = callback;
 }

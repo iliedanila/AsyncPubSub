@@ -47,7 +47,7 @@ public:
         std::string data,
         std::function< void(std::string, SendError)> callback);
     
-    void AcceptMessages(std::function< void(DataMessage) > callback);
+    void AcceptMessages(std::function< void(DataMessage&) > callback);
 
 	io_service& IOService() const { return io_service; }
     
@@ -87,7 +87,7 @@ private:
     std::unique_ptr<tcp::acceptor> acceptor;
     
     bool closing;
-    std::function<void(DataMessage)> messageAcceptor;
+    std::function<void(DataMessage&)> messageAcceptor;
     std::function<void(std::string, SendError)> messageCallback;
     std::function<void(std::string, bool)> notifyNewNodeStatusCallback;
     

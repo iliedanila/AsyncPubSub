@@ -16,21 +16,28 @@ namespace LogicalLayer
 		Subscription() {}
 		~Subscription() {}
 
-		explicit Subscription(SubscriptionT& _subscription)
+		explicit Subscription(
+			std::string _subscriber,
+			SubscriptionT& _subscription)
 		:
+			subscriber(_subscriber),
 			subscription(_subscription)
 		{}
 
+		const std::string& Subscriber() const { return subscriber; }
 		const SubscriptionT& GetSubscription() const { return subscription; }
 
 	private:
 		template<class Archive>
 		void serialize(Archive & ar, const unsigned int version)
 		{
+			ar & subscriber;
 			ar & subscription;
 		}
 
 		friend class boost::serialization::access;
+
+		std::string subscriber;
 		SubscriptionT subscription;
 	};
 }

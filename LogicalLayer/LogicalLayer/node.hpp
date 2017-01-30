@@ -23,7 +23,7 @@ public:
 private:
 	friend struct MessageVisitor<Node>;
 
-	void HandleIncomingMessage(NetworkLayer::DataMessage message);
+	void HandleIncomingMessage(NetworkLayer::DataMessage& message);
 	void DefaultSendMessageCallback(
 		std::string nodeName,
 		NetworkLayer::SendError error) const;

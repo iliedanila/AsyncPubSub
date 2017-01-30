@@ -3,6 +3,7 @@
 #include "messageVisitor.hpp"
 #include <vector>
 #include "brokerIdentity.hpp"
+#include "subscription.hpp"
 #include "../../nodeLib/nodeLib/sendError.hpp"
 
 namespace NetworkLayer {
@@ -12,8 +13,6 @@ namespace NetworkLayer {
 
 namespace LogicalLayer
 {
-	typedef std::vector<std::pair<std::string, std::string>> SubscriptionT;
-
 	class Subscriber
 	{
 	public:
@@ -25,7 +24,7 @@ namespace LogicalLayer
 	private:
 		friend struct MessageVisitor<Subscriber>;
 
-		void HandleIncomingMessage(NetworkLayer::DataMessage message);
+		void HandleIncomingMessage(NetworkLayer::DataMessage& message);
 
 		void SendSubscription(
 			SubscriptionT& subscription, 

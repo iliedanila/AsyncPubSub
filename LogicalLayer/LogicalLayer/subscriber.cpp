@@ -1,5 +1,4 @@
 #include "subscriber.hpp"
-#include "subscription.hpp"
 #include "allMessages.hpp"
 #include "../../nodeLib/nodeLib/dataMessage.hpp"
 #include "../../nodeLib/nodeLib/node.hpp"
@@ -32,7 +31,7 @@ namespace LogicalLayer
 		SendNewSubscription(subscription);
 	}
 
-	void Subscriber::HandleIncomingMessage(NetworkLayer::DataMessage message)
+	void Subscriber::HandleIncomingMessage(NetworkLayer::DataMessage& message)
 	{
 		std::stringstream ss(std::move(message.Buffer()));
 		boost::archive::binary_iarchive iarchive(ss);
@@ -47,7 +46,7 @@ namespace LogicalLayer
 		SubscriptionT& _subscription, 
 		const std::string& brokerName) const
 	{
-		Subscription subscription(_subscription);
+		Subscription subscription(node.Name(), _subscription);
 		MessageVariant messageV(subscription);
 		std::stringstream ss;
 		boost::archive::binary_oarchive oarchive(ss);
