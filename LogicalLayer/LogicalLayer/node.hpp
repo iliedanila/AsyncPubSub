@@ -9,7 +9,7 @@
 #include "messageVisitor.hpp"
 
 namespace NetworkLayer {
-	class Node;
+    class Node;
 }
 
 namespace LogicalLayer
@@ -18,20 +18,20 @@ namespace LogicalLayer
 class Node
 {
 public:
-	explicit Node(NetworkLayer::Node& _node);
+    explicit Node(NetworkLayer::Node& _node);
     
 private:
-	friend struct MessageVisitor<Node>;
+    friend struct MessageVisitor<Node>;
 
-	void HandleIncomingMessage(NetworkLayer::DataMessage& message);
-	void DefaultSendMessageCallback(
-		std::string nodeName,
-		NetworkLayer::SendError error) const;
+    void HandleIncomingMessage(NetworkLayer::DataMessage& message);
+    void DefaultSendMessageCallback(
+        std::string nodeName,
+        NetworkLayer::SendError error) const;
 
-	template <typename MessageT>
-	void HandleMessage(MessageT& message);
+    template <typename MessageT>
+    void HandleMessage(MessageT& message);
 
-	NetworkLayer::Node& node;
+    NetworkLayer::Node& node;
 };
     
 }

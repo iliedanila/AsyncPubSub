@@ -20,29 +20,29 @@ int main(int argc, const char * argv[])
 {
     boost::asio::io_service io_service;
     
-	// Test
-	// -------------------------------------------------------------------------
+    // Test
+    // -------------------------------------------------------------------------
 
-	NetworkLayer::Node subscriber("subscriber", io_service);
-	NetworkLayer::Node broker("broker", io_service);
-	NetworkLayer::Node publisher("publisher", io_service);
+    NetworkLayer::Node subscriber("subscriber", io_service);
+    NetworkLayer::Node broker("broker", io_service);
+    NetworkLayer::Node publisher("publisher", io_service);
 
-	broker.Accept(7777);
-	subscriber.Connect("localhost", 7777);
-	publisher.Connect("localhost", 7777);
+    broker.Accept(7777);
+    subscriber.Connect("localhost", 7777);
+    publisher.Connect("localhost", 7777);
 
-	LogicalLayer::Broker hl_broker(broker);
-	LogicalLayer::Subscriber hl_subscriber(subscriber);
-	LogicalLayer::Publisher hl_publisher(publisher);
+    LogicalLayer::Broker hl_broker(broker);
+    LogicalLayer::Subscriber hl_subscriber(subscriber);
+    LogicalLayer::Publisher hl_publisher(publisher);
 
-	auto attribPair = std::make_pair("attrib", "value");
-	LogicalLayer::SubscriptionT subscription;
-	subscription.push_back(attribPair);
+    auto attribPair = std::make_pair("attrib", "value");
+    LogicalLayer::SubscriptionT subscription;
+    subscription.push_back(attribPair);
 
-	hl_subscriber.AddSubscription(subscription);
+    hl_subscriber.AddSubscription(subscription);
     
     std::thread t(
-		[&io_service]
+        [&io_service]
         {
             io_service.run();
         });
@@ -55,7 +55,7 @@ int main(int argc, const char * argv[])
     char consoleCommand[commandSize];
     
     std::cout << "Insert command: \n";
-	auto exit = false;
+    auto exit = false;
     
     do
     {
@@ -64,9 +64,9 @@ int main(int argc, const char * argv[])
         if (boost::algorithm::starts_with(command, "exit"))
         {
             exit = true;
-			subscriber.Close();
+            subscriber.Close();
             broker.Close();
-			publisher.Close();
+            publisher.Close();
             t.join();
         }
     } while (!exit);

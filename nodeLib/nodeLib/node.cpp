@@ -35,7 +35,7 @@ void Node::Accept(unsigned short _port)
     }
     
     acceptor->async_accept(
-		accept_socket,
+        accept_socket,
         [this, _port]
         (const boost::system::error_code& error)
         {
@@ -44,7 +44,7 @@ void Node::Accept(unsigned short _port)
                 auto connection = AddConnection(std::move(accept_socket));
                                   
                 connection->Read(std::bind(
-					&Node::OnRead,
+                    &Node::OnRead,
                     this,
                     std::placeholders::_1,
                     std::placeholders::_2));
@@ -64,14 +64,14 @@ void Node::Accept(unsigned short _port)
 }
 
 void Node::Connect(
-	std::string host,
+    std::string host,
     unsigned short port)
 {
     tcp::resolver resolver(io_service);
     auto endpoint = resolver.resolve({host, std::to_string(port)});
     
     boost::asio::async_connect(
-		connect_socket,
+        connect_socket,
         endpoint,
         [this]
         (const boost::system::error_code& error, tcp::resolver::iterator)
@@ -81,7 +81,7 @@ void Node::Connect(
                 auto connection = AddConnection(std::move(connect_socket));
 
                 connection->Read(std::bind(
-					&Node::OnRead,
+                    &Node::OnRead,
                     this,
                     std::placeholders::_1,
                     std::placeholders::_2));
@@ -130,7 +130,7 @@ void Node::NotifyNewNodeStatus(std::function<void (std::string, bool)> callback)
 }
 
 void Node::SndMessage(
-	std::string destination,
+    std::string destination,
     std::string data,
     std::function< void(std::string, SendError)> callback)
 {
@@ -203,11 +203,11 @@ void Node::SendRoutingToNewConnection(SharedConnection connection)
 SharedConnection Node::AddConnection(tcp::socket&& socket)
 {
     auto connection = std::make_shared<Connection>(
-		*this,
+        *this,
         io_service,
         std::move(socket),
         std::bind(
-			&Node::CloseConnection,
+            &Node::CloseConnection,
             this,
             std::placeholders::_1));
     
@@ -255,7 +255,7 @@ void Node::HandleMessage(RoutingMessage& _message, SharedConnection _connection)
 template<>
 void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
 {
-	_message.distance++;
+    _message.distance++;
 
     if (_message.destinationNodeName == name)
     {
@@ -292,10 +292,10 @@ void Node::HandleMessage(DataMessageAck& _message, SharedConnection _connection)
 {
     if (_message.destinationNodeName == name)
     {
-		if(messageCallback)
-		{
-			messageCallback(_message.sourceNodeName, _message.error);
-		}
+        if(messageCallback)
+        {
+            messageCallback(_message.sourceNodeName, _message.error);
+        }
     }
     else
     {
@@ -309,7 +309,7 @@ void Node::HandleMessage(DataMessageAck& _message, SharedConnection _connection)
 }
 
 void Node::ProcessAddNodePaths(
-	RoutingMessage& message,
+    RoutingMessage& message,
     RoutingMessage& reply,
     RoutingMessage& forward,
     SharedConnection connection)
@@ -348,7 +348,7 @@ void Node::ProcessAddNodePaths(
 }
 
 void Node::ProcessFailedNodes(
-	RoutingMessage& message,
+    RoutingMessage& message,
     RoutingMessage& reply,
     RoutingMessage& forward,
     SharedConnection connection)

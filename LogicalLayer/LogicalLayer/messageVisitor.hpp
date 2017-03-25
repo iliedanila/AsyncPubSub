@@ -8,19 +8,19 @@ namespace LogicalLayer
 template<class NodeT>
 struct MessageVisitor : public boost::static_visitor<>
 {
-	explicit MessageVisitor(NodeT& _node)
-	:
-		node(_node)
-	{}
+    explicit MessageVisitor(NodeT& _node)
+    :
+        node(_node)
+    {}
 
-	template <typename MessageT>
-	void operator()(MessageT& message) const
-	{
-		node.HandleMessage(message);
-	}
+    template <typename MessageT>
+    void operator()(MessageT& message) const
+    {
+        node.HandleMessage(message);
+    }
 
 private:
-	NodeT& node;
+    NodeT& node;
 };
     
 }

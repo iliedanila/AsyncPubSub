@@ -21,10 +21,10 @@ class Connection : public std::enable_shared_from_this<Connection>
 {
 public:
     Connection(
-		Node& _node,
-		io_service& _io_service,
-		tcp::socket&& _socket,
-		std::function<void(std::shared_ptr<Connection>)> _closeHandler);
+        Node& _node,
+        io_service& _io_service,
+        tcp::socket&& _socket,
+        std::function<void(std::shared_ptr<Connection>)> _closeHandler);
 
     ~Connection();
     

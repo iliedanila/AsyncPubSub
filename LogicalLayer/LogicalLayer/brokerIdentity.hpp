@@ -6,29 +6,29 @@
 
 namespace LogicalLayer
 {
-	class BrokerIdentity
-	{
-	public:
-		BrokerIdentity() {}
-		~BrokerIdentity() {}
+    class BrokerIdentity
+    {
+    public:
+        BrokerIdentity() {}
+        ~BrokerIdentity() {}
 
-		explicit BrokerIdentity(const std::string _nodeName)
-		:
-			nodeName(_nodeName)
-		{}
+        explicit BrokerIdentity(const std::string _nodeName)
+        :
+            nodeName(_nodeName)
+        {}
 
-		std::string Name() const { return nodeName; }
+        std::string Name() const { return nodeName; }
 
-	private:
-		template<class Archive>
-		void serialize(Archive & ar, const unsigned int version)
-		{
-			ar & nodeName;
-		}
+    private:
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version)
+        {
+            ar & nodeName;
+        }
 
-		friend class boost::serialization::access;
-		std::string nodeName;
-	};
+        friend class boost::serialization::access;
+        std::string nodeName;
+    };
 }
 
 #endif

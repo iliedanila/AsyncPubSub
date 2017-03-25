@@ -5,32 +5,32 @@
 #include "../../nodeLib/nodeLib/sendError.hpp"
 
 namespace NetworkLayer {
-	class DataMessage;
-	class Node;
+    class DataMessage;
+    class Node;
 }
 
 namespace LogicalLayer
 {
-	class Publisher
-	{
-	public:
-		explicit Publisher(NetworkLayer::Node& node);
-		~Publisher();
+    class Publisher
+    {
+    public:
+        explicit Publisher(NetworkLayer::Node& node);
+        ~Publisher();
 
-	private:
-		friend struct MessageVisitor<Publisher>;
-		void HandleIncomingMessage(NetworkLayer::DataMessage& message);
+    private:
+        friend struct MessageVisitor<Publisher>;
+        void HandleIncomingMessage(NetworkLayer::DataMessage& message);
 
-		void HandleBrokerAck(
-			const std::string nodeName,
-			NetworkLayer::SendError error) const;
+        void HandleBrokerAck(
+            const std::string nodeName,
+            NetworkLayer::SendError error) const;
 
-		template<typename MessageT>
-		void HandleMessage(MessageT& message);
+        template<typename MessageT>
+        void HandleMessage(MessageT& message);
 
-		PublisherIdentityT identity;
-		NetworkLayer::Node& node;
-	};
+        PublisherIdentityT identity;
+        NetworkLayer::Node& node;
+    };
 }
 
 #endif

@@ -12,110 +12,110 @@
 
 namespace LogicalLayer
 {
-	Broker::Broker(NetworkLayer::Node& _node)
-	:
-		node(_node)
-	{
-		node.AcceptMessages(
-			std::bind(
-				&Broker::HandleIncomingMessage,
-				this,
-				std::placeholders::_1));
+    Broker::Broker(NetworkLayer::Node& _node)
+    :
+        node(_node)
+    {
+        node.AcceptMessages(
+            std::bind(
+                &Broker::HandleIncomingMessage,
+                this,
+                std::placeholders::_1));
 
-		node.IOService().post([this]{
-			BroadcastIdentity();
-		});
-	}
+        node.IOService().post([this]{
+            BroadcastIdentity();
+        });
+    }
 
-	Broker::~Broker()
-	{
-	}
+    Broker::~Broker()
+    {
+    }
 
-	void Broker::HandleIncomingMessage(NetworkLayer::DataMessage& message)
-	{
-		std::stringstream ss(std::move(message.Buffer()));
-		boost::archive::binary_iarchive iarchive(ss);
+    void Broker::HandleIncomingMessage(NetworkLayer::DataMessage& message)
+    {
+        std::stringstream ss(std::move(message.Buffer()));
+        boost::archive::binary_iarchive iarchive(ss);
 
-		MessageVariant messageV;
-		iarchive >> messageV;
+        MessageVariant messageV;
+        iarchive >> messageV;
 
-		boost::apply_visitor(MessageVisitor<Broker>(*this), messageV);
-	}
+        boost::apply_visitor(MessageVisitor<Broker>(*this), messageV);
+    }
 
-	void Broker::BroadcastIdentity() const
-	{
-		for(auto nodeName : node.GetAccessibleNodes())
-		{
-			SendIdentity(nodeName);
-		}
+    void Broker::BroadcastIdentity() const
+    {
+        for(auto nodeName : node.GetAccessibleNodes())
+        {
+            SendIdentity(nodeName);
+        }
 
-		node.NotifyNewNodeStatus(std::bind(
-			&Broker::HandleNewNode,
-			this,
-			std::placeholders::_1,
-			std::placeholders::_2));
-	}
+        node.NotifyNewNodeStatus(std::bind(
+            &Broker::HandleNewNode,
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2));
+    }
 
-	void Broker::SendIdentity(std::string nodeName) const
-	{
-		MessageVariant messageV(BrokerIdentity(node.Name()));
-		std::stringstream ss;
-		boost::archive::binary_oarchive oarchive(ss);
-		oarchive << messageV;
+    void Broker::SendIdentity(std::string nodeName) const
+    {
+        MessageVariant messageV(BrokerIdentity(node.Name()));
+        std::stringstream ss;
+        boost::archive::binary_oarchive oarchive(ss);
+        oarchive << messageV;
 
-		auto callback = std::bind(
-			&Broker::DefaultSendIdentityCallback,
-			this,
-			std::placeholders::_1,
-			std::placeholders::_2);
+        auto callback = std::bind(
+            &Broker::DefaultSendIdentityCallback,
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2);
 
-		node.SndMessage(nodeName, ss.str(), callback);
-	}
+        node.SndMessage(nodeName, ss.str(), callback);
+    }
 
-	void Broker::DefaultSendIdentityCallback(
-		std::string nodeName, 
-		NetworkLayer::SendError error) const
-	{
-		if(error == NetworkLayer::eSuccess)
-		{
-			std::cout	<< node.Name() 
-						<< " Identity sent successfully to " 
-						<< nodeName 
-						<< "\n";
-		}
-	}
+    void Broker::DefaultSendIdentityCallback(
+        std::string nodeName, 
+        NetworkLayer::SendError error) const
+    {
+        if(error == NetworkLayer::eSuccess)
+        {
+            std::cout	<< node.Name() 
+                        << " Identity sent successfully to " 
+                        << nodeName 
+                        << "\n";
+        }
+    }
 
-	void Broker::HandleNewNode(std::string nodeName, bool isAlive) const
-	{
-		if(isAlive)
-		{
-			SendIdentity(nodeName);
-		}
-	}
+    void Broker::HandleNewNode(std::string nodeName, bool isAlive) const
+    {
+        if(isAlive)
+        {
+            SendIdentity(nodeName);
+        }
+    }
 
-	template <>
-	void Broker::HandleMessage(LogMessage& message)
-	{
-		std::cout << node.Name() << " " << message.Log() << "\n";
-	}
+    template <>
+    void Broker::HandleMessage(LogMessage& message)
+    {
+        std::cout << node.Name() << " " << message.Log() << "\n";
+    }
 
-	template <>
-	void Broker::HandleMessage(BrokerIdentity& message)
-	{
-		std::cout << node.Name() << " " << message.Name() << "\n";
-	}
+    template <>
+    void Broker::HandleMessage(BrokerIdentity& message)
+    {
+        std::cout << node.Name() << " " << message.Name() << "\n";
+    }
 
-	template <>
-	void Broker::HandleMessage(Subscription& message)
-	{
-		std::cout	<< "Broker::HandleMessage - Subscription from " 
-					<< message.Subscriber()
-					<< "\n";
-	}
+    template <>
+    void Broker::HandleMessage(Subscription& message)
+    {
+        std::cout	<< "Broker::HandleMessage - Subscription from " 
+                    << message.Subscriber()
+                    << "\n";
+    }
 
-	template <>
-	void Broker::HandleMessage(PublisherIdentity& message)
-	{
-		std::cout << node.Name() << " PublisherIdentity: " << message.Publisher() << "\n";
-	}
+    template <>
+    void Broker::HandleMessage(PublisherIdentity& message)
+    {
+        std::cout << node.Name() << " PublisherIdentity: " << message.Publisher() << "\n";
+    }
 }

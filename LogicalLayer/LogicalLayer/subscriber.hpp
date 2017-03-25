@@ -7,43 +7,43 @@
 #include "../../nodeLib/nodeLib/sendError.hpp"
 
 namespace NetworkLayer {
-	class DataMessage;
-	class Node;
+    class DataMessage;
+    class Node;
 }
 
 namespace LogicalLayer
 {
-	class Subscriber
-	{
-	public:
-		explicit Subscriber(NetworkLayer::Node& node);
-		~Subscriber();
+    class Subscriber
+    {
+    public:
+        explicit Subscriber(NetworkLayer::Node& node);
+        ~Subscriber();
 
-		void AddSubscription(SubscriptionT& subscription);
+        void AddSubscription(SubscriptionT& subscription);
 
-	private:
-		friend struct MessageVisitor<Subscriber>;
+    private:
+        friend struct MessageVisitor<Subscriber>;
 
-		void HandleIncomingMessage(NetworkLayer::DataMessage& message);
+        void HandleIncomingMessage(NetworkLayer::DataMessage& message);
 
-		void SendSubscription(
-			SubscriptionT& subscription, 
-			const std::string& brokerName) const;
-		void SendNewSubscription(SubscriptionT& subscription);
-		void SendAllSubscriptions(const std::string& brokerName);
-		void HandleNewBroker(BrokerIdentity& message);
+        void SendSubscription(
+            SubscriptionT& subscription, 
+            const std::string& brokerName) const;
+        void SendNewSubscription(SubscriptionT& subscription);
+        void SendAllSubscriptions(const std::string& brokerName);
+        void HandleNewBroker(BrokerIdentity& message);
 
-		void HandleBrokerAck(
-			const std::string nodeName,
-			NetworkLayer::SendError error) const;
+        void HandleBrokerAck(
+            const std::string nodeName,
+            NetworkLayer::SendError error) const;
 
-		template<typename MessageT>
-		void HandleMessage(MessageT& message);
+        template<typename MessageT>
+        void HandleMessage(MessageT& message);
 
-		NetworkLayer::Node& node;
-		std::vector<std::string> brokers;
-		std::vector<SubscriptionT> subscriptions;
-	};
+        NetworkLayer::Node& node;
+        std::vector<std::string> brokers;
+        std::vector<SubscriptionT> subscriptions;
+    };
 }
 
 #endif

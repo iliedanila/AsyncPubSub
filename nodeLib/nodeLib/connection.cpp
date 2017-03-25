@@ -11,7 +11,7 @@ namespace NetworkLayer
 {
 
 Connection::Connection(
-	Node& _node,
+    Node& _node,
     boost::asio::io_service& _io_service,
     tcp::socket&& _socket,
     std::function<void(std::shared_ptr<Connection>)> _closeHandler)
@@ -33,7 +33,7 @@ void Connection::Read(ReadCallback _callback)
 {
     auto self(shared_from_this());
     boost::asio::async_read(
-		socket,
+        socket,
         boost::asio::buffer(readMessage, Node::MaxMessageSize),
         [this, self, _callback]
         (const boost::system::error_code& error, std::size_t /*length*/)
@@ -53,12 +53,12 @@ void Connection::Read(ReadCallback _callback)
             else
             {
                 std::cout   << "Error reading body: "
-							<< error.value()
-							<< " "
-							<< error.message()
-							<< " on node "
-							<< node.Name()
-							<< "\n";
+                            << error.value()
+                            << " "
+                            << error.message()
+                            << " on node "
+                            << node.Name()
+                            << "\n";
                 closeHandler(shared_from_this());
             }
         });
@@ -72,19 +72,19 @@ void Connection::Write(MessageVariant _message, std::function<void()> _callback)
     oarchive << _message;
 
     boost::asio::async_write(
-		socket,
+        socket,
         buffer(ss.str().c_str(), Node::MaxMessageSize),
         [self, _callback]
         (boost::system::error_code error, std::size_t lenght)
         {
-			if (!error)
-			{
-				_callback();
-			}
-			else
-			{
-				std::cout << "Error writing: " << error.message() << "\n";
-			}
+            if (!error)
+            {
+                _callback();
+            }
+            else
+            {
+                std::cout << "Error writing: " << error.message() << "\n";
+            }
         });
 }
 

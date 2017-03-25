@@ -12,12 +12,12 @@ namespace NetworkLayer
 class DataMessageAck
 {
 public:
-	DataMessageAck()
-	:
-		error()
-	{}
+    DataMessageAck()
+    :
+        error()
+    {}
 
-	~DataMessageAck() {}
+    ~DataMessageAck() {}
     
     DataMessageAck(std::string source, std::string destination, SendError _error)
     :

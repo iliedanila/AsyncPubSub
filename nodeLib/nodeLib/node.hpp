@@ -25,9 +25,9 @@ typedef std::shared_ptr<Connection> SharedConnection;
 class Node
 {
 public:
-	static const int MaxMessageSize = 2048;
+    static const int MaxMessageSize = 2048;
 
-	Node(std::string _name,	io_service& _io_service);
+    Node(std::string _name,	io_service& _io_service);
     ~Node();
     
     void Accept(unsigned short _port);
@@ -43,13 +43,13 @@ public:
     void NotifyNewNodeStatus(std::function<void(std::string, bool)> callback);
     
     void SndMessage(
-		std::string destination,
+        std::string destination,
         std::string data,
         std::function< void(std::string, SendError)> callback);
     
     void AcceptMessages(std::function< void(DataMessage&) > callback);
 
-	io_service& IOService() const { return io_service; }
+    io_service& IOService() const { return io_service; }
     
 private:
     friend struct MessageVisitor;
@@ -68,18 +68,18 @@ private:
     void HandleMessage(MessageT&, SharedConnection);
     
     void ProcessAddNodePaths(
-		RoutingMessage& message,
-		RoutingMessage& reply,
-		RoutingMessage& forward,
-		SharedConnection connection);
+        RoutingMessage& message,
+        RoutingMessage& reply,
+        RoutingMessage& forward,
+        SharedConnection connection);
 
     void ProcessFailedNodes(
-		RoutingMessage& message,
-		RoutingMessage& reply,
-		RoutingMessage& forward,
-		SharedConnection connection);
+        RoutingMessage& message,
+        RoutingMessage& reply,
+        RoutingMessage& forward,
+        SharedConnection connection);
 
-	std::string name;
+    std::string name;
     std::set<SharedConnection> connections;
     std::map<std::string, std::size_t> nodeDistances;
     std::map<std::string, SharedConnection> nodePaths;
