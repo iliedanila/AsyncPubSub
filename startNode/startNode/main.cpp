@@ -22,7 +22,7 @@ int main(int argc, const char * argv[])
             message += "Example:\n";
             message += "startNode --name someName ";
             message += "--accept portNo ";
-            message += "--connect portNo1 --connect portNo2 ";
+            message += "--connect ip1:portNo1 --connect ip2:portNo2 ";
             message += "--as broker";
             
             throw std::runtime_error(message);
