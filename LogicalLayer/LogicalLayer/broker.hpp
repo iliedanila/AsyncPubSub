@@ -2,6 +2,9 @@
 #define _LOGICAL_LAYER_BROKER_HPP_
 #include "../../nodeLib/nodeLib/sendError.hpp"
 #include "messageVisitor.hpp"
+#include <map>
+#include "subscription.hpp"
+#include "publisherIdentity.hpp"
 
 namespace NetworkLayer {
     class DataMessage;
@@ -32,6 +35,8 @@ namespace LogicalLayer
         void HandleMessage(MessageT& message);
 
         NetworkLayer::Node& node;
+        std::map<std::string, std::vector<SubscriptionT>> activeSubscriptions;
+        std::map<std::string, PublisherIdentityT> activePublishers;
     };
 }
 

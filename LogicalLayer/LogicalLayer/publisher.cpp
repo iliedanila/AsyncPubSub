@@ -8,9 +8,12 @@
 
 namespace LogicalLayer
 {
-    Publisher::Publisher(NetworkLayer::Node& _node)
+    Publisher::Publisher(
+        NetworkLayer::Node& _node,
+        PublisherIdentityT& _publisherIdentity)
     :
-        node(_node)
+        node(_node),
+        identity(_publisherIdentity)
     {
         node.AcceptMessages(
             std::bind(
@@ -51,7 +54,7 @@ namespace LogicalLayer
     template <>
     void Publisher::HandleMessage(BrokerIdentity& message)
     {
-        PublisherIdentity pMessage(node.Name(), identity);
+        PublisherIdentityMessage pMessage(node.Name(), identity);
         MessageVariant messageV(pMessage);
         std::stringstream ss;
         boost::archive::binary_oarchive oarchive(ss);
@@ -67,10 +70,10 @@ namespace LogicalLayer
     }
 
     template <>
-    void Publisher::HandleMessage(Subscription& message)
+    void Publisher::HandleMessage(SubscriptionMessage& message)
     {}
 
     template <>
-    void Publisher::HandleMessage(PublisherIdentity& message)
+    void Publisher::HandleMessage(PublisherIdentityMessage& message)
     {}
 }

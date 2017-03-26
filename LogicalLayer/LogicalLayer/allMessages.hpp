@@ -13,8 +13,8 @@ namespace LogicalLayer
 typedef boost::variant<
     LogMessage, 
     BrokerIdentity, 
-    Subscription,
-    PublisherIdentity> MessageVariant;
+    SubscriptionMessage,
+    PublisherIdentityMessage> MessageVariant;
     
 }
 

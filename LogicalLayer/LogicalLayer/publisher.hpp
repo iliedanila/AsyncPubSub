@@ -14,7 +14,9 @@ namespace LogicalLayer
     class Publisher
     {
     public:
-        explicit Publisher(NetworkLayer::Node& node);
+        explicit Publisher(
+            NetworkLayer::Node& node,
+            PublisherIdentityT& publisherIdentity);
         ~Publisher();
 
     private:

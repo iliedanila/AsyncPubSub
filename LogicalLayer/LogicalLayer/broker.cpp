@@ -106,16 +106,40 @@ namespace LogicalLayer
     }
 
     template <>
-    void Broker::HandleMessage(Subscription& message)
+    void Broker::HandleMessage(SubscriptionMessage& message)
     {
         std::cout	<< "Broker::HandleMessage - Subscription from " 
                     << message.Subscriber()
                     << "\n";
+        //TODO:
+        if(message.GetAction() == SubscriptionMessage::eAdd)
+        {
+            activeSubscriptions[message.Subscriber()].push_back(message.GetSubscription());
+            std::cout << "Added subscription from " << message.Subscriber() << "\n";
+            for(auto attribPair : message.GetSubscription())
+            {
+                std::cout << attribPair.first << " " << attribPair.second << "\n";
+            }
+            std::cout << "\n";
+        }
+        else
+        {
+            
+        }
     }
 
     template <>
-    void Broker::HandleMessage(PublisherIdentity& message)
+    void Broker::HandleMessage(PublisherIdentityMessage& message)
     {
-        std::cout << node.Name() << " PublisherIdentity: " << message.Publisher() << "\n";
+        std::cout   << "Broker::HandleMessage - PublisherIdentity: " 
+                    << message.Publisher() 
+                    << "\n";
+        activePublishers[message.Publisher()] = message.GetPublisherIdentity();
+        std::cout << "Added publisher: " << message.Publisher() << "\n";
+        for(auto attribPair : message.GetPublisherIdentity())
+        {
+            std::cout << attribPair.first << " " << attribPair.second << "\n";
+        }
+        std::cout << "\n";
     }
 }

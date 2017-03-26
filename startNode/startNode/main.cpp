@@ -71,7 +71,7 @@ int main(int argc, const char * argv[])
                 
                 if(identityVector[0] == "publisher")
                 {
-                    publisher.reset(new LogicalLayer::Publisher(node));
+                    publisher.reset(new LogicalLayer::Publisher(node, LogicalLayer::PublisherIdentityT()));
                 }
                 
                 if(identityVector[0] == "subscriber")

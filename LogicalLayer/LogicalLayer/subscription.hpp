@@ -10,22 +10,31 @@ namespace LogicalLayer
 {
     typedef std::vector<std::pair<std::string, std::string>> SubscriptionT;
 
-    class Subscription
+    class SubscriptionMessage
     {
     public:
-        Subscription() {}
-        ~Subscription() {}
+        enum Action
+        {
+            eAdd = 1,
+            eRemove
+        };
 
-        explicit Subscription(
-            std::string _subscriber,
-            SubscriptionT& _subscription)
+        SubscriptionMessage() {}
+        ~SubscriptionMessage() {}
+
+        explicit SubscriptionMessage(
+            const std::string _subscriber,
+            const SubscriptionT& _subscription,
+            Action _action)
         :
             subscriber(_subscriber),
-            subscription(_subscription)
+            subscription(_subscription),
+            action(_action)
         {}
 
         const std::string& Subscriber() const { return subscriber; }
         const SubscriptionT& GetSubscription() const { return subscription; }
+        const Action& GetAction() const { return action; }
 
     private:
         template<class Archive>
@@ -33,12 +42,14 @@ namespace LogicalLayer
         {
             ar & subscriber;
             ar & subscription;
+            ar & action;
         }
 
         friend class boost::serialization::access;
 
         std::string subscriber;
         SubscriptionT subscription;
+        Action action;
     };
 }
 

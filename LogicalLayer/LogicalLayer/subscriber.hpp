@@ -5,6 +5,7 @@
 #include "brokerIdentity.hpp"
 #include "subscription.hpp"
 #include "../../nodeLib/nodeLib/sendError.hpp"
+#include <set>
 
 namespace NetworkLayer {
     class DataMessage;
@@ -20,6 +21,7 @@ namespace LogicalLayer
         ~Subscriber();
 
         void AddSubscription(SubscriptionT& subscription);
+        void RemoveSubscription(SubscriptionT& subscription);
 
     private:
         friend struct MessageVisitor<Subscriber>;
@@ -27,9 +29,12 @@ namespace LogicalLayer
         void HandleIncomingMessage(NetworkLayer::DataMessage& message);
 
         void SendSubscription(
-            SubscriptionT& subscription, 
-            const std::string& brokerName) const;
+            const SubscriptionT& subscription, 
+            const std::string& brokerName,
+            SubscriptionMessage::Action) const;
+
         void SendNewSubscription(SubscriptionT& subscription);
+        void SendRemoveSubscription(SubscriptionT& subscription);
         void SendAllSubscriptions(const std::string& brokerName);
         void HandleNewBroker(BrokerIdentity& message);
 
@@ -42,7 +47,7 @@ namespace LogicalLayer
 
         NetworkLayer::Node& node;
         std::vector<std::string> brokers;
-        std::vector<SubscriptionT> subscriptions;
+        std::set<SubscriptionT> subscriptions;
     };
 }
 

@@ -9,13 +9,13 @@ namespace LogicalLayer
 {
     typedef std::vector<std::pair<std::string, std::string>> PublisherIdentityT;
     
-    class PublisherIdentity
+    class PublisherIdentityMessage
     {
     public:
-        PublisherIdentity() {}
-        ~PublisherIdentity() {}
+        PublisherIdentityMessage() {}
+        ~PublisherIdentityMessage() {}
 
-        explicit PublisherIdentity(
+        explicit PublisherIdentityMessage(
             std::string _publisher,
             PublisherIdentityT& _publisherIdentity)
         :

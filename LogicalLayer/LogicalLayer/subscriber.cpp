@@ -27,8 +27,14 @@ namespace LogicalLayer
 
     void Subscriber::AddSubscription(SubscriptionT& subscription)
     {
-        subscriptions.push_back(subscription);
+        subscriptions.insert(subscription);
         SendNewSubscription(subscription);
+    }
+
+    void Subscriber::RemoveSubscription(SubscriptionT& subscription)
+    {
+        subscriptions.erase(subscription);
+        SendRemoveSubscription(subscription);
     }
 
     void Subscriber::HandleIncomingMessage(NetworkLayer::DataMessage& message)
@@ -43,10 +49,11 @@ namespace LogicalLayer
     }
 
     void Subscriber::SendSubscription(
-        SubscriptionT& _subscription, 
-        const std::string& brokerName) const
+        const SubscriptionT& _subscription, 
+        const std::string& brokerName,
+        SubscriptionMessage::Action action) const
     {
-        Subscription subscription(node.Name(), _subscription);
+        SubscriptionMessage subscription(node.Name(), _subscription, action);
         MessageVariant messageV(subscription);
         std::stringstream ss;
         boost::archive::binary_oarchive oarchive(ss);
@@ -65,7 +72,15 @@ namespace LogicalLayer
     {
         for(auto& brokerName : brokers)
         {
-            SendSubscription(subscription, brokerName);
+            SendSubscription(subscription, brokerName, SubscriptionMessage::eAdd);
+        }
+    }
+
+    void Subscriber::SendRemoveSubscription(SubscriptionT& subscription)
+    {
+        for (auto& brokerName : brokers)
+        {
+            SendSubscription(subscription, brokerName, SubscriptionMessage::eRemove);
         }
     }
 
@@ -73,7 +88,7 @@ namespace LogicalLayer
     {
         for(auto& subscription : subscriptions)
         {
-            SendSubscription(subscription, brokerName);
+            SendSubscription(subscription, brokerName, SubscriptionMessage::eAdd);
         }
     }
 
@@ -105,12 +120,12 @@ namespace LogicalLayer
     }
 
     template <>
-    void Subscriber::HandleMessage(Subscription& message)
+    void Subscriber::HandleMessage(SubscriptionMessage& message)
     {
     }
 
     template <>
-    void Subscriber::HandleMessage(PublisherIdentity& message)
+    void Subscriber::HandleMessage(PublisherIdentityMessage& message)
     {
     }
 }

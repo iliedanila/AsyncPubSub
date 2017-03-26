@@ -33,13 +33,15 @@ int main(int argc, const char * argv[])
 
     LogicalLayer::Broker hl_broker(broker);
     LogicalLayer::Subscriber hl_subscriber(subscriber);
-    LogicalLayer::Publisher hl_publisher(publisher);
 
     auto attribPair = std::make_pair("attrib", "value");
     LogicalLayer::SubscriptionT subscription;
     subscription.push_back(attribPair);
-
     hl_subscriber.AddSubscription(subscription);
+
+    LogicalLayer::PublisherIdentityT publisherIdentity;
+    publisherIdentity.push_back(attribPair);
+    LogicalLayer::Publisher hl_publisher(publisher, publisherIdentity);
     
     std::thread t(
         [&io_service]

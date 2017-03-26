@@ -78,7 +78,7 @@ void Node::HandleMessage(BrokerIdentity& message)
 }
 
 template <>
-void Node::HandleMessage(Subscription& message)
+void Node::HandleMessage(SubscriptionMessage& message)
 {
     std::cout << node.Name() << " Subscription" << "\n";
 }
