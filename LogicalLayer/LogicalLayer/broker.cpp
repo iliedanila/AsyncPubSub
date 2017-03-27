@@ -93,6 +93,23 @@ namespace LogicalLayer
         }
     }
 
+    std::vector<std::string> Broker::GetPublishersForSubscription(const SubscriptionT& subscription)
+    {
+        //TODO: 
+        return std::vector<std::string>();
+    }
+
+    std::vector<std::string> Broker::GetSubscribersForPublisher(const PublisherIdentityT& publisherIdentity)
+    {
+        //TODO:
+        return std::vector<std::string>();
+    }
+
+    void Broker::SendStartPublish(std::string publisher, std::string subscriber)
+    {
+        //TODO:
+    }
+
     template <>
     void Broker::HandleMessage(LogMessage& message)
     {
@@ -111,20 +128,22 @@ namespace LogicalLayer
         std::cout	<< "Broker::HandleMessage - Subscription from " 
                     << message.Subscriber()
                     << "\n";
-        //TODO:
         if(message.GetAction() == SubscriptionMessage::eAdd)
         {
-            activeSubscriptions[message.Subscriber()].push_back(message.GetSubscription());
-            std::cout << "Added subscription from " << message.Subscriber() << "\n";
-            for(auto attribPair : message.GetSubscription())
+            activeSubscriptions[message.Subscriber()].insert(message.GetSubscription());
+            auto publishers = GetPublishersForSubscription(message.GetSubscription());
+            for(auto publisher : publishers)
             {
-                std::cout << attribPair.first << " " << attribPair.second << "\n";
+                SendStartPublish(publisher, message.Subscriber());
             }
-            std::cout << "\n";
         }
         else
         {
-            
+            auto iterator = activeSubscriptions.find(message.Subscriber());
+            if(iterator != activeSubscriptions.end())
+            {
+                iterator->second.erase(message.GetSubscription());
+            }
         }
     }
 
@@ -135,11 +154,10 @@ namespace LogicalLayer
                     << message.Publisher() 
                     << "\n";
         activePublishers[message.Publisher()] = message.GetPublisherIdentity();
-        std::cout << "Added publisher: " << message.Publisher() << "\n";
-        for(auto attribPair : message.GetPublisherIdentity())
+        auto subscribers = GetSubscribersForPublisher(message.GetPublisherIdentity());
+        for(auto subscriber : subscribers)
         {
-            std::cout << attribPair.first << " " << attribPair.second << "\n";
+            SendStartPublish(message.Publisher(), subscriber);
         }
-        std::cout << "\n";
     }
 }

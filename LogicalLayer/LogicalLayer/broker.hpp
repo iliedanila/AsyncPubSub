@@ -5,6 +5,7 @@
 #include <map>
 #include "subscription.hpp"
 #include "publisherIdentity.hpp"
+#include <set>
 
 namespace NetworkLayer {
     class DataMessage;
@@ -34,8 +35,12 @@ namespace LogicalLayer
         template<typename MessageT>
         void HandleMessage(MessageT& message);
 
+        std::vector<std::string> GetPublishersForSubscription(const SubscriptionT& subscription);
+        std::vector<std::string> GetSubscribersForPublisher(const PublisherIdentityT& publisherIdentity);
+        void SendStartPublish(std::string publisher, std::string subscriber);
+
         NetworkLayer::Node& node;
-        std::map<std::string, std::vector<SubscriptionT>> activeSubscriptions;
+        std::map<std::string, std::set<SubscriptionT>> activeSubscriptions;
         std::map<std::string, PublisherIdentityT> activePublishers;
     };
 }
