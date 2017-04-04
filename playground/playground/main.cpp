@@ -16,9 +16,9 @@ using namespace ip;
 using namespace std::chrono_literals;
 
 
-int main(int argc, const char * argv[])
+int main()
 {
-    boost::asio::io_service io_service;
+    io_service io_service;
     
     // Test
     // -------------------------------------------------------------------------
@@ -31,17 +31,14 @@ int main(int argc, const char * argv[])
     subscriber.Connect("localhost", 7777);
     publisher.Connect("localhost", 7777);
 
-    LogicalLayer::Broker hl_broker(broker);
-    LogicalLayer::Subscriber hl_subscriber(subscriber);
+    LogicalLayer::Broker LLBroker(broker);
+    LogicalLayer::Subscriber LLSubscriber(subscriber);
 
-    auto attribPair = std::make_pair("attrib", "value");
-    LogicalLayer::SubscriptionT subscription;
-    subscription.push_back(attribPair);
-    hl_subscriber.AddSubscription(subscription);
+    LogicalLayer::SubscriptionT subscription {{ "attrib", "value" }};
+    LLSubscriber.AddSubscription(subscription);
 
-    LogicalLayer::PublisherIdentityT publisherIdentity;
-    publisherIdentity.push_back(attribPair);
-    LogicalLayer::Publisher hl_publisher(publisher, publisherIdentity);
+    LogicalLayer::PublisherIdentityT publisherIdentity{ { "attrib", "value" } };
+    LogicalLayer::Publisher LLPublisher(publisher, publisherIdentity);
     
     std::thread t(
         [&io_service]

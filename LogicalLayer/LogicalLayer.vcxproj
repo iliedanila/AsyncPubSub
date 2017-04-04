@@ -132,6 +132,7 @@
     <ClInclude Include="LogicalLayer\node.hpp" />
     <ClInclude Include="LogicalLayer\publisher.hpp" />
     <ClInclude Include="LogicalLayer\publisherIdentity.hpp" />
+    <ClInclude Include="LogicalLayer\StartPublish.hpp" />
     <ClInclude Include="LogicalLayer\subscriber.hpp" />
     <ClInclude Include="LogicalLayer\subscription.hpp" />
   </ItemGroup>

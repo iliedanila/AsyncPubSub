@@ -2,13 +2,15 @@
 #define _SUBSCRIPTION_HPP_
 
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/vector.hpp>
+#include <boost/serialization/map.hpp>
 #include <boost/serialization/utility.hpp>
 #include <vector>
+#include <map>
 
 namespace LogicalLayer
 {
-    typedef std::vector<std::pair<std::string, std::string>> SubscriptionT;
+//    typedef std::vector<std::pair<std::string, std::string>> SubscriptionT;
+    typedef std::map<std::string, std::string> SubscriptionT;
 
     class SubscriptionMessage
     {

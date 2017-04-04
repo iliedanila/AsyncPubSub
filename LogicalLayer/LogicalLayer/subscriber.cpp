@@ -102,9 +102,7 @@ namespace LogicalLayer
         const std::string nodeName, 
         NetworkLayer::SendError error) const
     {
-        std::cout << "Subscriber::HandleBrokerAck in node "
-            << node.Name()
-            << "\n";
+        // TODO: add some implementation.
     }
 
     template <>
@@ -121,11 +119,14 @@ namespace LogicalLayer
 
     template <>
     void Subscriber::HandleMessage(SubscriptionMessage& message)
-    {
-    }
+    {}
 
     template <>
     void Subscriber::HandleMessage(PublisherIdentityMessage& message)
-    {
-    }
+    {}
+
+    template <>
+    void Subscriber::HandleMessage(StartPublish& message)
+    {}
+
 }

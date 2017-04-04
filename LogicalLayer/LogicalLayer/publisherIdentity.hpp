@@ -4,10 +4,13 @@
 #include <vector>
 #include <string>
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/map.hpp>
+#include <map>
 
 namespace LogicalLayer
 {
-    typedef std::vector<std::pair<std::string, std::string>> PublisherIdentityT;
+//    typedef std::vector<std::pair<std::string, std::string>> PublisherIdentityT;
+    typedef std::map<std::string, std::string> PublisherIdentityT;
     
     class PublisherIdentityMessage
     {

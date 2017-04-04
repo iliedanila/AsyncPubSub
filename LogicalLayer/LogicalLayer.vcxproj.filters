@@ -41,6 +41,9 @@
     <ClInclude Include="LogicalLayer\publisherIdentity.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LogicalLayer\StartPublish.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicalLayer\node.cpp">

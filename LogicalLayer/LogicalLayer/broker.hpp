@@ -26,11 +26,11 @@ namespace LogicalLayer
         void HandleIncomingMessage(NetworkLayer::DataMessage& message);
         void BroadcastIdentity() const;
         void SendIdentity(std::string nodeName) const;
-        void DefaultSendIdentityCallback(
+        void DefaultCallback(
             std::string nodeName,
             NetworkLayer::SendError error) const;
 
-        void HandleNewNode(std::string nodeName, bool isAlive) const;
+        void HandleNewNodeStatus(std::string nodeName, bool isAlive) const;
 
         template<typename MessageT>
         void HandleMessage(MessageT& message);
@@ -40,7 +40,7 @@ namespace LogicalLayer
         void SendStartPublish(std::string publisher, std::string subscriber);
 
         NetworkLayer::Node& node;
-        std::map<std::string, std::set<SubscriptionT>> activeSubscriptions;
+        std::map<std::string, std::set<SubscriptionT>> activeSubscribers;
         std::map<std::string, PublisherIdentityT> activePublishers;
     };
 }

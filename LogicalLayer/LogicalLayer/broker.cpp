@@ -50,7 +50,7 @@ namespace LogicalLayer
         }
 
         node.NotifyNewNodeStatus(std::bind(
-            &Broker::HandleNewNode,
+            &Broker::HandleNewNodeStatus,
             this,
             std::placeholders::_1,
             std::placeholders::_2));
@@ -64,7 +64,7 @@ namespace LogicalLayer
         oarchive << messageV;
 
         auto callback = std::bind(
-            &Broker::DefaultSendIdentityCallback,
+            &Broker::DefaultCallback,
             this,
             std::placeholders::_1,
             std::placeholders::_2);
@@ -72,42 +72,80 @@ namespace LogicalLayer
         node.SndMessage(nodeName, ss.str(), callback);
     }
 
-    void Broker::DefaultSendIdentityCallback(
+    void Broker::DefaultCallback(
         std::string nodeName, 
         NetworkLayer::SendError error) const
     {
-        if(error == NetworkLayer::eSuccess)
-        {
-            std::cout	<< node.Name() 
-                        << " Identity sent successfully to " 
-                        << nodeName 
-                        << "\n";
-        }
+        // TODO: add some implementation.
+        // maybe log...
     }
 
-    void Broker::HandleNewNode(std::string nodeName, bool isAlive) const
+    void Broker::HandleNewNodeStatus(std::string nodeName, bool isAlive) const
     {
         if(isAlive)
         {
             SendIdentity(nodeName);
         }
+        else
+        {
+            // TODO: treat this, maybe a subscriber, or a publisher.
+        }
     }
 
     std::vector<std::string> Broker::GetPublishersForSubscription(const SubscriptionT& subscription)
     {
-        //TODO: 
-        return std::vector<std::string>();
+        std::vector<std::string> publisherList;
+        for(auto& publisher : activePublishers)
+        {
+            if(std::includes(
+                publisher.second.begin(), 
+                publisher.second.end(),
+                subscription.begin(),
+                subscription.end()))
+            {
+                publisherList.push_back(publisher.first);
+            }
+        }
+
+        return publisherList;
     }
 
     std::vector<std::string> Broker::GetSubscribersForPublisher(const PublisherIdentityT& publisherIdentity)
     {
-        //TODO:
-        return std::vector<std::string>();
+        std::vector<std::string> subscriberList;
+        for(auto& subscriber : activeSubscribers)
+        {
+            for(auto& subscription : subscriber.second)
+            {
+                if(std::includes(
+                    publisherIdentity.begin(),
+                    publisherIdentity.end(),
+                    subscription.begin(),
+                    subscription.end()))
+                {
+                    subscriberList.push_back(subscriber.first);
+                }
+            }
+        }
+
+        return subscriberList;
     }
 
     void Broker::SendStartPublish(std::string publisher, std::string subscriber)
     {
-        //TODO:
+        StartPublish startPublishMessage(subscriber);
+        MessageVariant messageV(startPublishMessage);
+        std::stringstream ss;
+        boost::archive::binary_oarchive oarchive(ss);
+        oarchive << messageV;
+
+        auto callback = std::bind(
+            &Broker::DefaultCallback,
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2);
+
+        node.SndMessage(publisher, ss.str(), callback);
     }
 
     template <>
@@ -130,7 +168,7 @@ namespace LogicalLayer
                     << "\n";
         if(message.GetAction() == SubscriptionMessage::eAdd)
         {
-            activeSubscriptions[message.Subscriber()].insert(message.GetSubscription());
+            activeSubscribers[message.Subscriber()].insert(message.GetSubscription());
             auto publishers = GetPublishersForSubscription(message.GetSubscription());
             for(auto publisher : publishers)
             {
@@ -139,8 +177,8 @@ namespace LogicalLayer
         }
         else
         {
-            auto iterator = activeSubscriptions.find(message.Subscriber());
-            if(iterator != activeSubscriptions.end())
+            auto iterator = activeSubscribers.find(message.Subscriber());
+            if(iterator != activeSubscribers.end())
             {
                 iterator->second.erase(message.GetSubscription());
             }
@@ -160,4 +198,8 @@ namespace LogicalLayer
             SendStartPublish(message.Publisher(), subscriber);
         }
     }
+
+    template<>
+    void Broker::HandleMessage(StartPublish& message)
+    {}
 }
