@@ -23,7 +23,7 @@ namespace LogicalLayer
         friend struct MessageVisitor<Publisher>;
         void HandleIncomingMessage(NetworkLayer::DataMessage& message);
 
-        void HandleBrokerAck(
+        void DefaultHandleAck(
             const std::string nodeName,
             NetworkLayer::SendError error) const;
 

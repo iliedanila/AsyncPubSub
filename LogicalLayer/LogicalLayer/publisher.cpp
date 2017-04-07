@@ -37,7 +37,7 @@ namespace LogicalLayer
         boost::apply_visitor(MessageVisitor<Publisher>(*this), messageV);
     }
 
-    void Publisher::HandleBrokerAck(
+    void Publisher::DefaultHandleAck(
         const std::string nodeName, 
         NetworkLayer::SendError error) const
     {
@@ -59,7 +59,7 @@ namespace LogicalLayer
         oarchive << messageV;
 
         auto callback = std::bind(
-            &Publisher::HandleBrokerAck,
+            &Publisher::DefaultHandleAck,
             this,
             std::placeholders::_1,
             std::placeholders::_2);
@@ -79,5 +79,22 @@ namespace LogicalLayer
     void Publisher::HandleMessage(StartPublish& message)
     {
         std::cout << "Publisher: Start sending data to " << message.Subscriber() << "\n";
+        PublisherData dataMessage(node.Name(), "This is dummy data from publisher.");
+        MessageVariant messageV(dataMessage);
+        std::stringstream ss;
+        boost::archive::binary_oarchive oarchive(ss);
+        oarchive << messageV;
+
+        auto callback = std::bind(
+            &Publisher::DefaultHandleAck,
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2);
+
+        node.SndMessage(message.Subscriber(), ss.str(), callback);
     }
+
+    template <>
+    void Publisher::HandleMessage(PublisherData& message)
+    {}
 }

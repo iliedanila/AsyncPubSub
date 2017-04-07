@@ -202,4 +202,8 @@ namespace LogicalLayer
     template<>
     void Broker::HandleMessage(StartPublish& message)
     {}
+
+    template<>
+    void Broker::HandleMessage(PublisherData& message)
+    {}
 }

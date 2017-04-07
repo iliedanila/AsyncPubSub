@@ -5,8 +5,10 @@
 #include "brokerIdentity.hpp"
 #include "subscription.hpp"
 #include "publisherIdentity.hpp"
+#include "startPublish.hpp"
+#include "publisherData.hpp"
+
 #include <boost/variant/variant.hpp>
-#include "StartPublish.hpp"
 
 namespace LogicalLayer
 {
@@ -16,8 +18,8 @@ typedef boost::variant<
     BrokerIdentity, 
     SubscriptionMessage,
     PublisherIdentityMessage,
-    StartPublish> MessageVariant;
-    
+    StartPublish,
+    PublisherData> MessageVariant;
 }
 
 #endif

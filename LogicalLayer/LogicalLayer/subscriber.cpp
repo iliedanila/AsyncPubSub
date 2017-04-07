@@ -129,4 +129,15 @@ namespace LogicalLayer
     void Subscriber::HandleMessage(StartPublish& message)
     {}
 
+    template<>
+    void Subscriber::HandleMessage(PublisherData& message)
+    {
+        std::cout 
+            << node.Name()
+            << " handle message from Publisher: "
+            << message.PublisherName()
+            << "----->"
+            << message.Data()
+            << "\n";
+    }
 }
