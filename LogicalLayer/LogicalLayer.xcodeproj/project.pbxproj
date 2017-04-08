@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B3FFF6D1E98BFDA00EBCBF9 /* publisherData.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B3FFF6C1E98BFDA00EBCBF9 /* publisherData.hpp */; };
 		4B9A9E501E22FC53006621CC /* allMessages.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4B1E22FC53006621CC /* allMessages.hpp */; };
 		4B9A9E511E22FC53006621CC /* logMessage.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4C1E22FC53006621CC /* logMessage.hpp */; };
 		4B9A9E521E22FC53006621CC /* messageVisitor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B3FFF6C1E98BFDA00EBCBF9 /* publisherData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = publisherData.hpp; path = LogicalLayer/publisherData.hpp; sourceTree = "<group>"; };
 		4B5C445C1E22BF8E000C41C9 /* libLogicalLayer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libLogicalLayer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5C446E1E22C2F6000C41C9 /* libnodeLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnodeLib.a; path = "../../../Library/Developer/Xcode/DerivedData/nodes-alfiwcqexteccwguxbekptvstvjf/Build/Products/Debug/libnodeLib.a"; sourceTree = "<group>"; };
 		4B9A9E4B1E22FC53006621CC /* allMessages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = allMessages.hpp; path = LogicalLayer/allMessages.hpp; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 		4B9A9E4A1E22FC3D006621CC /* LogicalLayer */ = {
 			isa = PBXGroup;
 			children = (
+				4B3FFF6C1E98BFDA00EBCBF9 /* publisherData.hpp */,
 				4BDFDBDA1E94368000B9CEC2 /* StartPublish.hpp */,
 				4BAD5F3C1E3FD8E000BEB27E /* publisherIdentity.hpp */,
 				4BF4ADE31E3F6D0F0010889F /* subscription.hpp */,
@@ -120,6 +123,7 @@
 				4BA7F5E71E3E9897009BBFF3 /* brokerIdentity.hpp in Headers */,
 				4BAD5F3D1E3FD8E000BEB27E /* publisherIdentity.hpp in Headers */,
 				4BDFDBDB1E94368000B9CEC2 /* StartPublish.hpp in Headers */,
+				4B3FFF6D1E98BFDA00EBCBF9 /* publisherData.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
