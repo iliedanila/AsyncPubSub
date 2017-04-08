@@ -12,8 +12,8 @@ namespace LogicalLayer
         NetworkLayer::Node& _node,
         PublisherIdentityT& _publisherIdentity)
     :
-        node(_node),
-        identity(_publisherIdentity)
+        identity(_publisherIdentity),
+        node(_node)
     {
         node.AcceptMessages(
             std::bind(
@@ -46,8 +46,7 @@ namespace LogicalLayer
 
     template <>
     void Publisher::HandleMessage(LogMessage& message)
-    {
-    }
+    {}
 
     template <>
     void Publisher::HandleMessage(BrokerIdentity& message)
