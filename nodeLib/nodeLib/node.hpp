@@ -6,9 +6,11 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <unordered_map>
 
 #include "allMessages.hpp"
 #include "sendError.hpp"
+
 
 using namespace boost::asio;
 using namespace ip;
@@ -21,6 +23,7 @@ namespace NetworkLayer
     
 class Connection;
 typedef std::shared_ptr<Connection> SharedConnection;
+typedef std::function<void(std::string, SendError)> AckMessageCallback;
 
 class Node
 {
@@ -83,12 +86,12 @@ private:
     std::set<SharedConnection> connections;
     std::map<std::string, std::size_t> nodeDistances;
     std::map<std::string, SharedConnection> nodePaths;
+    std::unordered_map<std::size_t, AckMessageCallback> ackCallbacks;
     
     std::unique_ptr<tcp::acceptor> acceptor;
     
     bool closing;
     std::function<void(DataMessage&)> messageAcceptor;
-    std::function<void(std::string, SendError)> messageCallback;
     std::function<void(std::string, bool)> notifyNewNodeStatusCallback;
     
     tcp::socket connect_socket;

@@ -19,11 +19,16 @@ public:
 
     ~DataMessageAck() {}
     
-    DataMessageAck(std::string source, std::string destination, SendError _error)
+    explicit DataMessageAck(
+        std::string source, 
+        std::string destination, 
+        SendError _error, 
+        std::size_t _messageID)
     :
         sourceNodeName(std::move(source)),
         destinationNodeName(std::move(destination)),
-        error(_error)
+        error(_error),
+        messageID(_messageID)
     {}
     
 private:
@@ -36,12 +41,14 @@ private:
         ar & sourceNodeName;
         ar & destinationNodeName;
         ar & error;
+        ar & messageID;
     }
     
 private:
     std::string sourceNodeName;
     std::string destinationNodeName;
     SendError error;
+    std::size_t messageID;
 };
     
 }

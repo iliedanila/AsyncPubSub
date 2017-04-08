@@ -6,7 +6,6 @@
 #include <chrono>
 
 #include "../../nodeLib/nodeLib/node.hpp"
-#include "../../LogicalLayer/LogicalLayer/node.hpp"
 #include "../../LogicalLayer/LogicalLayer/broker.hpp"
 #include "../../LogicalLayer/LogicalLayer/subscriber.hpp"
 #include "../../LogicalLayer/LogicalLayer/publisher.hpp"

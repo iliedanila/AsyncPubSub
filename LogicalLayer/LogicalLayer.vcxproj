@@ -129,7 +129,6 @@
     <ClInclude Include="LogicalLayer\brokerIdentity.hpp" />
     <ClInclude Include="LogicalLayer\logMessage.hpp" />
     <ClInclude Include="LogicalLayer\messageVisitor.hpp" />
-    <ClInclude Include="LogicalLayer\node.hpp" />
     <ClInclude Include="LogicalLayer\publisher.hpp" />
     <ClInclude Include="LogicalLayer\publisherData.hpp" />
     <ClInclude Include="LogicalLayer\publisherIdentity.hpp" />
@@ -139,7 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicalLayer\broker.cpp" />
-    <ClCompile Include="LogicalLayer\node.cpp" />
     <ClCompile Include="LogicalLayer\publisher.cpp" />
     <ClCompile Include="LogicalLayer\subscriber.cpp" />
   </ItemGroup>

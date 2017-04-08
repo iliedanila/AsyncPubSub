@@ -20,9 +20,6 @@
     <ClInclude Include="LogicalLayer\messageVisitor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LogicalLayer\node.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LogicalLayer\publisher.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -49,9 +46,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LogicalLayer\node.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LogicalLayer\publisher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

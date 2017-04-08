@@ -139,10 +139,10 @@ void Node::SndMessage(
         auto namePath = nodePaths.find(destination);
         auto connection = namePath->second;
         
-        DataMessage message(name, destination, data);
-        
-        messageCallback = callback;
+        auto messageID = std::hash<std::string>{}(data);
+        DataMessage message(name, destination, data, messageID);
         connection->Write(message, std::bind(&Node::OnWrite, this));
+        ackCallbacks.insert({ messageID, callback });
     }
     else
     {
@@ -262,12 +262,12 @@ void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
         if (messageAcceptor)
         {
             messageAcceptor(_message);
-            DataMessageAck message(name, _message.sourceNodeName, eSuccess);
+            DataMessageAck message(name, _message.sourceNodeName, eSuccess, _message.MessageID());
             _connection->Write(message, std::bind(&Node::OnWrite, this));
         }
         else
         {
-            DataMessageAck message(_message.sourceNodeName, name, eNodeNotAccepting);
+            DataMessageAck message(_message.sourceNodeName, name, eNodeNotAccepting, _message.MessageID());
             _connection->Write(message, std::bind(&Node::OnWrite, this));
         }
     }
@@ -281,7 +281,7 @@ void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
         }
         else
         {
-            DataMessageAck message(_message.sourceNodeName, name, eNoPath);
+            DataMessageAck message(_message.sourceNodeName, name, eNoPath, _message.MessageID());
             _connection->Write(message, std::bind(&Node::OnWrite, this));
         }
     }
@@ -292,9 +292,11 @@ void Node::HandleMessage(DataMessageAck& _message, SharedConnection _connection)
 {
     if (_message.destinationNodeName == name)
     {
-        if(messageCallback)
+        auto it = ackCallbacks.find(_message.messageID);
+        if(it != ackCallbacks.end())
         {
-            messageCallback(_message.sourceNodeName, _message.error);
+            it->second(_message.sourceNodeName, _message.error);
+            ackCallbacks.erase(it);
         }
     }
     else
