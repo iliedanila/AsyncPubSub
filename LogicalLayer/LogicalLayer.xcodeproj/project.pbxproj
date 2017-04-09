@@ -11,8 +11,6 @@
 		4B9A9E501E22FC53006621CC /* allMessages.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4B1E22FC53006621CC /* allMessages.hpp */; };
 		4B9A9E511E22FC53006621CC /* logMessage.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4C1E22FC53006621CC /* logMessage.hpp */; };
 		4B9A9E521E22FC53006621CC /* messageVisitor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */; };
-		4B9A9E531E22FC53006621CC /* node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B9A9E4E1E22FC53006621CC /* node.cpp */; };
-		4B9A9E541E22FC53006621CC /* node.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4B9A9E4F1E22FC53006621CC /* node.hpp */; };
 		4BA7F5E71E3E9897009BBFF3 /* brokerIdentity.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BA7F5E61E3E9897009BBFF3 /* brokerIdentity.hpp */; };
 		4BAD5F3D1E3FD8E000BEB27E /* publisherIdentity.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BAD5F3C1E3FD8E000BEB27E /* publisherIdentity.hpp */; };
 		4BDFDBDB1E94368000B9CEC2 /* StartPublish.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 4BDFDBDA1E94368000B9CEC2 /* StartPublish.hpp */; };
@@ -32,8 +30,6 @@
 		4B9A9E4B1E22FC53006621CC /* allMessages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = allMessages.hpp; path = LogicalLayer/allMessages.hpp; sourceTree = "<group>"; };
 		4B9A9E4C1E22FC53006621CC /* logMessage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = logMessage.hpp; path = LogicalLayer/logMessage.hpp; sourceTree = "<group>"; };
 		4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = messageVisitor.hpp; path = LogicalLayer/messageVisitor.hpp; sourceTree = "<group>"; };
-		4B9A9E4E1E22FC53006621CC /* node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = node.cpp; path = LogicalLayer/node.cpp; sourceTree = "<group>"; };
-		4B9A9E4F1E22FC53006621CC /* node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = node.hpp; path = LogicalLayer/node.hpp; sourceTree = "<group>"; };
 		4BA7F5E61E3E9897009BBFF3 /* brokerIdentity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = brokerIdentity.hpp; path = LogicalLayer/brokerIdentity.hpp; sourceTree = "<group>"; };
 		4BAD5F3C1E3FD8E000BEB27E /* publisherIdentity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = publisherIdentity.hpp; path = LogicalLayer/publisherIdentity.hpp; sourceTree = "<group>"; };
 		4BDFDBDA1E94368000B9CEC2 /* StartPublish.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StartPublish.hpp; path = LogicalLayer/StartPublish.hpp; sourceTree = "<group>"; };
@@ -99,8 +95,6 @@
 				4B9A9E4B1E22FC53006621CC /* allMessages.hpp */,
 				4B9A9E4C1E22FC53006621CC /* logMessage.hpp */,
 				4B9A9E4D1E22FC53006621CC /* messageVisitor.hpp */,
-				4B9A9E4E1E22FC53006621CC /* node.cpp */,
-				4B9A9E4F1E22FC53006621CC /* node.hpp */,
 			);
 			name = LogicalLayer;
 			sourceTree = "<group>";
@@ -112,7 +106,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B9A9E541E22FC53006621CC /* node.hpp in Headers */,
 				4BF2AC911E3E7A77004366E5 /* publisher.hpp in Headers */,
 				4BF2AC931E3E7A77004366E5 /* subscriber.hpp in Headers */,
 				4BF2AC8F1E3E7A77004366E5 /* broker.hpp in Headers */,
@@ -186,7 +179,6 @@
 			files = (
 				4BF2AC8E1E3E7A77004366E5 /* broker.cpp in Sources */,
 				4BF2AC901E3E7A77004366E5 /* publisher.cpp in Sources */,
-				4B9A9E531E22FC53006621CC /* node.cpp in Sources */,
 				4BF2AC921E3E7A77004366E5 /* subscriber.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
