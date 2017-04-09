@@ -3,6 +3,10 @@
 #include "messageVisitor.hpp"
 #include "publisherIdentity.hpp"
 #include "../../nodeLib/nodeLib/sendError.hpp"
+#include "publisherData.hpp"
+#include <boost/date_time/posix_time/posix_time_config.hpp>
+#include <boost/asio/deadline_timer.hpp>
+#include <set>
 
 namespace NetworkLayer {
     class DataMessage;
@@ -11,6 +15,8 @@ namespace NetworkLayer {
 
 namespace LogicalLayer
 {
+    typedef std::function<PublisherData()> PublishFunctionT;
+
     class Publisher
     {
     public:
@@ -19,9 +25,14 @@ namespace LogicalLayer
             PublisherIdentityT& publisherIdentity);
         ~Publisher();
 
+        void StartPublishing(PublishFunctionT _publishFunction, std::size_t millisecondsRepeat);
+        void StopPublishing();
+
     private:
         friend struct MessageVisitor<Publisher>;
         void HandleIncomingMessage(NetworkLayer::DataMessage& message);
+
+        void HandleNewNodeStatus(std::string nodeName, bool isAlive);
 
         void DefaultHandleAck(
             const std::string nodeName,
@@ -30,8 +41,14 @@ namespace LogicalLayer
         template<typename MessageT>
         void HandleMessage(MessageT& message);
 
+        void OnTimerExpired(boost::system::error_code error);
+
         PublisherIdentityT identity;
         NetworkLayer::Node& node;
+        PublishFunctionT publishFunction;
+        boost::asio::deadline_timer publishTimer;
+        std::size_t millisecondsRepeatPublish;
+        std::set<std::string> subscribers;
     };
 }
 

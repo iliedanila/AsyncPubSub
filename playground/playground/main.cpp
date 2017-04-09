@@ -14,6 +14,11 @@ using namespace boost::asio;
 using namespace ip;
 using namespace std::chrono_literals;
 
+LogicalLayer::PublisherData GetPublisherData(std::string publisherName, std::string message)
+{
+    LogicalLayer::PublisherData publisherData(publisherName, message);
+    return publisherData;
+}
 
 int main()
 {
@@ -38,6 +43,14 @@ int main()
 
     LogicalLayer::PublisherIdentityT publisherIdentity{ { "attrib", "value" } };
     LogicalLayer::Publisher LLPublisher(publisher, publisherIdentity);
+    LLPublisher.StartPublishing(
+        std::bind(
+            &GetPublisherData,
+            publisher.Name(),
+            "Message from main"
+        ),
+        2000 /*milliseconds*/
+    );
     
     std::thread t(
         [&io_service]
@@ -62,6 +75,7 @@ int main()
         if (boost::algorithm::starts_with(command, "exit"))
         {
             exit = true;
+            LLPublisher.StopPublishing();
             subscriber.Close();
             broker.Close();
             publisher.Close();

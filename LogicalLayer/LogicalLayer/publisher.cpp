@@ -13,17 +13,46 @@ namespace LogicalLayer
         PublisherIdentityT& _publisherIdentity)
     :
         identity(_publisherIdentity),
-        node(_node)
+        node(_node),
+        publishTimer(node.IOService())
     {
         node.AcceptMessages(
             std::bind(
                 &Publisher::HandleIncomingMessage,
                 this,
                 std::placeholders::_1));
+
+        node.NotifyNewNodeStatus(
+            std::bind(
+                &Publisher::HandleNewNodeStatus,
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2
+            )
+        );
     }
 
     Publisher::~Publisher()
     {
+        StopPublishing();
+    }
+
+    void Publisher::StartPublishing(PublishFunctionT _publishFunction, std::size_t millisecondsRepeat)
+    {
+        publishFunction = _publishFunction;
+        millisecondsRepeatPublish = millisecondsRepeat;
+        publishTimer.cancel();
+        publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
+        publishTimer.async_wait(
+            std::bind(&Publisher::OnTimerExpired, this, std::placeholders::_1)
+        );
+    }
+
+    void Publisher::StopPublishing()
+    {
+        std::cout << "Publisher::StopPublishing()\n";
+        publishTimer.cancel();
+        subscribers.clear();
     }
 
     void Publisher::HandleIncomingMessage(NetworkLayer::DataMessage& message)
@@ -37,11 +66,49 @@ namespace LogicalLayer
         boost::apply_visitor(MessageVisitor<Publisher>(*this), messageV);
     }
 
+    void Publisher::HandleNewNodeStatus(std::string nodeName, bool isAlive)
+    {
+        if(!isAlive)
+        {
+            subscribers.erase(nodeName);
+        }
+    }
+
     void Publisher::DefaultHandleAck(
         const std::string nodeName, 
         NetworkLayer::SendError error) const
     {
         // TODO: add some implementation.
+    }
+
+    void Publisher::OnTimerExpired(boost::system::error_code error)
+    {
+        if (!publishFunction)
+            return;
+
+        if(error)
+        {
+            std::cout << "Timer error: " << error.message() << "\n";
+        }
+
+        auto message = publishFunction();
+        MessageVariant messageV(message);
+        std::stringstream ss;
+        boost::archive::binary_oarchive oarchive(ss);
+        oarchive << messageV;
+
+        auto callback = std::bind(
+            &Publisher::DefaultHandleAck,
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2);
+        for(auto subscriber : subscribers)
+        {
+            node.SndMessage(subscriber, ss.str(), callback);
+        }
+
+        publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
+        publishTimer.async_wait(std::bind(&Publisher::OnTimerExpired, this, std::placeholders::_1));
     }
 
     template <>
@@ -78,19 +145,7 @@ namespace LogicalLayer
     void Publisher::HandleMessage(StartPublish& message)
     {
         std::cout << "Publisher: Start sending data to " << message.Subscriber() << "\n";
-        PublisherData dataMessage(node.Name(), "This is dummy data from publisher.");
-        MessageVariant messageV(dataMessage);
-        std::stringstream ss;
-        boost::archive::binary_oarchive oarchive(ss);
-        oarchive << messageV;
-
-        auto callback = std::bind(
-            &Publisher::DefaultHandleAck,
-            this,
-            std::placeholders::_1,
-            std::placeholders::_2);
-
-        node.SndMessage(message.Subscriber(), ss.str(), callback);
+        subscribers.insert(message.Subscriber());
     }
 
     template <>
