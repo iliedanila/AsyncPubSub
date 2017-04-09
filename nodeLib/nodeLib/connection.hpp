@@ -30,7 +30,7 @@ public:
     
     void Read(ReadCallback _callback);
     
-    void Write(MessageVariant, std::function<void()>);
+    void Write(MessageVariant, std::function<void(boost::system::error_code)>);
     
     void Close();
     

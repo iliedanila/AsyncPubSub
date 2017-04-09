@@ -65,7 +65,7 @@ private:
     
     void OnRead(MessageVariant, SharedConnection);
     
-    void OnWrite();
+    void OnWrite(MessageVariant message, boost::system::error_code error) const;
     
     template <typename MessageT>
     void HandleMessage(MessageT&, SharedConnection);

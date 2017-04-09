@@ -141,7 +141,17 @@ void Node::SndMessage(
         
         auto messageID = std::hash<std::string>{}(data);
         DataMessage message(name, destination, data, messageID);
-        connection->Write(message, std::bind(&Node::OnWrite, this));
+        
+        connection->Write(
+            message, 
+            std::bind(
+                &Node::OnWrite, 
+                this,
+                message,
+                std::placeholders::_1
+            )
+        );
+
         ackCallbacks.insert({ messageID, callback });
     }
     else
@@ -184,7 +194,15 @@ void Node::CloseConnection(SharedConnection connectionDown)
     
     for (auto connection : connections)
     {
-        connection->Write(nodesDown, std::bind(&Node::OnWrite, this));
+        connection->Write(
+            nodesDown, 
+            std::bind(
+                &Node::OnWrite, 
+                this, 
+                nodesDown,
+                std::placeholders::_1
+            )
+        );
     }
 }
 
@@ -197,7 +215,15 @@ void Node::SendRoutingToNewConnection(SharedConnection connection)
     {
         message.AddNodeDistance(nodeDistance);
     }
-    connection->Write(message, std::bind(&Node::OnWrite, this));
+    connection->Write(
+        message, 
+        std::bind(
+            &Node::OnWrite,
+            this,
+            message,
+            std::placeholders::_1
+        )
+    );
 }
 
 SharedConnection Node::AddConnection(tcp::socket&& socket)
@@ -220,8 +246,18 @@ void Node::OnRead(MessageVariant _message, SharedConnection _connection)
     boost::apply_visitor(MessageVisitor(*this, _connection), _message);
 }
 
-void Node::OnWrite()
+void Node::OnWrite(MessageVariant message, boost::system::error_code error) const
 {
+    if(error)
+    {
+        std::cout 
+            << "Error writing in node: "
+            << name 
+            << " : "
+            << error.message() 
+            << "\n";
+        std::cout << "Message type: " << message.type().name() << "\n";
+    }
 }
 
 template <>
@@ -236,7 +272,15 @@ void Node::HandleMessage(RoutingMessage& _message, SharedConnection _connection)
     if (reply.NodeDistances().size() > 0 ||
         reply.FailedNodes().size() > 0)
     {
-        _connection->Write(reply, std::bind(&Node::OnWrite, this));
+        _connection->Write(
+            reply,
+            std::bind(
+                &Node::OnWrite,
+                this,
+                reply,
+                std::placeholders::_1
+            )
+        );
     }
     
     if (forward.NodeDistances().size() > 0 ||
@@ -246,7 +290,15 @@ void Node::HandleMessage(RoutingMessage& _message, SharedConnection _connection)
         {
             if (conn != _connection)
             {
-                conn->Write(forward, std::bind(&Node::OnWrite, this));
+                conn->Write(
+                    forward,
+                    std::bind(
+                        &Node::OnWrite,
+                        this,
+                        forward,
+                        std::placeholders::_1
+                    )
+                );
             }
         }
     }
@@ -263,12 +315,33 @@ void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
         {
             messageAcceptor(_message);
             DataMessageAck message(name, _message.sourceNodeName, eSuccess, _message.MessageID());
-            _connection->Write(message, std::bind(&Node::OnWrite, this));
+            _connection->Write(
+                message,
+                std::bind(
+                    &Node::OnWrite,
+                    this,
+                    message,
+                    std::placeholders::_1
+                )
+            );
         }
         else
         {
-            DataMessageAck message(_message.sourceNodeName, name, eNodeNotAccepting, _message.MessageID());
-            _connection->Write(message, std::bind(&Node::OnWrite, this));
+            DataMessageAck message(
+                _message.sourceNodeName,
+                name,
+                eNodeNotAccepting,
+                _message.MessageID()
+            );
+            _connection->Write(
+                message,
+                std::bind(
+                    &Node::OnWrite,
+                    this,
+                    message,
+                    std::placeholders::_1
+                )
+            );
         }
     }
     else
@@ -277,12 +350,28 @@ void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
         {
             auto namePath = nodePaths.find(_message.destinationNodeName);
             auto connection = namePath->second;
-            connection->Write(_message, std::bind(&Node::OnWrite, this));
+            connection->Write(
+                _message,
+                std::bind(
+                    &Node::OnWrite,
+                    this,
+                    _message,
+                    std::placeholders::_1
+                )
+            );
         }
         else
         {
             DataMessageAck message(_message.sourceNodeName, name, eNoPath, _message.MessageID());
-            _connection->Write(message, std::bind(&Node::OnWrite, this));
+            _connection->Write(
+                message,
+                std::bind(
+                    &Node::OnWrite,
+                    this,
+                    message,
+                    std::placeholders::_1
+                )
+            );
         }
     }
 }
@@ -305,7 +394,15 @@ void Node::HandleMessage(DataMessageAck& _message, SharedConnection _connection)
         {
             auto namePath = nodePaths.find(_message.destinationNodeName);
             auto connection = namePath->second;
-            connection->Write(_message, std::bind(&Node::OnWrite, this));
+            connection->Write(
+                _message,
+                std::bind(
+                    &Node::OnWrite,
+                    this,
+                    _message,
+                    std::placeholders::_1
+                )
+            );
         }
     }
 }

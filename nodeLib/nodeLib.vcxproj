@@ -36,7 +36,7 @@
     <ProjectGuid>{BC279B93-02D3-4847-9E0B-EA7E916D5E1A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>nodeLib</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
     <ProjectName>NetworkLayer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

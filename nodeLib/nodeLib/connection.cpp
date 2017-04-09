@@ -64,7 +64,9 @@ void Connection::Read(ReadCallback _callback)
         });
 }
 
-void Connection::Write(MessageVariant _message, std::function<void()> _callback)
+void Connection::Write(
+    MessageVariant _message, 
+    std::function<void(boost::system::error_code)> _callback)
 {
     auto self(shared_from_this());
     std::stringstream ss;
@@ -77,14 +79,7 @@ void Connection::Write(MessageVariant _message, std::function<void()> _callback)
         [self, _callback]
         (boost::system::error_code error, std::size_t lenght)
         {
-            if (!error)
-            {
-                _callback();
-            }
-            else
-            {
-                std::cout << "Error writing: " << error.message() << "\n";
-            }
+            _callback(error);
         });
 }
 
