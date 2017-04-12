@@ -36,10 +36,11 @@ void Connection::Read(ReadCallback _callback)
         socket,
         boost::asio::buffer(readMessage, Node::MaxMessageSize),
         [this, self, _callback]
-        (const boost::system::error_code& error, std::size_t /*length*/)
+        (const boost::system::error_code& error, std::size_t length)
         {
             if( !error)
             {
+                assert(length <= Node::MaxMessageSize);
                 std::string content(readMessage, Node::MaxMessageSize);
                 std::stringstream ss(content);
                 boost::archive::binary_iarchive iarchive(ss);
@@ -72,6 +73,7 @@ void Connection::Write(
     std::stringstream ss;
     boost::archive::binary_oarchive oarchive(ss);
     oarchive << _message;
+    assert(ss.str().size() <= Node::MaxMessageSize);
     auto bufferData = std::make_shared<std::string>(std::move(ss.str()));
 
     boost::asio::async_write(

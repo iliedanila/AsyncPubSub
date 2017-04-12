@@ -54,6 +54,11 @@ namespace LogicalLayer
         publishTimer.cancel();
         //subscribers.clear();
     }
+    
+    const std::string& Publisher::Name() const
+    {
+        return node.Name();
+    }
 
     void Publisher::HandleIncomingMessage(NetworkLayer::DataMessage& message)
     {

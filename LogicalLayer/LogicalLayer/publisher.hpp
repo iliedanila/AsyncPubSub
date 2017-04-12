@@ -27,6 +27,7 @@ namespace LogicalLayer
 
         void StartPublishing(PublishFunctionT _publishFunction, std::size_t millisecondsRepeat);
         void StopPublishing();
+        const std::string& Name() const;
 
     private:
         friend struct MessageVisitor<Publisher>;
