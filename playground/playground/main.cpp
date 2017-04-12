@@ -27,9 +27,9 @@ int main()
     // Test
     // -------------------------------------------------------------------------
 
-    NetworkLayer::Node node("broker", io_service);
-    LogicalLayer::Broker broker(node);
-    node.Accept(7777);
+    NetworkLayer::Node brokerNode("broker", io_service);
+    LogicalLayer::Broker broker(brokerNode);
+    brokerNode.Accept(7777);
     
     std::vector<std::shared_ptr<NetworkLayer::Node>> nodes;
     std::vector<std::shared_ptr<LogicalLayer::Subscriber>> subscribers;
@@ -89,7 +89,7 @@ int main()
                 {
                     node->Close();
                 }
-                node.Close();
+                brokerNode.Close();
             });
             t.join();
         }
