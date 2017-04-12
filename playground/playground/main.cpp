@@ -27,19 +27,26 @@ int main()
     // Test
     // -------------------------------------------------------------------------
 
-    NetworkLayer::Node subscriber("subscriber", io_service);
     NetworkLayer::Node broker("broker", io_service);
     NetworkLayer::Node publisher("publisher", io_service);
 
     broker.Accept(7777);
-    subscriber.Connect("localhost", 7777);
     publisher.Connect("localhost", 7777);
 
     LogicalLayer::Broker LLBroker(broker);
-    LogicalLayer::Subscriber LLSubscriber(subscriber);
 
-    LogicalLayer::SubscriptionT subscription {{ "attrib", "value" }};
-    LLSubscriber.AddSubscription(subscription);
+    std::vector<std::shared_ptr<NetworkLayer::Node>> nodes;
+    std::vector<std::shared_ptr<LogicalLayer::Subscriber>> subscribers;
+    for(auto i = 0; i < 10; i++)
+    {
+        auto node = std::make_shared<NetworkLayer::Node>("subscriber" + std::to_string(i), io_service);
+        node->Connect("localhost", 7777);
+        auto subscriber = std::make_shared<LogicalLayer::Subscriber>(*node);
+        LogicalLayer::SubscriptionT subscription{ { "attrib", "value" } };
+        subscriber->AddSubscription(subscription);
+        nodes.push_back(node);
+        subscribers.push_back(subscriber);
+    }
 
     LogicalLayer::PublisherIdentityT publisherIdentity{ { "attrib", "value" } };
     LogicalLayer::Publisher LLPublisher(publisher, publisherIdentity);
@@ -77,7 +84,10 @@ int main()
             exit = true;
             io_service.post([&] {
                 LLPublisher.StopPublishing();
-                subscriber.Close();
+                for(auto& subscriber : nodes)
+                {
+                    subscriber->Close();
+                }
                 broker.Close();
                 publisher.Close();
             });

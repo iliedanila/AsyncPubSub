@@ -72,11 +72,12 @@ void Connection::Write(
     std::stringstream ss;
     boost::archive::binary_oarchive oarchive(ss);
     oarchive << _message;
+    auto bufferData = std::make_shared<std::string>(std::move(ss.str()));
 
     boost::asio::async_write(
         socket,
-        buffer(ss.str().c_str(), Node::MaxMessageSize),
-        [self, _callback]
+        buffer(bufferData->c_str(), Node::MaxMessageSize),
+        [self, _callback, bufferData]
         (boost::system::error_code error, std::size_t lenght)
         {
             _callback(error);

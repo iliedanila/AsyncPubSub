@@ -23,6 +23,7 @@ namespace LogicalLayer
 
     Subscriber::~Subscriber()
     {
+        std::cout << "Subscriber::~Subscriber()\n";
     }
 
     void Subscriber::AddSubscription(SubscriptionT& subscription)
@@ -86,6 +87,9 @@ namespace LogicalLayer
 
     void Subscriber::SendAllSubscriptions(const std::string& brokerName)
     {
+        if (subscriptions.empty())
+            return;
+
         for(auto& subscription : subscriptions)
         {
             SendSubscription(subscription, brokerName, SubscriptionMessage::eAdd);
@@ -94,7 +98,10 @@ namespace LogicalLayer
 
     void Subscriber::HandleNewBroker(BrokerIdentity& message)
     {
-        brokers.push_back(message.Name());
+        if (brokers.find(message.Name()) != brokers.end())
+            return;
+
+        brokers.insert(message.Name());
         SendAllSubscriptions(message.Name());
     }
 

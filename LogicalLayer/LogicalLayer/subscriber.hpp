@@ -46,7 +46,7 @@ namespace LogicalLayer
         void HandleMessage(MessageT& message);
 
         NetworkLayer::Node& node;
-        std::vector<std::string> brokers;
+        std::set<std::string> brokers;
         std::set<SubscriptionT> subscriptions;
     };
 }
