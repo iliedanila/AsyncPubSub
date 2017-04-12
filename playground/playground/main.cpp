@@ -75,11 +75,34 @@ int main()
         if (boost::algorithm::starts_with(command, "exit"))
         {
             exit = true;
-            LLPublisher.StopPublishing();
-            subscriber.Close();
-            broker.Close();
-            publisher.Close();
+            io_service.post([&] {
+                LLPublisher.StopPublishing();
+                subscriber.Close();
+                broker.Close();
+                publisher.Close();
+            });
             t.join();
+        }
+
+        if (boost::algorithm::starts_with(command, "stop"))
+        {
+            io_service.post([&LLPublisher] {
+                LLPublisher.StopPublishing();
+            });
+        }
+
+        if (boost::algorithm::starts_with(command, "start"))
+        {
+            io_service.post([&] {
+                LLPublisher.StartPublishing(
+                    std::bind(
+                        &GetPublisherData,
+                        publisher.Name(),
+                        "Message from main"
+                    ),
+                    2000 /*milliseconds*/
+                );
+            });
         }
     } while (!exit);
     

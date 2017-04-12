@@ -52,7 +52,7 @@ namespace LogicalLayer
     {
         std::cout << "Publisher::StopPublishing()\n";
         publishTimer.cancel();
-        subscribers.clear();
+        //subscribers.clear();
     }
 
     void Publisher::HandleIncomingMessage(NetworkLayer::DataMessage& message)
@@ -89,6 +89,7 @@ namespace LogicalLayer
         if(error)
         {
             std::cout << "Timer error: " << error.message() << "\n";
+            return;
         }
 
         auto message = publishFunction();
