@@ -28,7 +28,7 @@ typedef std::function<void(std::string, SendError)> AckMessageCallback;
 class Node
 {
 public:
-    static const int MaxMessageSize = 1024 * 2048; // 2MB
+    static const int MaxMessageSize = 512/*1024 * 2048*/; // 2MB
 
     Node(std::string _name,	io_service& _io_service);
     ~Node();

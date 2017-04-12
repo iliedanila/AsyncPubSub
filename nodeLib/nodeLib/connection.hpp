@@ -41,7 +41,6 @@ private:
     
     Node& node;
     char readMessage[Node::MaxMessageSize];
-    char writeMessage[Node::MaxMessageSize];
 };
     
 }
