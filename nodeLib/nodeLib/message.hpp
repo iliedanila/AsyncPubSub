@@ -13,67 +13,46 @@ namespace NetworkLayer
     public:
         enum { eHeaderLength = 4 };
 
-        Message()
-            :
-            buffer(nullptr),
-            bodyLength(0)
-        {}
-
-        ~Message()
+        Message() : bodySize(0)
         {
-            delete[] buffer;
         }
 
-        Message(const Message& other)
+        Message(const std::string& aBody)
         {
-            memcpy(header, other.header, eHeaderLength);
-            bodyLength = other.bodyLength;
-            buffer = new char[bodyLength + eHeaderLength];
-            memcpy(buffer, other.buffer, eHeaderLength + bodyLength);
+            bodySize = aBody.size();
+            body.assign(aBody.begin(), aBody.end());
         }
 
-        const char* Header() const { return header; }
-        char* Header() { return header; }
+        char* GetHeader() { return header; }
+        auto& GetBody() { return body; }
+        uint32_t GetBodySize() const { return bodySize; }
 
-        const char* Buffer() const { return buffer; }
-        char* Buffer() { return buffer; }
-
-        uint32_t Length() const { return eHeaderLength + bodyLength; }
-
-        const char* Body() const { return buffer + eHeaderLength; }
-
-        char* Body() { return buffer + eHeaderLength; }
-
-        uint32_t BodyLength() const { return bodyLength; }
-
-        void SetBodyLength(uint32_t newLength)
+        void CreateOutputBuffer()
         {
-            bodyLength = newLength;
-            buffer = new char[eHeaderLength + bodyLength];
+            auto networkSize = htonl(body.size());
+            memcpy(header, &networkSize, eHeaderLength);
+
+            outputBuffer.clear();
+            outputBuffer.insert(outputBuffer.end(), header, header + eHeaderLength);
+            outputBuffer.insert(outputBuffer.end(), body.begin(), body.end());
         }
+
+        auto& GetOutputBuffer() { return outputBuffer; }
 
         void DecodeHeader()
         {
-            uint32_t networkBodyLength;
-            memcpy(&networkBodyLength, header, eHeaderLength);
-            bodyLength = ntohl(networkBodyLength);
-
-            if (buffer == nullptr)
-            {
-                buffer = new char[eHeaderLength + bodyLength];
-            }
-        }
-
-        void EncodeHeader()
-        {
-            uint32_t networkBodyLength = htonl(bodyLength);
-            memcpy(buffer, &networkBodyLength, eHeaderLength);
+            uint32_t networkSize;
+            memcpy(&networkSize, header, eHeaderLength);
+            bodySize = ntohl(networkSize);
+            body.reserve(bodySize);
+            body.assign(bodySize, '\0');
         }
 
     private:
+        uint32_t bodySize;
         char header[eHeaderLength + 1];
-        char* buffer;
-        uint32_t bodyLength;
+        std::vector<char> body;
+        std::vector<char> outputBuffer;
     };
 
 }

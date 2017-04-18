@@ -35,8 +35,8 @@ void Connection::Write()
     boost::asio::async_write(
         socket,
         buffer(
-            writeMessages.front().first.Buffer(),
-            writeMessages.front().first.Length()
+            writeMessages.front().first.GetOutputBuffer(),
+            writeMessages.front().first.GetOutputBuffer().size()
         ),
         [this, self]
         (boost::system::error_code error, std::size_t /*lenght*/)
@@ -67,11 +67,8 @@ void Connection::Send(MessageVariant _message, WriteCallback _callback)
     boost::archive::binary_oarchive oarchive(ss);
     oarchive << _message;
 
-    Message message;
-    auto bodyLength = ss.str().size();
-    message.SetBodyLength(bodyLength);
-    memcpy(message.Body(), ss.str().c_str(), message.BodyLength());
-    message.EncodeHeader();
+    Message message(ss.str());
+    message.CreateOutputBuffer();
 
     auto writeInProgress = !writeMessages.empty();
     writeMessages.push_back(std::make_pair(message, _callback));
@@ -93,9 +90,9 @@ void Connection::ReadHeader(ReadCallback _callback)
 
     boost::asio::async_read(
         socket,
-        buffer(readMessage.Header(), Message::eHeaderLength),
+        buffer(readMessage.GetHeader(), Message::eHeaderLength),
         [this, self, _callback]
-        (boost::system::error_code error_code, std::size_t /*length*/)
+        (boost::system::error_code error_code, std::size_t length)
         {
             if(!error_code)
             {
@@ -112,13 +109,13 @@ void Connection::ReadBody(ReadCallback _callback)
 
     boost::asio::async_read(
         socket,
-        buffer(readMessage.Body(), readMessage.BodyLength()),
+        buffer(readMessage.GetBody(), readMessage.GetBodySize()),
         [this, self, _callback]
         (boost::system::error_code error_code, std::size_t /*length*/)
         {
             if (!error_code)
             {
-                std::string content(readMessage.Body(), readMessage.BodyLength());
+                std::string content(readMessage.GetBody().begin(), readMessage.GetBody().end());
                 std::stringstream ss(content);
                 boost::archive::binary_iarchive iarchive(ss);
 

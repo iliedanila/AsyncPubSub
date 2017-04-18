@@ -16,15 +16,24 @@ namespace LogicalLayer
     :
         node(_node)
     {
-        node.AcceptMessages(
-            std::bind(
-                &Broker::HandleIncomingMessage,
-                this,
-                std::placeholders::_1));
-
-        node.IOService().post([this]{
-            BroadcastIdentity();
-        });
+        node.IOService().post(
+            [this]
+            {
+                node.AcceptMessages(
+                    std::bind(
+                        &Broker::HandleIncomingMessage,
+                        this,
+                        std::placeholders::_1
+                    )
+                );
+            }
+        );
+        node.IOService().post(
+            [this] 
+            {
+                BroadcastIdentity();
+            }
+        );
     }
 
     Broker::~Broker()
@@ -49,11 +58,19 @@ namespace LogicalLayer
             SendIdentity(nodeName);
         }
 
-        node.NotifyNewNodeStatus(std::bind(
-            &Broker::HandleNewNodeStatus,
-            this,
-            std::placeholders::_1,
-            std::placeholders::_2));
+        node.IOService().post(
+            [this]
+            {
+                node.NotifyNewNodeStatus(
+                    std::bind(
+                        &Broker::HandleNewNodeStatus,
+                        this,
+                        std::placeholders::_1,
+                        std::placeholders::_2
+                    )
+                );
+            }
+        );
     }
 
     void Broker::SendIdentity(std::string nodeName) const
@@ -62,6 +79,7 @@ namespace LogicalLayer
         std::stringstream ss;
         boost::archive::binary_oarchive oarchive(ss);
         oarchive << messageV;
+        auto messageContent = ss.str();
 
         auto callback = std::bind(
             &Broker::DefaultCallback,
@@ -69,7 +87,12 @@ namespace LogicalLayer
             std::placeholders::_1,
             std::placeholders::_2);
 
-        node.SndMessage(nodeName, ss.str(), callback);
+        node.IOService().post(
+            [this, nodeName, callback, messageContent]
+            {
+                node.SndMessage(nodeName, messageContent, callback);
+            }
+        );
     }
 
     void Broker::DefaultCallback(
@@ -138,14 +161,21 @@ namespace LogicalLayer
         std::stringstream ss;
         boost::archive::binary_oarchive oarchive(ss);
         oarchive << messageV;
+        auto messageContent = ss.str();
 
         auto callback = std::bind(
             &Broker::DefaultCallback,
             this,
             std::placeholders::_1,
-            std::placeholders::_2);
+            std::placeholders::_2
+        );
 
-        node.SndMessage(publisher, ss.str(), callback);
+        node.IOService().post(
+            [this, publisher, messageContent, callback]
+            {
+                node.SndMessage(publisher, messageContent, callback);
+            }
+        );
     }
 
     template <>
