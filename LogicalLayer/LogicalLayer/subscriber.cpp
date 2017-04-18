@@ -14,11 +14,18 @@ namespace LogicalLayer
     :
         node(_node)
     {
-        node.AcceptMessages(
-            std::bind(
-                &Subscriber::HandleIncomingMessage,
-                this,
-                std::placeholders::_1));
+        node.IOService().post(
+            [this]
+            {
+                node.AcceptMessages(
+                    std::bind(
+                        &Subscriber::HandleIncomingMessage,
+                        this,
+                        std::placeholders::_1
+                    )
+                );
+            }
+        );
     }
 
     Subscriber::~Subscriber()
@@ -59,6 +66,7 @@ namespace LogicalLayer
         std::stringstream ss;
         boost::archive::binary_oarchive oarchive(ss);
         oarchive << messageV;
+        auto messageContent = ss.str();
 
         auto callback = std::bind(
             &Subscriber::HandleBrokerAck,
@@ -66,7 +74,12 @@ namespace LogicalLayer
             std::placeholders::_1,
             std::placeholders::_2);
 
-        node.SndMessage(brokerName, ss.str(), callback);
+        node.IOService().post(
+            [this, brokerName, messageContent, callback]
+            {
+                node.SndMessage(brokerName, messageContent, callback);
+            }
+        );
     }
 
     void Subscriber::SendNewSubscription(SubscriptionT& subscription)

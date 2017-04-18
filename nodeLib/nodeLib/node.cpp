@@ -142,7 +142,7 @@ void Node::SndMessage(
         auto messageID = std::hash<std::string>{}(data);
         DataMessage message(name, destination, data, messageID);
         
-        connection->Write(
+        connection->Send(
             message, 
             std::bind(
                 &Node::OnWrite, 
@@ -194,7 +194,7 @@ void Node::CloseConnection(SharedConnection connectionDown)
     
     for (auto connection : connections)
     {
-        connection->Write(
+        connection->Send(
             nodesDown, 
             std::bind(
                 &Node::OnWrite, 
@@ -215,7 +215,7 @@ void Node::SendRoutingToNewConnection(SharedConnection connection)
     {
         message.AddNodeDistance(nodeDistance);
     }
-    connection->Write(
+    connection->Send(
         message, 
         std::bind(
             &Node::OnWrite,
@@ -272,7 +272,7 @@ void Node::HandleMessage(RoutingMessage& _message, SharedConnection _connection)
     if (reply.NodeDistances().size() > 0 ||
         reply.FailedNodes().size() > 0)
     {
-        _connection->Write(
+        _connection->Send(
             reply,
             std::bind(
                 &Node::OnWrite,
@@ -290,7 +290,7 @@ void Node::HandleMessage(RoutingMessage& _message, SharedConnection _connection)
         {
             if (conn != _connection)
             {
-                conn->Write(
+                conn->Send(
                     forward,
                     std::bind(
                         &Node::OnWrite,
@@ -315,7 +315,7 @@ void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
         {
             messageAcceptor(_message);
             DataMessageAck message(name, _message.sourceNodeName, eSuccess, _message.MessageID());
-            _connection->Write(
+            _connection->Send(
                 message,
                 std::bind(
                     &Node::OnWrite,
@@ -333,7 +333,7 @@ void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
                 eNodeNotAccepting,
                 _message.MessageID()
             );
-            _connection->Write(
+            _connection->Send(
                 message,
                 std::bind(
                     &Node::OnWrite,
@@ -350,7 +350,7 @@ void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
         {
             auto namePath = nodePaths.find(_message.destinationNodeName);
             auto connection = namePath->second;
-            connection->Write(
+            connection->Send(
                 _message,
                 std::bind(
                     &Node::OnWrite,
@@ -363,7 +363,7 @@ void Node::HandleMessage(DataMessage& _message, SharedConnection _connection)
         else
         {
             DataMessageAck message(_message.sourceNodeName, name, eNoPath, _message.MessageID());
-            _connection->Write(
+            _connection->Send(
                 message,
                 std::bind(
                     &Node::OnWrite,
@@ -394,7 +394,7 @@ void Node::HandleMessage(DataMessageAck& _message, SharedConnection _connection)
         {
             auto namePath = nodePaths.find(_message.destinationNodeName);
             auto connection = namePath->second;
-            connection->Write(
+            connection->Send(
                 _message,
                 std::bind(
                     &Node::OnWrite,

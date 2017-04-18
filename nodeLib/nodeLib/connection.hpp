@@ -3,8 +3,10 @@
 
 #include <boost/asio.hpp>
 #include <memory>
+#include <deque>
 
 #include "allMessages.hpp"
+#include "message.hpp"
 #include "node.hpp"
 
 using namespace boost::asio;
@@ -12,10 +14,12 @@ using namespace ip;
 
 namespace NetworkLayer
 {
-    
+
 class Connection;
 typedef std::shared_ptr<Connection> SharedConnection;
+typedef std::function<void(boost::system::error_code)> WriteCallback;
 typedef std::function<void(MessageVariant, SharedConnection)> ReadCallback;
+typedef std::deque<std::pair<Message, WriteCallback>> MessageQueue;
 
 class Connection : public std::enable_shared_from_this<Connection>
 {
@@ -30,17 +34,23 @@ public:
     
     void Read(ReadCallback _callback);
     
-    void Write(MessageVariant, std::function<void(boost::system::error_code)>);
+    void Send(MessageVariant, WriteCallback);
+
+    void Write();
     
     void Close();
     
 private:
+    void ReadHeader(ReadCallback _callback);
+    void ReadBody(ReadCallback _callback);
+
     io_service& io_service;
     tcp::socket socket;
     std::function<void(std::shared_ptr<Connection>)> closeHandler;
     
     Node& node;
-    char readMessage[Node::MaxMessageSize];
+    Message readMessage;
+    MessageQueue writeMessages;
 };
     
 }

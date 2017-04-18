@@ -16,19 +16,31 @@ namespace LogicalLayer
         node(_node),
         publishTimer(node.IOService())
     {
-        node.AcceptMessages(
-            std::bind(
-                &Publisher::HandleIncomingMessage,
-                this,
-                std::placeholders::_1));
+        node.IOService().post(
+            [this]
+            {
+                node.AcceptMessages(
+                    std::bind(
+                        &Publisher::HandleIncomingMessage,
+                        this,
+                        std::placeholders::_1
+                    )
+                );
+            }
+        );
 
-        node.NotifyNewNodeStatus(
-            std::bind(
-                &Publisher::HandleNewNodeStatus,
-                this,
-                std::placeholders::_1,
-                std::placeholders::_2
-            )
+        node.IOService().post(
+            [this]
+            {
+                node.NotifyNewNodeStatus(
+                    std::bind(
+                        &Publisher::HandleNewNodeStatus,
+                        this,
+                        std::placeholders::_1,
+                        std::placeholders::_2
+                    )
+                );
+            }
         );
     }
 
@@ -102,15 +114,22 @@ namespace LogicalLayer
         std::stringstream ss;
         boost::archive::binary_oarchive oarchive(ss);
         oarchive << messageV;
+        auto messageContent = ss.str();
 
         auto callback = std::bind(
             &Publisher::DefaultHandleAck,
             this,
             std::placeholders::_1,
             std::placeholders::_2);
-        for(auto subscriber : subscribers)
+
+        for(auto subscriberName : subscribers)
         {
-            node.SndMessage(subscriber, ss.str(), callback);
+            node.IOService().post(
+                [this, subscriberName, messageContent, callback]
+                {
+                    node.SndMessage(subscriberName, messageContent, callback);
+                }
+            );
         }
 
         publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
@@ -129,6 +148,7 @@ namespace LogicalLayer
         std::stringstream ss;
         boost::archive::binary_oarchive oarchive(ss);
         oarchive << messageV;
+        auto messageContent = ss.str();
 
         auto callback = std::bind(
             &Publisher::DefaultHandleAck,
@@ -136,7 +156,12 @@ namespace LogicalLayer
             std::placeholders::_1,
             std::placeholders::_2);
 
-        node.SndMessage(message.Name(), ss.str(), callback);
+        node.IOService().post(
+            [this, message, messageContent, callback]
+            {
+                node.SndMessage(message.Name(), messageContent, callback);
+            }
+        );
     }
 
     template <>

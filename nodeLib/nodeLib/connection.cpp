@@ -29,66 +29,104 @@ Connection::~Connection()
     std::cout << "~Connection() in node " << node.Name() << "\n";
 }
 
-void Connection::Read(ReadCallback _callback)
+void Connection::Write()
 {
     auto self(shared_from_this());
-    boost::asio::async_read(
+    boost::asio::async_write(
         socket,
-        boost::asio::buffer(readMessage, Node::MaxMessageSize),
-        [this, self, _callback]
-        (const boost::system::error_code& error, std::size_t length)
+        buffer(
+            writeMessages.front().first.GetOutputBuffer(),
+            writeMessages.front().first.GetOutputBuffer().size()
+        ),
+        [this, self]
+        (boost::system::error_code error, std::size_t /*lenght*/)
         {
-            if( !error)
+            if(!error)
             {
-                assert(length <= Node::MaxMessageSize);
-                std::string content(readMessage, Node::MaxMessageSize);
-                std::stringstream ss(content);
-                boost::archive::binary_iarchive iarchive(ss);
-                                    
-                MessageVariant message;
-                iarchive >> message;
-                                    
-                _callback(message, self);
-                Read(_callback);
+                // Callback.
+                writeMessages.front().second(error);
+
+                writeMessages.pop_front();
+                if(!writeMessages.empty())
+                {
+                    Write();
+                }
             }
-            else
-            {
-                std::cout   << "Error reading body: "
-                            << error.value()
-                            << " "
-                            << error.message()
-                            << " on node "
-                            << node.Name()
-                            << "\n";
-                closeHandler(shared_from_this());
-            }
-        });
+        }
+    );
 }
 
-void Connection::Write(
-    MessageVariant _message, 
-    std::function<void(boost::system::error_code)> _callback)
+void Connection::Read(ReadCallback _callback)
 {
-    auto self(shared_from_this());
+    ReadHeader(_callback);
+}
+
+void Connection::Send(MessageVariant _message, WriteCallback _callback)
+{
     std::stringstream ss;
     boost::archive::binary_oarchive oarchive(ss);
     oarchive << _message;
-    assert(ss.str().size() <= Node::MaxMessageSize);
-    auto bufferData = std::make_shared<std::string>(std::move(ss.str()));
 
-    boost::asio::async_write(
-        socket,
-        buffer(bufferData->c_str(), Node::MaxMessageSize),
-        [self, _callback, bufferData]
-        (boost::system::error_code error, std::size_t lenght)
-        {
-            _callback(error);
-        });
+    Message message(ss.str());
+    message.CreateOutputBuffer();
+
+    auto writeInProgress = !writeMessages.empty();
+    writeMessages.push_back(std::make_pair(message, _callback));
+
+    if (!writeInProgress)
+    {
+        Write();
+    }
 }
 
 void Connection::Close()
 {
     socket.close();
+}
+
+void Connection::ReadHeader(ReadCallback _callback)
+{
+    auto self(shared_from_this());
+
+    boost::asio::async_read(
+        socket,
+        buffer(readMessage.GetHeader(), Message::eHeaderLength),
+        [this, self, _callback]
+        (boost::system::error_code error_code, std::size_t length)
+        {
+            if(!error_code)
+            {
+                readMessage.DecodeHeader();
+                ReadBody(_callback);
+            }
+        }
+    );
+}
+
+void Connection::ReadBody(ReadCallback _callback)
+{
+    auto self(shared_from_this());
+
+    boost::asio::async_read(
+        socket,
+        buffer(readMessage.GetBody(), readMessage.GetBodySize()),
+        [this, self, _callback]
+        (boost::system::error_code error_code, std::size_t /*length*/)
+        {
+            if (!error_code)
+            {
+                std::string content(readMessage.GetBody().begin(), readMessage.GetBody().end());
+                std::stringstream ss(content);
+                boost::archive::binary_iarchive iarchive(ss);
+
+                MessageVariant message;
+                iarchive >> message;
+
+                _callback(message, self);
+                ReadHeader(_callback);
+            }
+        }
+    );
 }
 
 }
