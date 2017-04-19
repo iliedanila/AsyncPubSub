@@ -34,3 +34,7 @@ nodes.xcworkspace/xcuserdata/ilie.xcuserdatad/UserInterfaceState.xcuserstate
 /startNode/Debug
 /startNode/x64/Debug
 /startNode/Release
+
+\.build-debug/
+
+\.codelite/
