@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="nodes" Database="" Version="10.0.0">
-  <Project Name="nodeLib" Path="nodeLib/nodeLib.project" Active="Yes"/>
-  <Project Name="LogicalLayer" Path="LogicalLayer/LogicalLayer.project"/>
+  <Project Name="nodeLib" Path="nodeLib/nodeLib.project" Active="No"/>
+  <Project Name="LogicalLayer" Path="LogicalLayer/LogicalLayer.project" Active="No"/>
+  <Project Name="playground" Path="playground/playground.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
       <Project Name="nodeLib" ConfigName="Debug"/>
       <Project Name="LogicalLayer" ConfigName="Debug"/>
+      <Project Name="playground" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
       <Project Name="nodeLib" ConfigName="Release"/>
       <Project Name="LogicalLayer" ConfigName="Release"/>
+      <Project Name="playground" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -40,3 +40,5 @@ nodes.xcworkspace/xcuserdata/ilie.xcuserdatad/UserInterfaceState.xcuserstate
 \.codelite/
 
 LogicalLayer/LogicalLayer\.txt
+
+\.build-release/

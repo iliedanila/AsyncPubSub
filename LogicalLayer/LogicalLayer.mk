@@ -2,12 +2,12 @@
 ## Auto Generated makefile by CodeLite IDE
 ## any manual changes will be erased      
 ##
-## Debug
+## Release
 ProjectName            :=LogicalLayer
-ConfigurationName      :=Debug
+ConfigurationName      :=Release
 WorkspacePath          :=/home/ilie/workspace/nodes
 ProjectPath            :=/home/ilie/workspace/nodes/LogicalLayer
-IntermediateDirectory  :=./Debug
+IntermediateDirectory  :=./Release
 OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
@@ -50,8 +50,8 @@ LibPath                := $(LibraryPathSwitch).
 AR       := /usr/bin/ar rcu
 CXX      := /usr/bin/g++
 CC       := /usr/bin/gcc
-CXXFLAGS :=  -g $(Preprocessors)
-CFLAGS   :=  -g $(Preprocessors)
+CXXFLAGS :=   $(Preprocessors)
+CFLAGS   :=   $(Preprocessors)
 ASFLAGS  := 
 AS       := /usr/bin/as
 
@@ -77,15 +77,15 @@ $(OutputFile): $(Objects)
 	@echo "" > $(IntermediateDirectory)/.d
 	@echo $(Objects0)  > $(ObjectsFileList)
 	$(AR) $(ArchiveOutputSwitch)$(OutputFile) @$(ObjectsFileList) $(ArLibs)
-	@$(MakeDirCommand) "/home/ilie/workspace/nodes/.build-debug"
-	@echo rebuilt > "/home/ilie/workspace/nodes/.build-debug/LogicalLayer"
+	@$(MakeDirCommand) "/home/ilie/workspace/nodes/.build-release"
+	@echo rebuilt > "/home/ilie/workspace/nodes/.build-release/LogicalLayer"
 
 MakeIntermediateDirs:
-	@test -d ./Debug || $(MakeDirCommand) ./Debug
+	@test -d ./Release || $(MakeDirCommand) ./Release
 
 
-./Debug:
-	@test -d ./Debug || $(MakeDirCommand) ./Debug
+./Release:
+	@test -d ./Release || $(MakeDirCommand) ./Release
 
 PreBuild:
 
@@ -123,6 +123,6 @@ $(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(PreprocessSuffix): Logical
 ## Clean
 ##
 clean:
-	$(RM) -r ./Debug/
+	$(RM) -r ./Release/
 
 
