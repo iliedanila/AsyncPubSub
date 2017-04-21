@@ -9,7 +9,6 @@
 
 namespace LogicalLayer
 {
-//    typedef std::vector<std::pair<std::string, std::string>> PublisherIdentityT;
     typedef std::map<std::string, std::string> PublisherIdentityT;
     
     class PublisherIdentityMessage
