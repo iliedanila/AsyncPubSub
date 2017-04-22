@@ -62,9 +62,10 @@ namespace LogicalLayer
 
     void Publisher::StopPublishing()
     {
-        std::cout << "Publisher::StopPublishing()\n";
+        node.Log("Stop publishing.");
         publishTimer.cancel();
         //subscribers.clear();
+        //TODO:
     }
     
     const std::string& Publisher::Name() const
@@ -105,7 +106,6 @@ namespace LogicalLayer
 
         if(error)
         {
-            std::cout << "Timer error: " << error.message() << "\n";
             return;
         }
 
@@ -135,10 +135,6 @@ namespace LogicalLayer
         publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
         publishTimer.async_wait(std::bind(&Publisher::OnTimerExpired, this, std::placeholders::_1));
     }
-
-    template <>
-    void Publisher::HandleMessage(LogMessage& message)
-    {}
 
     template <>
     void Publisher::HandleMessage(BrokerIdentity& message)
@@ -175,7 +171,7 @@ namespace LogicalLayer
     template <>
     void Publisher::HandleMessage(StartPublish& message)
     {
-        std::cout << "Publisher: Start sending data to " << message.Subscriber() << "\n";
+        node.Log("Start sending data to " + message.Subscriber());
         subscribers.insert(message.Subscriber());
     }
 

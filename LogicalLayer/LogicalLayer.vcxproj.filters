@@ -14,9 +14,6 @@
     <ClInclude Include="LogicalLayer\allMessages.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LogicalLayer\logMessage.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LogicalLayer\messageVisitor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

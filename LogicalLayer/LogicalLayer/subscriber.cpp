@@ -30,7 +30,6 @@ namespace LogicalLayer
 
     Subscriber::~Subscriber()
     {
-        std::cout << "Subscriber::~Subscriber()\n";
     }
 
     void Subscriber::AddSubscription(SubscriptionT& subscription)
@@ -126,12 +125,6 @@ namespace LogicalLayer
     }
 
     template <>
-    void Subscriber::HandleMessage(LogMessage& message)
-    {
-        std::cout << node.Name() << " " << message.Log() << "\n";
-    }
-
-    template <>
     void Subscriber::HandleMessage(BrokerIdentity& message)
     {
         HandleNewBroker(message);
@@ -152,12 +145,11 @@ namespace LogicalLayer
     template<>
     void Subscriber::HandleMessage(PublisherData& message)
     {
-        std::cout 
-            << node.Name()
-            << " handle message from Publisher: "
-            << message.PublisherName()
-            << "----->"
-            << message.Data()
-            << "\n";
+        node.Log(
+            "Received messsage from publisher: " + 
+            message.PublisherName() +
+            ": " +
+            message.Data()
+        );
     }
 }

@@ -27,13 +27,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -69,11 +69,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Boost\include\boost-1_63;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Boost\include\boost-1_64;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Boost\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Boost\include\boost-1_63;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Boost\include\boost-1_64;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\Boost\include\boost-1_63;$(IncludePath)</IncludePath>
@@ -127,7 +127,6 @@
     <ClInclude Include="LogicalLayer\allMessages.hpp" />
     <ClInclude Include="LogicalLayer\broker.hpp" />
     <ClInclude Include="LogicalLayer\brokerIdentity.hpp" />
-    <ClInclude Include="LogicalLayer\logMessage.hpp" />
     <ClInclude Include="LogicalLayer\messageVisitor.hpp" />
     <ClInclude Include="LogicalLayer\publisher.hpp" />
     <ClInclude Include="LogicalLayer\publisherData.hpp" />
