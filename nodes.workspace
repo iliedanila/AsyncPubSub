@@ -2,8 +2,8 @@
 <CodeLite_Workspace Name="nodes" Database="" Version="10.0.0">
   <Project Name="nodeLib" Path="nodeLib/nodeLib.project" Active="No"/>
   <Project Name="LogicalLayer" Path="LogicalLayer/LogicalLayer.project" Active="No"/>
-  <Project Name="playground" Path="playground/playground.project" Active="Yes"/>
-  <Project Name="startNode" Path="startNode/startNode.project"/>
+  <Project Name="playground" Path="playground/playground.project" Active="No"/>
+  <Project Name="startNode" Path="startNode/startNode.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>

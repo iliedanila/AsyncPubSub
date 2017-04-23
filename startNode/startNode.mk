@@ -3,10 +3,10 @@
 ## any manual changes will be erased      
 ##
 ## Release
-ProjectName            :=playground
+ProjectName            :=startNode
 ConfigurationName      :=Release
 WorkspacePath          :=/home/ilie/workspace/nodes
-ProjectPath            :=/home/ilie/workspace/nodes/playground
+ProjectPath            :=/home/ilie/workspace/nodes/startNode
 IntermediateDirectory  :=./Release
 OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
@@ -32,7 +32,7 @@ Preprocessors          :=$(PreprocessorSwitch)NDEBUG
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
 PreprocessOnlySwitch   :=-E
-ObjectsFileList        :="playground.txt"
+ObjectsFileList        :="startNode.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=mkdir -p
 LinkOptions            :=  
@@ -60,7 +60,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/startNode_main.cpp$(ObjectSuffix) 
 
 
 
@@ -91,13 +91,13 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix): playground/main.cpp $(IntermediateDirectory)/playground_main.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/ilie/workspace/nodes/playground/playground/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/playground_main.cpp$(DependSuffix): playground/main.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/playground_main.cpp$(DependSuffix) -MM playground/main.cpp
+$(IntermediateDirectory)/startNode_main.cpp$(ObjectSuffix): startNode/main.cpp $(IntermediateDirectory)/startNode_main.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/ilie/workspace/nodes/startNode/startNode/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/startNode_main.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/startNode_main.cpp$(DependSuffix): startNode/main.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/startNode_main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/startNode_main.cpp$(DependSuffix) -MM startNode/main.cpp
 
-$(IntermediateDirectory)/playground_main.cpp$(PreprocessSuffix): playground/main.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/playground_main.cpp$(PreprocessSuffix) playground/main.cpp
+$(IntermediateDirectory)/startNode_main.cpp$(PreprocessSuffix): startNode/main.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/startNode_main.cpp$(PreprocessSuffix) startNode/main.cpp
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

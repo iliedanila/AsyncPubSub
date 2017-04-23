@@ -16,7 +16,6 @@
     <File Name="LogicalLayer/allMessages.hpp"/>
     <File Name="LogicalLayer/broker.hpp"/>
     <File Name="LogicalLayer/brokerIdentity.hpp"/>
-    <File Name="LogicalLayer/logMessage.hpp"/>
     <File Name="LogicalLayer/messageVisitor.hpp"/>
     <File Name="LogicalLayer/publisher.hpp"/>
     <File Name="LogicalLayer/publisherData.hpp"/>
