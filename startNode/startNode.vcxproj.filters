@@ -19,5 +19,8 @@
     <ClCompile Include="startNode\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="startNode\arguments.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

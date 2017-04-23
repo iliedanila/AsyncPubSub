@@ -149,6 +149,7 @@
     <ClInclude Include="startNode\arguments.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="startNode\arguments.cpp" />
     <ClCompile Include="startNode\main.cpp" />
   </ItemGroup>
   <ItemGroup>

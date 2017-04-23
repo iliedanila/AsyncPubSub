@@ -15,15 +15,16 @@ int main(int argc, const char * argv[])
     
     try
     {
-        // startNode --name someName --accept port --connect ip1:port1 --connect ip2:port2 --as broker
         if(argc < 3)
         {
             std::string message;
             message += "Example:\n";
             message += "startNode --name someName ";
             message += "--accept portNo ";
-            message += "--connect ip1:portNo1 --connect ip2:portNo2 ";
-            message += "--as broker";
+            message += "--connect ip1 portNo1 --connect ip2 portNo2 ";
+            message += "--as publisher ";
+            message += "--identity attrib value ";
+            message += "--logger";
             
             throw std::runtime_error(message);
         }
@@ -31,58 +32,78 @@ int main(int argc, const char * argv[])
         Arguments args(argc, argv);
         
         // Name.
-        auto nameVector = args.GetArgument("--name");
-        if(nameVector.size() != 1)
+        if (!args.HasArgument("--name"))
         {
             throw std::runtime_error("Name is required. Only one name.");
         }
+        auto nameParameter = args.GetParameters("--name", 1);
         
-        NetworkLayer::Node node(nameVector[0], io_service);
+        NetworkLayer::Node node(nameParameter[0], io_service, args.HasArgument("--logger"));
         
         // Accept.
-        auto acceptPortVector = args.GetArgument("--accept");
-        if(acceptPortVector.size() == 1)
+        if (args.HasArgument("--accept"))
         {
-            node.Accept(std::stoi(acceptPortVector[0]));
+            auto acceptParameters = args.GetParameters("--accept", 1);
+            node.Accept(std::stoi(acceptParameters[0]));
         }
         
         // Connect.
-        auto connectVector = args.GetArgument("--connect");
-        for(auto hostPort : connectVector)
+        while(args.HasArgument("--connect"))
         {
-            std::vector<std::string> hostPortPair;
-            boost::split(hostPortPair, hostPort, boost::is_any_of(":"));
-            node.Connect(hostPortPair[0], std::stoi(hostPortPair[1]));
+            auto connectParameters = args.GetParameters("--connect", 2);
+            node.Connect(connectParameters[0], std::stoi(connectParameters[1]));
         }
         
         // Publisher Subscriber Broker
         std::unique_ptr<LogicalLayer::Publisher> publisher;
         std::unique_ptr<LogicalLayer::Broker> broker;
         std::unique_ptr<LogicalLayer::Subscriber> subscriber;
-        
-        auto identityVector = args.GetArgument("--as");
+
+        if (args.HasArgument("--as"))
         {
-            if(identityVector.size() == 1)
+            auto asParameters = args.GetParameters("--as", 1);
+            if (asParameters[0] == "broker")
             {
-                if(identityVector[0] == "broker")
+                broker.reset(new LogicalLayer::Broker(node));
+            }
+            else if (asParameters[0] == "publisher")
+            {
+                LogicalLayer::PublisherIdentityT publisherIdentity;
+                while(args.HasArgument("--identity"))
                 {
-                    broker.reset(new LogicalLayer::Broker(node));
+                    auto identityParameters = args.GetParameters("--identity", 2);
+                    publisherIdentity.insert(
+                        std::make_pair(
+                            identityParameters[0],
+                            identityParameters[1]));
                 }
-                
-                if(identityVector[0] == "publisher")
+                publisher.reset(new LogicalLayer::Publisher(node, publisherIdentity));
+
+                auto intervalParameters = args.GetParameters("--interval", 1);
+                publisher->StartPublishing(
+                    [&]() -> LogicalLayer::PublisherData
+                    {
+                        return LogicalLayer::PublisherData(
+                            node.Name(),
+                            "Message from Publisher");
+                    }, std::stoi(intervalParameters[0]));
+            }
+            else if (asParameters[0] == "subscriber")
+            {
+                subscriber.reset(new LogicalLayer::Subscriber(node));
+
+                LogicalLayer::SubscriptionT subscription;
+                while(args.HasArgument("--subscription"))
                 {
-                    LogicalLayer::PublisherIdentityT publisherIdentity;
-                    publisher.reset(
-                        new LogicalLayer::Publisher(
-                            node, 
-                            publisherIdentity
-                        )
-                    );
+                    auto subscriptionParameters = args.GetParameters("--subscription", 2);
+                    subscription.insert(
+                        std::make_pair(
+                            subscriptionParameters[0],
+                            subscriptionParameters[1]));
                 }
-                
-                if(identityVector[0] == "subscriber")
+                if (subscription.size() > 0)
                 {
-                    subscriber.reset(new LogicalLayer::Subscriber(node));
+                    subscriber->AddSubscription(subscription);
                 }
             }
         }
