@@ -1,5 +1,7 @@
 #include "arguments.hpp"
 
+#include <algorithm>
+
 Arguments::Arguments(int argc, const char * argv[])
 {
     for (auto i = 0; i < argc; i++)

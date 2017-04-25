@@ -4,6 +4,7 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="startNode/main.cpp"/>
+    <File Name="startNode/arguments.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="startNode/arguments.hpp"/>
@@ -22,7 +23,16 @@
       <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="" Required="yes">
+        <LibraryPath Value="/usr/lib/x86_64-linux-gnu/"/>
+        <LibraryPath Value="../nodeLib/Debug"/>
+        <LibraryPath Value="../LogicalLayer/Debug"/>
+        <Library Value="nodeLib"/>
+        <Library Value="LogicalLayer"/>
+        <Library Value="pthread"/>
+        <Library Value="boost_system"/>
+        <Library Value="boost_serialization"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
