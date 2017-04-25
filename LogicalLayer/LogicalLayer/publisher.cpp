@@ -49,7 +49,7 @@ namespace LogicalLayer
         StopPublishing();
     }
 
-    void Publisher::StartPublishing(PublishFunctionT _publishFunction, std::size_t millisecondsRepeat)
+    void Publisher::StartPublishing(PublishFunctionT _publishFunction, uint32_t millisecondsRepeat)
     {
         publishFunction = _publishFunction;
         millisecondsRepeatPublish = millisecondsRepeat;

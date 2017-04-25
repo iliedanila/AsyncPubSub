@@ -18,7 +18,7 @@ bool Arguments::HasArgument(const std::string& argument)
 
 std::vector<std::string> Arguments::GetParameters(
     const std::string& argument, 
-    std::size_t count)
+    uint32_t count)
 {
     auto it = std::find(args.begin(), args.end(), argument);
     if (it == args.end())
