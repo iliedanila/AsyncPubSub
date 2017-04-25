@@ -13,7 +13,7 @@ public:
 
     bool HasArgument(const std::string& argument);
 
-    std::vector<std::string> GetParameters(const std::string& argument, std::size_t count);
+    std::vector<std::string> GetParameters(const std::string& argument, uint32_t count);
 
 private:
     std::vector<std::string> args;

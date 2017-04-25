@@ -25,7 +25,7 @@ namespace LogicalLayer
             PublisherIdentityT& publisherIdentity);
         ~Publisher();
 
-        void StartPublishing(PublishFunctionT _publishFunction, std::size_t millisecondsRepeat);
+        void StartPublishing(PublishFunctionT _publishFunction, uint32_t millisecondsRepeat);
         void StopPublishing();
         const std::string& Name() const;
 
@@ -48,7 +48,7 @@ namespace LogicalLayer
         NetworkLayer::Node& node;
         PublishFunctionT publishFunction;
         boost::asio::deadline_timer publishTimer;
-        std::size_t millisecondsRepeatPublish;
+        uint32_t millisecondsRepeatPublish;
         std::set<std::string> subscribers;
     };
 }

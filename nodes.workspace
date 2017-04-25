@@ -5,14 +5,14 @@
   <Project Name="playground" Path="playground/playground.project" Active="No"/>
   <Project Name="startNode" Path="startNode/startNode.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="nodeLib" ConfigName="Debug"/>
       <Project Name="LogicalLayer" ConfigName="Debug"/>
       <Project Name="playground" ConfigName="Debug"/>
       <Project Name="startNode" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="nodeLib" ConfigName="Release"/>
       <Project Name="LogicalLayer" ConfigName="Release"/>
