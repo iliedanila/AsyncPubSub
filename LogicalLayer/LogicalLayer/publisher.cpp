@@ -5,6 +5,8 @@
 #include "allMessages.hpp"
 #include <boost/serialization/variant.hpp>
 #include <iostream>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 namespace LogicalLayer
 {
@@ -76,7 +78,7 @@ namespace LogicalLayer
     void Publisher::HandleIncomingMessage(NetworkLayer::DataMessage& message)
     {
         std::stringstream ss(std::move(message.Buffer()));
-        boost::archive::binary_iarchive iarchive(ss);
+        boost::archive::text_iarchive iarchive(ss);
 
         MessageVariant messageV;
         iarchive >> messageV;
@@ -112,7 +114,7 @@ namespace LogicalLayer
         auto message = publishFunction();
         MessageVariant messageV(message);
         std::stringstream ss;
-        boost::archive::binary_oarchive oarchive(ss);
+        boost::archive::text_oarchive oarchive(ss);
         oarchive << messageV;
         auto messageContent = ss.str();
 
@@ -142,7 +144,7 @@ namespace LogicalLayer
         PublisherIdentityMessage pMessage(node.Name(), identity);
         MessageVariant messageV(pMessage);
         std::stringstream ss;
-        boost::archive::binary_oarchive oarchive(ss);
+        boost::archive::text_oarchive oarchive(ss);
         oarchive << messageV;
         auto messageContent = ss.str();
 

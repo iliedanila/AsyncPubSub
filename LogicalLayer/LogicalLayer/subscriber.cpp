@@ -7,6 +7,8 @@
 #include <boost/serialization/variant.hpp>
 #include <sstream>
 #include <iostream>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 namespace LogicalLayer
 {
@@ -47,7 +49,7 @@ namespace LogicalLayer
     void Subscriber::HandleIncomingMessage(NetworkLayer::DataMessage& message)
     {
         std::stringstream ss(std::move(message.Buffer()));
-        boost::archive::binary_iarchive iarchive(ss);
+        boost::archive::text_iarchive iarchive(ss);
 
         MessageVariant messageV;
         iarchive >> messageV;
@@ -63,7 +65,7 @@ namespace LogicalLayer
         SubscriptionMessage subscription(node.Name(), _subscription, action);
         MessageVariant messageV(subscription);
         std::stringstream ss;
-        boost::archive::binary_oarchive oarchive(ss);
+        boost::archive::text_oarchive oarchive(ss);
         oarchive << messageV;
         auto messageContent = ss.str();
 

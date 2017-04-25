@@ -6,6 +6,8 @@
 #include "brokerIdentity.hpp"
 #include "messageVisitor.hpp"
 #include "allMessages.hpp"
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 //#include <boost/archive/text_iarchive.hpp>
 //#include <boost/archive/text_oarchive.hpp>
@@ -43,7 +45,7 @@ namespace LogicalLayer
     void Broker::HandleIncomingMessage(NetworkLayer::DataMessage& message)
     {
         std::stringstream ss(std::move(message.Buffer()));
-        boost::archive::binary_iarchive iarchive(ss);
+        boost::archive::text_iarchive iarchive(ss);
 
         MessageVariant messageV;
         iarchive >> messageV;
@@ -77,7 +79,7 @@ namespace LogicalLayer
     {
         MessageVariant messageV(BrokerIdentity(node.Name()));
         std::stringstream ss;
-        boost::archive::binary_oarchive oarchive(ss);
+        boost::archive::text_oarchive oarchive(ss);
         oarchive << messageV;
         auto messageContent = ss.str();
 
@@ -159,7 +161,7 @@ namespace LogicalLayer
         StartPublish startPublishMessage(subscriber);
         MessageVariant messageV(startPublishMessage);
         std::stringstream ss;
-        boost::archive::binary_oarchive oarchive(ss);
+        boost::archive::text_oarchive oarchive(ss);
         oarchive << messageV;
         auto messageContent = ss.str();
 
