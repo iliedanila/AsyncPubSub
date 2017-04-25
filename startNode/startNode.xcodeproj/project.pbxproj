@@ -12,6 +12,7 @@
 		4BB8EE7B1E59B22E00E91772 /* libnodeLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB8EE7A1E59B22E00E91772 /* libnodeLib.a */; };
 		4BB8EE7D1E59B73300E91772 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB8EE7C1E59B73300E91772 /* libboost_system.a */; };
 		4BB8EE7F1E59B75400E91772 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BB8EE7E1E59B75400E91772 /* libboost_serialization.a */; };
+		4BDE4F271EAD4408001AD56A /* arguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BDE4F261EAD4408001AD56A /* arguments.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,6 +35,7 @@
 		4BB8EE7C1E59B73300E91772 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../../boost/lib/libboost_system.a; sourceTree = "<group>"; };
 		4BB8EE7E1E59B75400E91772 /* libboost_serialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_serialization.a; path = ../../boost/lib/libboost_serialization.a; sourceTree = "<group>"; };
 		4BB8EE801E59F0B900E91772 /* arguments.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = arguments.hpp; sourceTree = "<group>"; };
+		4BDE4F261EAD4408001AD56A /* arguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = arguments.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 		4BB8EE6F1E59B03000E91772 /* startNode */ = {
 			isa = PBXGroup;
 			children = (
+				4BDE4F261EAD4408001AD56A /* arguments.cpp */,
 				4BB8EE701E59B03000E91772 /* main.cpp */,
 				4BB8EE801E59F0B900E91772 /* arguments.hpp */,
 			);
@@ -145,6 +148,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BDE4F271EAD4408001AD56A /* arguments.cpp in Sources */,
 				4BB8EE711E59B03000E91772 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -278,6 +282,7 @@
 				4BB8EE761E59B03000E91772 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
