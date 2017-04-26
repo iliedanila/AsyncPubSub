@@ -40,16 +40,16 @@ namespace LogicalLayer
 
         node.IOService().post(
             [this]
-        {
-            node.NotifyNewNodeStatus(
-                std::bind(
-                    &Broker::HandleNewNodeStatus,
-                    this,
-                    std::placeholders::_1,
-                    std::placeholders::_2
-                )
-            );
-        }
+            {
+                node.NotifyNewNodeStatus(
+                    std::bind(
+                        &Broker::HandleNewNodeStatus,
+                        this,
+                        std::placeholders::_1,
+                        std::placeholders::_2
+                    )
+                );
+            }
         );
 
     }

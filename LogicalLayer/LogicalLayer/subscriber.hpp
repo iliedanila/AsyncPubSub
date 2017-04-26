@@ -38,6 +38,8 @@ namespace LogicalLayer
         void SendAllSubscriptions(const std::string& brokerName);
         void HandleNewBroker(BrokerIdentity& message);
 
+        void HandleNewNodeStatus(const std::string nodeName, bool isAlive);
+
         void HandleBrokerAck(
             const std::string nodeName,
             NetworkLayer::SendError error) const;

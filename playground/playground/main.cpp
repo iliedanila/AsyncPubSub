@@ -32,16 +32,16 @@ int main()
     NetworkLayer::Node brokerNode("broker", ioservice);
     LogicalLayer::Broker broker(brokerNode);
     brokerNode.Accept(7777);
-    brokerNode.Connect("localhost", 8888);
+    brokerNode.Connect("localhost", 8888, false);
     
     std::vector<std::shared_ptr<NetworkLayer::Node>> nodes;
     std::vector<std::shared_ptr<LogicalLayer::Subscriber>> subscribers;
     std::vector<std::shared_ptr<LogicalLayer::Publisher>> publishers;
     
-    for(auto i = 0; i < 2; i++)
+    for(auto i = 0; i < 50; i++)
     {
         auto node = std::make_shared<NetworkLayer::Node>("subscriber" + std::to_string(i), ioservice);
-        node->Connect("localhost", 7777);
+        node->Connect("localhost", 7777, false);
         auto subscriber = std::make_shared<LogicalLayer::Subscriber>(*node);
         LogicalLayer::SubscriptionT subscription{ { "attrib", "value" } };
         subscriber->AddSubscription(subscription);
@@ -49,10 +49,10 @@ int main()
         subscribers.push_back(subscriber);
     }
     
-    for(auto i = 0; i < 2; i++)
+    for(auto i = 0; i < 50; i++)
     {
         auto node = std::make_shared<NetworkLayer::Node>("publisher" + std::to_string(i), ioservice);
-        node->Connect("localhost", 7777);
+        node->Connect("localhost", 7777, false);
         LogicalLayer::PublisherIdentityT publisherIdentity{ { "attrib", "value" } };
         auto publisher = std::make_shared<LogicalLayer::Publisher>(*node, publisherIdentity);
         publisher->StartPublishing(std::bind(&GetPublisherData, node->Name(), "Message from main()"), 2000);

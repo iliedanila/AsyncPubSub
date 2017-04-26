@@ -48,10 +48,16 @@ int main(int argc, const char * argv[])
         }
         
         // Connect.
-        while(args.HasArgument("--connect"))
+        while (args.HasArgument("--connect"))
         {
             auto connectParameters = args.GetParameters("--connect", 2);
-            node.Connect(connectParameters[0], std::stoi(connectParameters[1]));
+            node.Connect(connectParameters[0], std::stoi(connectParameters[1]), false);
+        }
+
+        while (args.HasArgument("--connect-reconnect"))
+        {
+            auto connectParameters = args.GetParameters("--connect-reconnect", 2);
+            node.Connect(connectParameters[0], std::stoi(connectParameters[1]), true);
         }
         
         // Publisher Subscriber Broker

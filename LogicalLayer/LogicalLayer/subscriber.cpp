@@ -28,6 +28,21 @@ namespace LogicalLayer
                 );
             }
         );
+
+        node.IOService().post(
+            [this]
+            {
+                node.NotifyNewNodeStatus(
+                    std::bind(
+                        &Subscriber::HandleNewNodeStatus,
+                        this,
+                        std::placeholders::_1,
+                        std::placeholders::_2
+                    )
+                );
+            }
+        );
+
     }
 
     Subscriber::~Subscriber()
@@ -118,6 +133,19 @@ namespace LogicalLayer
 
         brokers.insert(message.BrokerName());
         SendAllSubscriptions(message.BrokerName());
+    }
+
+    void Subscriber::HandleNewNodeStatus(const std::string nodeName, bool isAlive)
+    {
+        if (isAlive)
+        {
+            node.Log("New node in network: " + nodeName);
+        }
+        else
+        {
+            node.Log("Removing eventual brokers named " + nodeName);
+            brokers.erase(nodeName);
+        }
     }
 
     void Subscriber::HandleBrokerAck(

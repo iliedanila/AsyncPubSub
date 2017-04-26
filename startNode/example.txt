@@ -1,5 +1,5 @@
 startNode --name broker --accept 7777 --as broker --logger
 
-startNode --name publisher --connect localhost 7777 --as publisher --identity attrib1 value1 --identity attrib2 value2 --interval 1000
+startNode --name publisher --connect-reconnect localhost 7777 --as publisher --identity attrib1 value1 --interval 1000
 
-startNode --name subscriber --connect localhost 7777 --as subscriber --subscription attrib1 value1 --subscription attrib2 value2
+startNode --name subscriber --connect-reconnect localhost 7777 --as subscriber --subscription attrib1 value1
