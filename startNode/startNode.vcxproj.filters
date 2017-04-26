@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Doc">
+      <UniqueIdentifier>{5a058538-6efc-4045-8172-f44b820a2dc7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="startNode\arguments.hpp">
@@ -22,5 +25,10 @@
     <ClCompile Include="startNode\arguments.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="example.txt">
+      <Filter>Doc</Filter>
+    </Text>
   </ItemGroup>
 </Project>
