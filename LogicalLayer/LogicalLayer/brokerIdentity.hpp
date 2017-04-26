@@ -17,7 +17,7 @@ namespace LogicalLayer
             nodeName(_nodeName)
         {}
 
-        std::string Name() const { return nodeName; }
+        std::string BrokerName() const { return nodeName; }
 
     private:
         template<class Archive>

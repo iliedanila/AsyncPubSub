@@ -157,7 +157,7 @@ namespace LogicalLayer
         node.IOService().post(
             [this, message, messageContent, callback]
             {
-                node.SndMessage(message.Name(), messageContent, callback);
+                node.SndMessage(message.BrokerName(), messageContent, callback);
             }
         );
     }

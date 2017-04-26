@@ -112,11 +112,12 @@ namespace LogicalLayer
 
     void Subscriber::HandleNewBroker(BrokerIdentity& message)
     {
-        if (brokers.find(message.Name()) != brokers.end())
+        node.Log("New broker found: " + message.BrokerName());
+        if (brokers.find(message.BrokerName()) != brokers.end())
             return;
 
-        brokers.insert(message.Name());
-        SendAllSubscriptions(message.Name());
+        brokers.insert(message.BrokerName());
+        SendAllSubscriptions(message.BrokerName());
     }
 
     void Subscriber::HandleBrokerAck(

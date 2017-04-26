@@ -30,7 +30,7 @@ namespace LogicalLayer
             std::string nodeName,
             NetworkLayer::SendError error) const;
 
-        void HandleNewNodeStatus(std::string nodeName, bool isAlive) const;
+        void HandleNewNodeStatus(const std::string nodeName, bool isAlive);
 
         template<typename MessageT>
         void HandleMessage(MessageT& message);
@@ -40,7 +40,7 @@ namespace LogicalLayer
         void SendStartPublish(std::string publisher, std::string subscriber);
 
         NetworkLayer::Node& node;
-        std::map<std::string, std::set<SubscriptionT> > activeSubscribers;
+        std::map<std::string, std::set<SubscriptionT>> activeSubscribers;
         std::map<std::string, PublisherIdentityT> activePublishers;
     };
 }

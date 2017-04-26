@@ -30,12 +30,28 @@ namespace LogicalLayer
                 );
             }
         );
+
         node.IOService().post(
             [this] 
             {
                 BroadcastIdentity();
             }
         );
+
+        node.IOService().post(
+            [this]
+        {
+            node.NotifyNewNodeStatus(
+                std::bind(
+                    &Broker::HandleNewNodeStatus,
+                    this,
+                    std::placeholders::_1,
+                    std::placeholders::_2
+                )
+            );
+        }
+        );
+
     }
 
     Broker::~Broker()
@@ -59,20 +75,6 @@ namespace LogicalLayer
         {
             SendIdentity(nodeName);
         }
-
-        node.IOService().post(
-            [this]
-            {
-                node.NotifyNewNodeStatus(
-                    std::bind(
-                        &Broker::HandleNewNodeStatus,
-                        this,
-                        std::placeholders::_1,
-                        std::placeholders::_2
-                    )
-                );
-            }
-        );
     }
 
     void Broker::SendIdentity(std::string nodeName) const
@@ -105,15 +107,18 @@ namespace LogicalLayer
         // maybe log...
     }
 
-    void Broker::HandleNewNodeStatus(std::string nodeName, bool isAlive) const
+    void Broker::HandleNewNodeStatus(const std::string nodeName, bool isAlive)
     {
         if(isAlive)
         {
+            node.Log("New node in network: " + nodeName);
             SendIdentity(nodeName);
         }
         else
         {
-            // TODO: treat this, maybe a subscriber, or a publisher.
+            node.Log("Removing node " + nodeName + " from publishers and subscribers.");
+            activeSubscribers.erase(nodeName);
+            activePublishers.erase(nodeName);
         }
     }
 
@@ -183,7 +188,7 @@ namespace LogicalLayer
     template <>
     void Broker::HandleMessage(BrokerIdentity& message)
     {
-        node.Log("Received BrokerIdentity: " + message.Name());
+        node.Log("Received BrokerIdentity: " + message.BrokerName());
     }
 
     template <>
@@ -207,6 +212,8 @@ namespace LogicalLayer
             {
                 iterator->second.erase(message.GetSubscription());
             }
+
+            // TODO: send stop publish.
         }
     }
 
