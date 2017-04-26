@@ -1,12 +1,15 @@
 #ifndef _LOGICAL_LAYER_PUBLISHER_HPP_
 #define _LOGICAL_LAYER_PUBLISHER_HPP_
+
 #include "messageVisitor.hpp"
 #include "publisherIdentity.hpp"
 #include "../../nodeLib/nodeLib/sendError.hpp"
 #include "publisherData.hpp"
+
 #include <boost/date_time/posix_time/posix_time_config.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <set>
+#include <functional>
 
 namespace NetworkLayer {
     class DataMessage;

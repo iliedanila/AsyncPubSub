@@ -13,12 +13,12 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Ilie Danila
-Date                   :=25/04/17
+Date                   :=26/04/17
 CodeLitePath           :=/home/ilie/.codelite
-LinkerName             :=g++
-SharedObjectLinkerName :=g++ -shared -fPIC
+LinkerName             :=clang++
+SharedObjectLinkerName :=clang++ -shared -fPIC
 ObjectSuffix           :=.o
-DependSuffix           :=.o.d
+DependSuffix           :=
 PreprocessSuffix       :=.o.i
 DebugSwitch            :=-gstab
 IncludeSwitch          :=-I
@@ -48,12 +48,12 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/usr/lib/x86
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
 AR       := ar rcus
-CXX      := g++
-CC       := gcc
-CXXFLAGS :=  -g -O0 -Wall $(Preprocessors)
+CXX      := clang++
+CC       := clang
+CXXFLAGS :=  -g -O0 -Wall -std=c++14  $(Preprocessors)
 CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
-AS       := as
+AS       := llvm-as
 
 
 ##
@@ -91,16 +91,11 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix): playground/main.cpp $(IntermediateDirectory)/playground_main.cpp$(DependSuffix)
+$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix): playground/main.cpp 
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/ilie/workspace/nodes/playground/playground/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/playground_main.cpp$(DependSuffix): playground/main.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/playground_main.cpp$(DependSuffix) -MM playground/main.cpp
-
 $(IntermediateDirectory)/playground_main.cpp$(PreprocessSuffix): playground/main.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/playground_main.cpp$(PreprocessSuffix) playground/main.cpp
 
-
--include $(IntermediateDirectory)/*$(DependSuffix)
 ##
 ## Clean
 ##

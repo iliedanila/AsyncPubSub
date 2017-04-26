@@ -13,12 +13,12 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Ilie Danila
-Date                   :=25/04/17
+Date                   :=26/04/17
 CodeLitePath           :=/home/ilie/.codelite
-LinkerName             :=g++
-SharedObjectLinkerName :=g++ -shared -fPIC
+LinkerName             :=clang++
+SharedObjectLinkerName :=clang++ -shared -fPIC
 ObjectSuffix           :=.o
-DependSuffix           :=.o.d
+DependSuffix           :=
 PreprocessSuffix       :=.o.i
 DebugSwitch            :=-gstab
 IncludeSwitch          :=-I
@@ -48,12 +48,12 @@ LibPath                := $(LibraryPathSwitch).
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
 AR       := ar rcus
-CXX      := g++
-CC       := gcc
-CXXFLAGS :=  -g $(Preprocessors)
+CXX      := clang++
+CC       := clang
+CXXFLAGS :=  -g -std=c++14  $(Preprocessors)
 CFLAGS   :=  -g $(Preprocessors)
 ASFLAGS  := 
-AS       := as
+AS       := llvm-as
 
 
 ##
@@ -93,32 +93,21 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/LogicalLayer_broker.cpp$(ObjectSuffix): LogicalLayer/broker.cpp $(IntermediateDirectory)/LogicalLayer_broker.cpp$(DependSuffix)
+$(IntermediateDirectory)/LogicalLayer_broker.cpp$(ObjectSuffix): LogicalLayer/broker.cpp 
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/ilie/workspace/nodes/LogicalLayer/LogicalLayer/broker.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/LogicalLayer_broker.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/LogicalLayer_broker.cpp$(DependSuffix): LogicalLayer/broker.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/LogicalLayer_broker.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/LogicalLayer_broker.cpp$(DependSuffix) -MM LogicalLayer/broker.cpp
-
 $(IntermediateDirectory)/LogicalLayer_broker.cpp$(PreprocessSuffix): LogicalLayer/broker.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/LogicalLayer_broker.cpp$(PreprocessSuffix) LogicalLayer/broker.cpp
 
-$(IntermediateDirectory)/LogicalLayer_publisher.cpp$(ObjectSuffix): LogicalLayer/publisher.cpp $(IntermediateDirectory)/LogicalLayer_publisher.cpp$(DependSuffix)
+$(IntermediateDirectory)/LogicalLayer_publisher.cpp$(ObjectSuffix): LogicalLayer/publisher.cpp 
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/ilie/workspace/nodes/LogicalLayer/LogicalLayer/publisher.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/LogicalLayer_publisher.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/LogicalLayer_publisher.cpp$(DependSuffix): LogicalLayer/publisher.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/LogicalLayer_publisher.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/LogicalLayer_publisher.cpp$(DependSuffix) -MM LogicalLayer/publisher.cpp
-
 $(IntermediateDirectory)/LogicalLayer_publisher.cpp$(PreprocessSuffix): LogicalLayer/publisher.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/LogicalLayer_publisher.cpp$(PreprocessSuffix) LogicalLayer/publisher.cpp
 
-$(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(ObjectSuffix): LogicalLayer/subscriber.cpp $(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(DependSuffix)
+$(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(ObjectSuffix): LogicalLayer/subscriber.cpp 
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/ilie/workspace/nodes/LogicalLayer/LogicalLayer/subscriber.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(DependSuffix): LogicalLayer/subscriber.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(DependSuffix) -MM LogicalLayer/subscriber.cpp
-
 $(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(PreprocessSuffix): LogicalLayer/subscriber.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/LogicalLayer_subscriber.cpp$(PreprocessSuffix) LogicalLayer/subscriber.cpp
 
-
--include $(IntermediateDirectory)/*$(DependSuffix)
 ##
 ## Clean
 ##

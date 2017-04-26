@@ -13,12 +13,12 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Ilie Danila
-Date                   :=25/04/17
+Date                   :=26/04/17
 CodeLitePath           :=/home/ilie/.codelite
-LinkerName             :=g++
-SharedObjectLinkerName :=g++ -shared -fPIC
+LinkerName             :=clang++
+SharedObjectLinkerName :=clang++ -shared -fPIC
 ObjectSuffix           :=.o
-DependSuffix           :=.o.d
+DependSuffix           :=
 PreprocessSuffix       :=.o.i
 DebugSwitch            :=-gstab
 IncludeSwitch          :=-I
@@ -48,12 +48,12 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/usr/lib/x86
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
 AR       := ar rcus
-CXX      := g++
-CC       := gcc
-CXXFLAGS :=  -g -O0 -Wall $(Preprocessors)
+CXX      := clang++
+CC       := clang
+CXXFLAGS :=  -g -O0 -Wall -std=c++14  $(Preprocessors)
 CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
-AS       := as
+AS       := llvm-as
 
 
 ##
@@ -91,24 +91,16 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/startNode_main.cpp$(ObjectSuffix): startNode/main.cpp $(IntermediateDirectory)/startNode_main.cpp$(DependSuffix)
+$(IntermediateDirectory)/startNode_main.cpp$(ObjectSuffix): startNode/main.cpp 
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/ilie/workspace/nodes/startNode/startNode/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/startNode_main.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/startNode_main.cpp$(DependSuffix): startNode/main.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/startNode_main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/startNode_main.cpp$(DependSuffix) -MM startNode/main.cpp
-
 $(IntermediateDirectory)/startNode_main.cpp$(PreprocessSuffix): startNode/main.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/startNode_main.cpp$(PreprocessSuffix) startNode/main.cpp
 
-$(IntermediateDirectory)/startNode_arguments.cpp$(ObjectSuffix): startNode/arguments.cpp $(IntermediateDirectory)/startNode_arguments.cpp$(DependSuffix)
+$(IntermediateDirectory)/startNode_arguments.cpp$(ObjectSuffix): startNode/arguments.cpp 
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/ilie/workspace/nodes/startNode/startNode/arguments.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/startNode_arguments.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/startNode_arguments.cpp$(DependSuffix): startNode/arguments.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/startNode_arguments.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/startNode_arguments.cpp$(DependSuffix) -MM startNode/arguments.cpp
-
 $(IntermediateDirectory)/startNode_arguments.cpp$(PreprocessSuffix): startNode/arguments.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/startNode_arguments.cpp$(PreprocessSuffix) startNode/arguments.cpp
 
-
--include $(IntermediateDirectory)/*$(DependSuffix)
 ##
 ## Clean
 ##
