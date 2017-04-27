@@ -2,6 +2,9 @@
 #define _PUBLISHER_DATA_HPP_
 #include <string>
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/set.hpp>
+
+#include "subscription.hpp"
 
 namespace LogicalLayer
 {
@@ -11,9 +14,13 @@ namespace LogicalLayer
         PublisherData() {}
         ~PublisherData() {}
 
-        explicit PublisherData(const std::string& _publisherName, const std::string& _data)
+        explicit PublisherData(
+            const std::string& _publisherName,
+            const SubscriptionT& _subscription,
+            const std::string& _data)
         :
             publisherName(_publisherName),
+            subscription(_subscription),
             data(_data)
         {}
 
@@ -31,6 +38,7 @@ namespace LogicalLayer
         friend class boost::serialization::access;
 
         std::string publisherName;
+        SubscriptionT subscription;
         std::string data;
     };
 }

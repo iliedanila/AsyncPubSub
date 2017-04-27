@@ -2,15 +2,14 @@
 #define _SUBSCRIPTION_HPP_
 
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/map.hpp>
 #include <boost/serialization/utility.hpp>
+#include <boost/serialization/set.hpp>
 #include <vector>
-#include <map>
+#include <set>
 
 namespace LogicalLayer
 {
-//    typedef std::vector<std::pair<std::string, std::string>> SubscriptionT;
-    typedef std::map<std::string, std::string> SubscriptionT;
+    typedef std::set<std::string> SubscriptionT;
 
     class SubscriptionMessage
     {
@@ -29,27 +28,27 @@ namespace LogicalLayer
             const SubscriptionT& _subscription,
             Action _action)
         :
-            subscriber(_subscriber),
+            subscriberName(_subscriber),
             subscription(_subscription),
             action(_action)
         {}
 
-        const std::string& Subscriber() const { return subscriber; }
-        const SubscriptionT& GetSubscription() const { return subscription; }
+        const std::string& SubscriberName() const { return subscriberName; }
+        const SubscriptionT& Subscription() const { return subscription; }
         const Action& GetAction() const { return action; }
 
     private:
         template<class Archive>
         void serialize(Archive & ar, const unsigned int version)
         {
-            ar & subscriber;
+            ar & subscriberName;
             ar & subscription;
             ar & action;
         }
 
         friend class boost::serialization::access;
 
-        std::string subscriber;
+        std::string subscriberName;
         SubscriptionT subscription;
         Action action;
     };

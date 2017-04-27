@@ -3,6 +3,9 @@
 
 #include <string>
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/set.hpp>
+
+#include "subscription.hpp"
 
 namespace LogicalLayer
 {
@@ -12,23 +15,29 @@ namespace LogicalLayer
         StartPublish() {}
         ~StartPublish() {}
 
-        explicit StartPublish(const std::string _subscriber)
+        explicit StartPublish(
+            const std::string _subscriber,
+            SubscriptionT _subscription)
         :
-            subscriber(_subscriber)
+            subscriberName(_subscriber),
+            subscription(_subscription)
         {}
 
-        const std::string& Subscriber() const { return subscriber; }
+        const std::string& SubscriberName() const { return subscriberName; }
+        const SubscriptionT& Subscription() const { return subscription; }
 
     private:
         template<class Archive>
         void serialize(Archive & ar, const unsigned int version)
         {
-            ar & subscriber;
+            ar & subscriberName;
+            ar & subscription;
         }
 
         friend class boost::serialization::access;
 
-        std::string subscriber;
+        std::string subscriberName;
+        SubscriptionT subscription;
     };
 }
 

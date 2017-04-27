@@ -124,12 +124,12 @@ namespace LogicalLayer
             std::placeholders::_1,
             std::placeholders::_2);
 
-        for(auto subscriberName : subscribers)
+        for(auto subscriberNameSubscription : subscribers)
         {
             node.IOService().post(
-                [this, subscriberName, messageContent, callback]
+                [this, subscriberNameSubscription, messageContent, callback]
                 {
-                    node.SndMessage(subscriberName, messageContent, callback);
+                    node.SndMessage(subscriberNameSubscription.first, messageContent, callback);
                 }
             );
         }
@@ -173,8 +173,8 @@ namespace LogicalLayer
     template <>
     void Publisher::HandleMessage(StartPublish& message)
     {
-        node.Log("Start sending data to " + message.Subscriber());
-        subscribers.insert(message.Subscriber());
+        node.Log("Start sending data to " + message.SubscriberName());
+        subscribers.insert(std::make_pair(message.SubscriberName(), message.Subscription()));
     }
 
     template <>

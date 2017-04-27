@@ -49,9 +49,9 @@ namespace LogicalLayer
     {
     }
 
-    void Subscriber::AddSubscription(SubscriptionT& subscription)
+    void Subscriber::AddSubscription(SubscriptionT& subscription, PublisherDataHandlerT handler)
     {
-        subscriptions.insert(subscription);
+        subscriptions.insert(std::make_pair(subscription, handler));
         SendNewSubscription(subscription);
     }
 
@@ -121,7 +121,7 @@ namespace LogicalLayer
 
         for(auto& subscription : subscriptions)
         {
-            SendSubscription(subscription, brokerName, SubscriptionMessage::eAdd);
+            SendSubscription(subscription.first, brokerName, SubscriptionMessage::eAdd);
         }
     }
 

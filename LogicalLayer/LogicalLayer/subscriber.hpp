@@ -1,11 +1,15 @@
 #ifndef _LOGICAL_LAYER_SUBSCRIBER_HPP_
 #define _LOGICAL_LAYER_SUBSCRIBER_HPP_
+
+#include <set>
+#include <functional>
+#include <map>
+
 #include "messageVisitor.hpp"
-#include <vector>
 #include "brokerIdentity.hpp"
 #include "subscription.hpp"
 #include "../../nodeLib/nodeLib/sendError.hpp"
-#include <set>
+
 
 namespace NetworkLayer {
     class DataMessage;
@@ -14,13 +18,17 @@ namespace NetworkLayer {
 
 namespace LogicalLayer
 {
+    class PublisherData;
+
     class Subscriber
     {
     public:
+        typedef std::function<void(PublisherData& publisherData)> PublisherDataHandlerT;
+
         explicit Subscriber(NetworkLayer::Node& node);
         ~Subscriber();
 
-        void AddSubscription(SubscriptionT& subscription);
+        void AddSubscription(SubscriptionT& subscription, PublisherDataHandlerT handler);
         void RemoveSubscription(SubscriptionT& subscription);
 
     private:
@@ -49,7 +57,7 @@ namespace LogicalLayer
 
         NetworkLayer::Node& node;
         std::set<std::string> brokers;
-        std::set<SubscriptionT> subscriptions;
+        std::map<SubscriptionT, PublisherDataHandlerT> subscriptions;
     };
 }
 

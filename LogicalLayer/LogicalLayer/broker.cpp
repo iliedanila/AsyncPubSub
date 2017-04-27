@@ -161,9 +161,12 @@ namespace LogicalLayer
         return subscriberList;
     }
 
-    void Broker::SendStartPublish(std::string publisher, std::string subscriber)
+    void Broker::SendStartPublish(
+        std::string publisher,
+        std::string subscriberName,
+        SubscriptionT subscription)
     {
-        StartPublish startPublishMessage(subscriber);
+        StartPublish startPublishMessage(subscriberName, subscription);
         MessageVariant messageV(startPublishMessage);
         std::stringstream ss;
         boost::archive::text_oarchive oarchive(ss);
@@ -194,23 +197,23 @@ namespace LogicalLayer
     template <>
     void Broker::HandleMessage(SubscriptionMessage& message)
     {
-        node.Log("Received subscription from " + message.Subscriber());
+        node.Log("Received subscription from " + message.SubscriberName());
 
         if(message.GetAction() == SubscriptionMessage::eAdd)
         {
-            activeSubscribers[message.Subscriber()].insert(message.GetSubscription());
-            auto publishers = GetPublishersForSubscription(message.GetSubscription());
+            activeSubscribers[message.SubscriberName()].insert(message.Subscription());
+            auto publishers = GetPublishersForSubscription(message.Subscription());
             for(auto publisher : publishers)
             {
-                SendStartPublish(publisher, message.Subscriber());
+                SendStartPublish(publisher, message.SubscriberName(), message.Subscription());
             }
         }
         else
         {
-            auto iterator = activeSubscribers.find(message.Subscriber());
+            auto iterator = activeSubscribers.find(message.SubscriberName());
             if(iterator != activeSubscribers.end())
             {
-                iterator->second.erase(message.GetSubscription());
+                iterator->second.erase(message.Subscription());
             }
 
             // TODO: send stop publish.

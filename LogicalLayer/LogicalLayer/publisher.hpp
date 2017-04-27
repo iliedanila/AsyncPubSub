@@ -52,7 +52,7 @@ namespace LogicalLayer
         PublishFunctionT publishFunction;
         boost::asio::deadline_timer publishTimer;
         uint32_t millisecondsRepeatPublish;
-        std::set<std::string> subscribers;
+        std::map<std::string, SubscriptionT> subscribers;
     };
 }
 

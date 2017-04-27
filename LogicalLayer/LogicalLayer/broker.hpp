@@ -37,7 +37,7 @@ namespace LogicalLayer
 
         std::vector<std::string> GetPublishersForSubscription(const SubscriptionT& subscription);
         std::vector<std::string> GetSubscribersForPublisher(const PublisherIdentityT& publisherIdentity);
-        void SendStartPublish(std::string publisher, std::string subscriber);
+        void SendStartPublish(std::string publisher, std::string subscriber, SubscriptionT subscription);
 
         NetworkLayer::Node& node;
         std::map<std::string, std::set<SubscriptionT>> activeSubscribers;
