@@ -13,14 +13,14 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Ilie Danila
-Date                   :=26/04/17
+Date                   :=27/04/17
 CodeLitePath           :=/home/ilie/.codelite
-LinkerName             :=clang++
-SharedObjectLinkerName :=clang++ -shared -fPIC
+LinkerName             :=/usr/bin/clang++
+SharedObjectLinkerName :=/usr/bin/clang++ -shared -fPIC
 ObjectSuffix           :=.o
-DependSuffix           :=
-PreprocessSuffix       :=.o.i
-DebugSwitch            :=-gstab
+DependSuffix           :=.o.d
+PreprocessSuffix       :=.i
+DebugSwitch            :=-g 
 IncludeSwitch          :=-I
 LibrarySwitch          :=-l
 OutputSwitch           :=-o 
@@ -31,7 +31,7 @@ OutputFile             :=$(IntermediateDirectory)/$(ProjectName)
 Preprocessors          :=
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
-PreprocessOnlySwitch   :=-E 
+PreprocessOnlySwitch   :=-E
 ObjectsFileList        :="playground.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=mkdir -p
@@ -47,13 +47,13 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/usr/lib/x86
 ## Common variables
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
-AR       := ar rcus
-CXX      := clang++
-CC       := clang
+AR       := /usr/bin/llvm-ar rcu
+CXX      := /usr/bin/clang++
+CC       := /usr/bin/clang
 CXXFLAGS :=  -g -O0 -Wall -std=c++14  $(Preprocessors)
 CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
-AS       := llvm-as
+AS       := /usr/bin/llvm-as
 
 
 ##
@@ -91,11 +91,16 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix): playground/main.cpp 
+$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix): playground/main.cpp $(IntermediateDirectory)/playground_main.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/ilie/workspace/nodes/playground/playground/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/playground_main.cpp$(DependSuffix): playground/main.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/playground_main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/playground_main.cpp$(DependSuffix) -MM playground/main.cpp
+
 $(IntermediateDirectory)/playground_main.cpp$(PreprocessSuffix): playground/main.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/playground_main.cpp$(PreprocessSuffix) playground/main.cpp
 
+
+-include $(IntermediateDirectory)/*$(DependSuffix)
 ##
 ## Clean
 ##
