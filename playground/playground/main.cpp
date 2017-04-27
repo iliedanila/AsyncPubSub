@@ -38,7 +38,7 @@ int main()
     std::vector<std::shared_ptr<LogicalLayer::Subscriber>> subscribers;
     std::vector<std::shared_ptr<LogicalLayer::Publisher>> publishers;
     
-    for(auto i = 0; i < 50; i++)
+    for(auto i = 0; i < 1; i++)
     {
         auto node = std::make_shared<NetworkLayer::Node>("subscriber" + std::to_string(i), ioservice);
         node->Connect("localhost", 7777, false);
@@ -49,7 +49,7 @@ int main()
         subscribers.push_back(subscriber);
     }
     
-    for(auto i = 0; i < 50; i++)
+    for(auto i = 0; i < 1; i++)
     {
         auto node = std::make_shared<NetworkLayer::Node>("publisher" + std::to_string(i), ioservice);
         node->Connect("localhost", 7777, false);
