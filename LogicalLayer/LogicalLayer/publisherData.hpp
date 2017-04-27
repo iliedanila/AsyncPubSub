@@ -16,16 +16,22 @@ namespace LogicalLayer
 
         explicit PublisherData(
             const std::string& _publisherName,
-            const SubscriptionT& _subscription,
+            /*const SubscriptionT& _subscription,*/
             const std::string& _data)
         :
             publisherName(_publisherName),
-            subscription(_subscription),
+            /*subscription(_subscription),*/
             data(_data)
         {}
 
+        void AddSubscription(SubscriptionT _subscription)
+        {
+            subscription = _subscription;
+        }
+
         const std::string& PublisherName() const { return publisherName; }
         const std::string& Data() const { return data; }
+        const SubscriptionT Subscription() const { return subscription; }
 
     private:
         template<class Archive>

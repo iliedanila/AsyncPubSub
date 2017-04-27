@@ -140,9 +140,10 @@ namespace LogicalLayer
         return publisherList;
     }
 
-    std::vector<std::string> Broker::GetSubscribersForPublisher(const PublisherIdentityT& publisherIdentity)
+    std::map<std::string, SubscriptionT> Broker::GetSubscribersForPublisher(
+        const PublisherIdentityT& publisherIdentity)
     {
-        std::vector<std::string> subscriberList;
+        std::map<std::string, SubscriptionT> subscriberList;
         for(auto& subscriber : activeSubscribers)
         {
             for(auto& subscription : subscriber.second)
@@ -153,7 +154,7 @@ namespace LogicalLayer
                     subscription.begin(),
                     subscription.end()))
                 {
-                    subscriberList.push_back(subscriber.first);
+                    subscriberList.insert(std::make_pair(subscriber.first, subscription));
                 }
             }
         }
@@ -227,9 +228,13 @@ namespace LogicalLayer
 
         activePublishers[message.Publisher()] = message.GetPublisherIdentity();
         auto subscribers = GetSubscribersForPublisher(message.GetPublisherIdentity());
-        for(auto subscriber : subscribers)
+        for (auto subscriberSubscriptions : subscribers)
         {
-            SendStartPublish(message.Publisher(), subscriber);
+            SendStartPublish(
+                message.Publisher(),
+                subscriberSubscriptions.first,
+                subscriberSubscriptions.second
+            );
         }
     }
 

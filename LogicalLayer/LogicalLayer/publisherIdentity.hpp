@@ -5,11 +5,11 @@
 #include <string>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/map.hpp>
-#include <map>
+#include <set>
 
 namespace LogicalLayer
 {
-    typedef std::map<std::string, std::string> PublisherIdentityT;
+    typedef std::set<std::string> PublisherIdentityT;
     
     class PublisherIdentityMessage
     {

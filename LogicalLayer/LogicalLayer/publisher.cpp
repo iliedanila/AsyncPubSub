@@ -112,11 +112,6 @@ namespace LogicalLayer
         }
 
         auto message = publishFunction();
-        MessageVariant messageV(message);
-        std::stringstream ss;
-        boost::archive::text_oarchive oarchive(ss);
-        oarchive << messageV;
-        auto messageContent = ss.str();
 
         auto callback = std::bind(
             &Publisher::DefaultHandleAck,
@@ -127,8 +122,17 @@ namespace LogicalLayer
         for(auto subscriberNameSubscription : subscribers)
         {
             node.IOService().post(
-                [this, subscriberNameSubscription, messageContent, callback]
+                [this, subscriberNameSubscription, message, callback]
                 {
+                    PublisherData localMessage(message.PublisherName(), message.Data());
+                    SubscriptionT subscription = subscriberNameSubscription.second;
+                    localMessage.AddSubscription(subscription);
+                    MessageVariant messageV(localMessage);
+                    std::stringstream ss;
+                    boost::archive::text_oarchive oarchive(ss);
+                    oarchive << messageV;
+                    auto messageContent = ss.str();
+
                     node.SndMessage(subscriberNameSubscription.first, messageContent, callback);
                 }
             );

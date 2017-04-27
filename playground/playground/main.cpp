@@ -43,8 +43,15 @@ int main()
         auto node = std::make_shared<NetworkLayer::Node>("subscriber" + std::to_string(i), ioservice);
         node->Connect("localhost", 7777, false);
         auto subscriber = std::make_shared<LogicalLayer::Subscriber>(*node);
-        LogicalLayer::SubscriptionT subscription{ { "attrib", "value" } };
-        subscriber->AddSubscription(subscription);
+        LogicalLayer::SubscriptionT subscription{ { "data" } };
+        subscriber->AddSubscription(
+            subscription,
+            [node]
+            (LogicalLayer::PublisherData& data)
+            {
+                node->Log("Publisher data: " + data.Data());
+            }
+        );
         nodes.push_back(node);
         subscribers.push_back(subscriber);
     }
@@ -53,7 +60,7 @@ int main()
     {
         auto node = std::make_shared<NetworkLayer::Node>("publisher" + std::to_string(i), ioservice);
         node->Connect("localhost", 7777, false);
-        LogicalLayer::PublisherIdentityT publisherIdentity{ { "attrib", "value" } };
+        LogicalLayer::PublisherIdentityT publisherIdentity{ { "data" } };
         auto publisher = std::make_shared<LogicalLayer::Publisher>(*node, publisherIdentity);
         publisher->StartPublishing(std::bind(&GetPublisherData, node->Name(), "Message from main()"), 2000);
         nodes.push_back(node);

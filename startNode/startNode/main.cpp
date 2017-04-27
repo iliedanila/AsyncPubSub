@@ -77,11 +77,8 @@ int main(int argc, const char * argv[])
                 LogicalLayer::PublisherIdentityT publisherIdentity;
                 while(args.HasArgument("--identity"))
                 {
-                    auto identityParameters = args.GetParameters("--identity", 2);
-                    publisherIdentity.insert(
-                        std::make_pair(
-                            identityParameters[0],
-                            identityParameters[1]));
+                    auto identityParameters = args.GetParameters("--identity", 1);
+                    publisherIdentity.insert(identityParameters[0]);
                 }
                 publisher.reset(new LogicalLayer::Publisher(node, publisherIdentity));
 
@@ -101,15 +98,19 @@ int main(int argc, const char * argv[])
                 LogicalLayer::SubscriptionT subscription;
                 while(args.HasArgument("--subscription"))
                 {
-                    auto subscriptionParameters = args.GetParameters("--subscription", 2);
-                    subscription.insert(
-                        std::make_pair(
-                            subscriptionParameters[0],
-                            subscriptionParameters[1]));
+                    auto subscriptionParameters = args.GetParameters("--subscription", 1);
+                    subscription.insert(subscriptionParameters[0]);
                 }
                 if (subscription.size() > 0)
                 {
-                    subscriber->AddSubscription(subscription);
+                    subscriber->AddSubscription(
+                        subscription,
+                        [&node]
+                        (LogicalLayer::PublisherData& publisherData)
+                        {
+                            node.Log("Publisher data: " + publisherData.Data());
+                        }
+                    );
                 }
             }
         }
