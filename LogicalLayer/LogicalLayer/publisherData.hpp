@@ -38,6 +38,7 @@ namespace LogicalLayer
         void serialize(Archive & ar, const unsigned int version)
         {
             ar & publisherName;
+            ar & subscription;
             ar & data;
         }
 

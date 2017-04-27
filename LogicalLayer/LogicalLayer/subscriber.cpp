@@ -176,11 +176,10 @@ namespace LogicalLayer
     template<>
     void Subscriber::HandleMessage(PublisherData& message)
     {
-        node.Log(
-            "Received messsage from publisher: " + 
-            message.PublisherName() +
-            ": " +
-            message.Data()
-        );
+        auto it = subscriptions.find(message.Subscription());
+        if (it != subscriptions.end())
+        {
+            it->second(message);
+        }
     }
 }
