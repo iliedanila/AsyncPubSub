@@ -1,1 +1,1 @@
-./Debug/startNode_main.cpp.o ./Debug/startNode_arguments.cpp.o
+./Release/startNode_main.cpp.o ./Release/startNode_arguments.cpp.o
