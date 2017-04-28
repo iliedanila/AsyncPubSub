@@ -23,7 +23,7 @@ int main(int argc, const char * argv[])
             message += "--accept portNo ";
             message += "--connect ip1 portNo1 --connect ip2 portNo2 ";
             message += "--as publisher ";
-            message += "--identity attrib value ";
+            message += "--publish DataAttrib ";
             message += "--logger";
             
             throw std::runtime_error(message);
@@ -75,9 +75,9 @@ int main(int argc, const char * argv[])
             else if (asParameters[0] == "publisher")
             {
                 LogicalLayer::PublisherIdentityT publisherIdentity;
-                while(args.HasArgument("--identity"))
+                while(args.HasArgument("--publish"))
                 {
-                    auto identityParameters = args.GetParameters("--identity", 1);
+                    auto identityParameters = args.GetParameters("--publish", 1);
                     publisherIdentity.insert(identityParameters[0]);
                 }
                 publisher.reset(new LogicalLayer::Publisher(node, publisherIdentity));
