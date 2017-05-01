@@ -44,3 +44,10 @@ LogicalLayer/LogicalLayer\.txt
 \.build-release/
 
 UpgradeLog\.htm
+
+*.suo
+.vs/PubSub/v15/Browse.VC.db
+.vs/PubSub/v15/ipch/AutoPCH/LOGICALLAYER-3b32a257/SUBSCRIBER-aaea5f7e/SUBSCRIBER.ipch
+.vs/PubSub/v15/ipch/AutoPCH/STARTNODE-efa9930f/MAIN-c7bdcba7/MAIN.ipch
+.vs/PubSub/v15/Solution.VC.db
+\.vs/PubSub/v15/

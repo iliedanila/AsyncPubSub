@@ -1,6 +1,6 @@
 #include "publisher.hpp"
 #include <functional>
-#include "../../nodeLib/nodeLib/node.hpp"
+#include "../../MeshNetwork/src/node.hpp"
 #include "messageVisitor.hpp"
 #include "allMessages.hpp"
 #include <boost/serialization/variant.hpp>

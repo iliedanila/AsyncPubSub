@@ -5,7 +5,7 @@
 #include <thread>
 #include <chrono>
 
-#include "../../nodeLib/nodeLib/node.hpp"
+#include "../../MeshNetwork/src/node.hpp"
 #include "../../LogicalLayer/LogicalLayer/broker.hpp"
 #include "../../LogicalLayer/LogicalLayer/subscriber.hpp"
 #include "../../LogicalLayer/LogicalLayer/publisher.hpp"

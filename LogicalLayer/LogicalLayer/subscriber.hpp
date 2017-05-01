@@ -8,7 +8,8 @@
 #include "messageVisitor.hpp"
 #include "brokerIdentity.hpp"
 #include "subscription.hpp"
-#include "../../nodeLib/nodeLib/sendError.hpp"
+#include "../../MeshNetwork/src/sendError.hpp"
+#include "../../MeshNetwork/src/sendError.hpp"
 
 
 namespace NetworkLayer {

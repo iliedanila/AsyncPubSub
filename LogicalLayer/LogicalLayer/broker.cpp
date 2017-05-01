@@ -2,7 +2,7 @@
 #include <boost/serialization/variant.hpp>
 
 #include "broker.hpp"
-#include "../../nodeLib/nodeLib/node.hpp"
+#include "../../MeshNetwork/src/node.hpp"
 #include "brokerIdentity.hpp"
 #include "messageVisitor.hpp"
 #include "allMessages.hpp"

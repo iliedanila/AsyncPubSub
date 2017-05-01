@@ -1,6 +1,6 @@
 #ifndef _LOGICAL_LAYER_BROKER_HPP_
 #define _LOGICAL_LAYER_BROKER_HPP_
-#include "../../nodeLib/nodeLib/sendError.hpp"
+#include "../../MeshNetwork/src/sendError.hpp"
 #include "messageVisitor.hpp"
 #include <map>
 #include "subscription.hpp"
