@@ -22,6 +22,7 @@
     <ProjectGuid>{6083BCF9-DDC8-4AF9-A934-953640361AF3}</ProjectGuid>
     <RootNamespace>playground</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>playground</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -127,15 +128,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="playground\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\LogicalLayer\LogicalLayer.vcxproj">
       <Project>{2bdef224-0681-43fd-a685-2d8f2650fb2b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\nodeLib\nodeLib.vcxproj">
       <Project>{bc279b93-02d3-4847-9e0b-ea7e916d5e1a}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="playground\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
