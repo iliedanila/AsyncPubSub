@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="startNode" Version="10.0.0" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+  </Plugins>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
@@ -25,9 +30,9 @@
       </Compiler>
       <Linker Options="" Required="yes">
         <LibraryPath Value="/usr/lib/x86_64-linux-gnu/"/>
-        <LibraryPath Value="../nodeLib/Debug"/>
+        <LibraryPath Value="../MeshNetwork/Debug"/>
         <LibraryPath Value="../LogicalLayer/Debug"/>
-        <Library Value="nodeLib"/>
+        <Library Value="MeshNetwork"/>
         <Library Value="LogicalLayer"/>
         <Library Value="pthread"/>
         <Library Value="boost_system"/>
@@ -75,9 +80,9 @@
       </Compiler>
       <Linker Options="" Required="yes">
         <LibraryPath Value="/usr/lib/x86_64-linux-gnu/"/>
-        <LibraryPath Value="../nodeLib/Release"/>
+        <LibraryPath Value="../MeshNetwork/Release"/>
         <LibraryPath Value="../LogicalLayer/Release"/>
-        <Library Value="nodeLib"/>
+        <Library Value="MeshNetwork"/>
         <Library Value="LogicalLayer"/>
         <Library Value="pthread"/>
         <Library Value="boost_system"/>
