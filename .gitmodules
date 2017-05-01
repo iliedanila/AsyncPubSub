@@ -1,0 +1,3 @@
+[submodule "MeshNetwork"]
+	path = MeshNetwork
+	url = https://github.com/iliedanila/MeshNetwork
