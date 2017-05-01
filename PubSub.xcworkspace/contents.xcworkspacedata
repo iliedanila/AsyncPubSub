@@ -2,10 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:startNode/startNode.xcodeproj">
+      location = "group:MeshNetwork/MeshNetwork.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:nodeLib/nodeLib.xcodeproj">
+      location = "group:startNode/startNode.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:LogicalLayer/LogicalLayer.xcodeproj">

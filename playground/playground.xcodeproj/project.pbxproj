@@ -14,6 +14,16 @@
 		4BE9101E1DE1F7B1004A39C2 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE910151DE1F426004A39C2 /* libboost_serialization.a */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		4B983E1C1EB7CFC10047D433 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B983E181EB7CFC10047D433 /* MeshNetwork.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B042ABB1DE1B0F500E1C461;
+			remoteInfo = nodeLib;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		4B042AD01DE1B22C00E1C461 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -31,6 +41,7 @@
 		4B042AD51DE1B22C00E1C461 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		4B042ADD1DE1B29800E1C461 /* libnodeLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnodeLib.a; path = "../../../Library/Developer/Xcode/DerivedData/nodes-alfiwcqexteccwguxbekptvstvjf/Build/Products/Debug/libnodeLib.a"; sourceTree = "<group>"; };
 		4B5C44701E22C3A2000C41C9 /* libLogicalLayer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLogicalLayer.a; path = "../../../Library/Developer/Xcode/DerivedData/nodes-alfiwcqexteccwguxbekptvstvjf/Build/Products/Debug/libLogicalLayer.a"; sourceTree = "<group>"; };
+		4B983E181EB7CFC10047D433 /* MeshNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MeshNetwork.xcodeproj; path = ../MeshNetwork/MeshNetwork.xcodeproj; sourceTree = "<group>"; };
 		4BE910131DE1F3FD004A39C2 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../../boost/lib/libboost_system.a; sourceTree = "<group>"; };
 		4BE910151DE1F426004A39C2 /* libboost_serialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_serialization.a; path = ../../boost/lib/libboost_serialization.a; sourceTree = "<group>"; };
 		4BE9101A1DE1F5A9004A39C2 /* libboost_serialization.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_serialization.dylib; path = ../../boost/lib/libboost_serialization.dylib; sourceTree = "<group>"; };
@@ -54,6 +65,7 @@
 		4B042AC91DE1B22C00E1C461 = {
 			isa = PBXGroup;
 			children = (
+				4B983E181EB7CFC10047D433 /* MeshNetwork.xcodeproj */,
 				4B042AD41DE1B22C00E1C461 /* playground */,
 				4B042AD31DE1B22C00E1C461 /* Products */,
 				4B042ADC1DE1B29700E1C461 /* Frameworks */,
@@ -86,6 +98,14 @@
 				4B042ADD1DE1B29800E1C461 /* libnodeLib.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4B983E191EB7CFC10047D433 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4B983E1D1EB7CFC10047D433 /* libnodeLib.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -133,12 +153,28 @@
 			mainGroup = 4B042AC91DE1B22C00E1C461;
 			productRefGroup = 4B042AD31DE1B22C00E1C461 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 4B983E191EB7CFC10047D433 /* Products */;
+					ProjectRef = 4B983E181EB7CFC10047D433 /* MeshNetwork.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				4B042AD11DE1B22C00E1C461 /* playground */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		4B983E1D1EB7CFC10047D433 /* libnodeLib.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libnodeLib.a;
+			remoteRef = 4B983E1C1EB7CFC10047D433 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4B042ACE1DE1B22C00E1C461 /* Sources */ = {
