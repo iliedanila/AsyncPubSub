@@ -1,5 +1,5 @@
 # PubSub
-Publisher - Subscriber on top of a self-routing node network (C++ 14)
+Asynchronous Publisher - Subscriber library on top of a self-routing node network (C++ 14)
 
 You'll need `boost` to run this. Please download and install the latest version.
 
