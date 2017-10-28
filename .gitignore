@@ -51,3 +51,11 @@ UpgradeLog\.htm
 .vs/PubSub/v15/ipch/AutoPCH/STARTNODE-efa9930f/MAIN-c7bdcba7/MAIN.ipch
 .vs/PubSub/v15/Solution.VC.db
 \.vs/PubSub/v15/
+
+LogicalLayer/x64/Release/
+
+playground/x64/Release/
+
+startNode/x64/Release/
+
+x64/Release/
