@@ -247,8 +247,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/lib;
+				"HEADER_SEARCH_PATHS[arch=*]" = ../boost/inc;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = ../boost/lib/macos/x64_debug;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -257,8 +258,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/lib;
+				"HEADER_SEARCH_PATHS[arch=*]" = ../boost/inc;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = ../boost/lib/macos/x64_release;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
