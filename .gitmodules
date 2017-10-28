@@ -1,3 +1,6 @@
 [submodule "MeshNetwork"]
 	path = MeshNetwork
 	url = https://github.com/iliedanila/MeshNetwork
+[submodule "boost"]
+	path = boost
+	url = https://github.com/iliedanila/boost.git
