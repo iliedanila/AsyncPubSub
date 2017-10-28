@@ -23,12 +23,12 @@
     <Configuration Name="Debug" CompilerType="clang( tags/RELEASE_400/rc1 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall;-std=c++14;" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
-        <IncludePath Value="/usr/include"/>
+        <IncludePath Value="..boost/inc"/>
       </Compiler>
       <Linker Options="" Required="yes">
-        <LibraryPath Value="/usr/lib/x86_64-linux-gnu/"/>
         <LibraryPath Value="../MeshNetwork/Debug"/>
         <LibraryPath Value="../LogicalLayer/Debug"/>
+        <LibraryPath Value="../boost/lib/linux/x64_debug"/>
         <Library Value="MeshNetwork"/>
         <Library Value="LogicalLayer"/>
         <Library Value="pthread"/>
@@ -72,13 +72,13 @@
     <Configuration Name="Release" CompilerType="clang( tags/RELEASE_400/rc1 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall;-std=c++14;" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
-        <IncludePath Value="/usr/include"/>
+        <IncludePath Value="../boost/inc"/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
       <Linker Options="" Required="yes">
-        <LibraryPath Value="/usr/lib/x86_64-linux-gnu/"/>
         <LibraryPath Value="../MeshNetwork/Release"/>
         <LibraryPath Value="../LogicalLayer/Release"/>
+        <LibraryPath Value="../boost/lib/linux/x64_release"/>
         <Library Value="MeshNetwork"/>
         <Library Value="LogicalLayer"/>
         <Library Value="pthread"/>
@@ -120,4 +120,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release">
+    <Project Name="MeshNetwork"/>
+    <Project Name="LogicalLayer"/>
+  </Dependencies>
 </CodeLite_Project>

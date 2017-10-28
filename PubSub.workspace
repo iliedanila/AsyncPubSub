@@ -5,7 +5,7 @@
   <Project Name="startNode" Path="startNode/startNode.project" Active="No"/>
   <Project Name="MeshNetwork" Path="MeshNetwork/MeshNetwork.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
       <Project Name="MeshNetwork" ConfigName="Debug"/>
       <Project Name="LogicalLayer" ConfigName="Debug"/>
@@ -13,7 +13,7 @@
       <Project Name="startNode" ConfigName="Debug"/>
       <Project Name="MeshNetwork" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
       <Project Name="MeshNetwork" ConfigName="Release"/>
       <Project Name="LogicalLayer" ConfigName="Release"/>
