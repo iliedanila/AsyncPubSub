@@ -59,3 +59,7 @@ playground/x64/Release/
 startNode/x64/Release/
 
 x64/Release/
+
+\.DS_Store
+
+PubSub\.xcworkspace/xcuserdata/ilie\.xcuserdatad/

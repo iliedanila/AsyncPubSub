@@ -1,7 +1,7 @@
 # PubSub
 Asynchronous Publisher - Subscriber library on top of a self-routing node network (C++ 14)
 
-You'll need `boost` to run this. Please download and install the latest version.
+This allows to create a dynamic network of publishers and subscribers (you can add/remove nodes while the system is running, add/remove subscriptions or start/stop certain publishers).
 
 There are solution files for `Visual Studio 2017` on Windows, `xcode` on Mac OS, and `codelite` on Linux.
 
