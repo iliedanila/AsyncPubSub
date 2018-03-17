@@ -1,2 +1,0 @@
-/usr/bin/ar qc libMeshNetwork.a  CMakeFiles/MeshNetwork.dir/src/connection.cpp.o CMakeFiles/MeshNetwork.dir/src/node.cpp.o
-/usr/bin/ranlib libMeshNetwork.a

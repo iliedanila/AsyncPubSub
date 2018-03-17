@@ -1,2 +1,0 @@
-/usr/bin/ar qc libLogicalLayer.a  CMakeFiles/LogicalLayer.dir/src/broker.cpp.o CMakeFiles/LogicalLayer.dir/src/publisher.cpp.o CMakeFiles/LogicalLayer.dir/src/subscriber.cpp.o
-/usr/bin/ranlib libLogicalLayer.a
