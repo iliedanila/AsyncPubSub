@@ -3,10 +3,10 @@
 #include <boost/algorithm/string.hpp>
 
 #include "arguments.hpp"
-#include "../../MeshNetwork/src/node.hpp"
-#include "../../LogicalLayer/LogicalLayer/broker.hpp"
-#include "../../LogicalLayer/LogicalLayer/subscriber.hpp"
-#include "../../LogicalLayer/LogicalLayer/publisher.hpp"
+#include "node.hpp"
+#include "broker.hpp"
+#include "subscriber.hpp"
+#include "publisher.hpp"
 
 
 int main(int argc, const char * argv[])

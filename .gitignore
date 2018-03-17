@@ -65,3 +65,6 @@ x64/Release/
 PubSub\.xcworkspace/xcuserdata/ilie\.xcuserdatad/
 
 LogicalLayer/build/
+
+build/
+.vscode/
