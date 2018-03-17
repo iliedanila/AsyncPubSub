@@ -1,7 +1,7 @@
 #include "subscriber.hpp"
-#include "allMessages.hpp"
-#include "../../MeshNetwork/src/dataMessage.hpp"
-#include "../../MeshNetwork/src/node.hpp"
+#include "../inc/allMessages.hpp"
+#include "dataMessage.hpp"
+#include "node.hpp"
 
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/serialization/variant.hpp>

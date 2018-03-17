@@ -1,8 +1,8 @@
 #include "publisher.hpp"
 #include <functional>
-#include "../../MeshNetwork/src/node.hpp"
+#include "node.hpp"
 #include "messageVisitor.hpp"
-#include "allMessages.hpp"
+#include "../inc/allMessages.hpp"
 #include <boost/serialization/variant.hpp>
 #include <iostream>
 #include <boost/archive/text_iarchive.hpp>

@@ -2,10 +2,10 @@
 #include <boost/serialization/variant.hpp>
 
 #include "broker.hpp"
-#include "../../MeshNetwork/src/node.hpp"
+#include "node.hpp"
 #include "brokerIdentity.hpp"
 #include "messageVisitor.hpp"
-#include "allMessages.hpp"
+#include "../inc/allMessages.hpp"
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
@@ -63,7 +63,7 @@ namespace LogicalLayer
         std::stringstream ss(std::move(message.Buffer()));
         boost::archive::text_iarchive iarchive(ss);
 
-        MessageVariant messageV;
+        LogicalLayer::MessageVariant messageV;
         iarchive >> messageV;
 
         boost::apply_visitor(MessageVisitor<Broker>(*this), messageV);
@@ -79,7 +79,7 @@ namespace LogicalLayer
 
     void Broker::SendIdentity(std::string nodeName) const
     {
-        MessageVariant messageV(BrokerIdentity(node.Name()));
+        LogicalLayer::MessageVariant messageV(BrokerIdentity(node.Name()));
         std::stringstream ss;
         boost::archive::text_oarchive oarchive(ss);
         oarchive << messageV;
@@ -168,7 +168,7 @@ namespace LogicalLayer
         SubscriptionT subscription)
     {
         StartPublish startPublishMessage(subscriberName, subscription);
-        MessageVariant messageV(startPublishMessage);
+        LogicalLayer::MessageVariant messageV(startPublishMessage);
         std::stringstream ss;
         boost::archive::text_oarchive oarchive(ss);
         oarchive << messageV;

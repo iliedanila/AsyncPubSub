@@ -5,10 +5,10 @@
 #include <thread>
 #include <chrono>
 
-#include "../../MeshNetwork/src/node.hpp"
-#include "../../LogicalLayer/LogicalLayer/broker.hpp"
-#include "../../LogicalLayer/LogicalLayer/subscriber.hpp"
-#include "../../LogicalLayer/LogicalLayer/publisher.hpp"
+#include "node.hpp"
+#include "broker.hpp"
+#include "subscriber.hpp"
+#include "publisher.hpp"
 
 using namespace boost::asio;
 using namespace ip;

@@ -3,7 +3,7 @@
 
 #include "messageVisitor.hpp"
 #include "publisherIdentity.hpp"
-#include "../../MeshNetwork/src/sendError.hpp"
+#include "sendError.hpp"
 #include "publisherData.hpp"
 
 #include <boost/date_time/posix_time/posix_time_config.hpp>
