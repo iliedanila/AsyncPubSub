@@ -63,3 +63,5 @@ x64/Release/
 \.DS_Store
 
 PubSub\.xcworkspace/xcuserdata/ilie\.xcuserdatad/
+
+LogicalLayer/build/
