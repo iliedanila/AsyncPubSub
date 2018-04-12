@@ -9,7 +9,8 @@ set (CMAKE_CXX_STANDARD 14) # C++ 14
 
 include_directories(startNode/inc)
 include_directories(MeshNetwork/inc)
-include_directories(MeshNetwork/boost/inc)
+# include_directories(MeshNetwork/boost/inc)
+include_directories(c:/boost/include/boost-1_66)
 include_directories(LogicalLayer/inc)
 
 # project dependencies
@@ -22,7 +23,8 @@ if(APPLE)
 elseif(UNIX)
     link_directories(MeshNetwork/boost/lib/linux/x64_release)
 elseif(WIN32)
-    link_directories(MeshNetwork/boost/lib/win/x32/debug) # for some reason the default is debug
+    # link_directories(MeshNetwork/boost/lib/win/x32/debug) # for some reason the default is debug
+    link_directories(c:/boost/lib)
 endif()
 
 # sources
