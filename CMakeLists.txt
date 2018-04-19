@@ -8,6 +8,15 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES arm)
     message("arm mode")
 endif()
 
+# the complete system name, e.g. "Linux-2.4.22", "FreeBSD-5.4-RELEASE" or "Windows 5.1"
+MESSAGE( STATUS "CMAKE_SYSTEM: " ${CMAKE_SYSTEM} )
+# the short system name, e.g. "Linux", "FreeBSD" or "Windows"
+MESSAGE( STATUS "CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME} )
+# only the version part of CMAKE_SYSTEM
+MESSAGE( STATUS "CMAKE_SYSTEM_VERSION: " ${CMAKE_SYSTEM_VERSION} )
+# the processor name (e.g. "Intel(R) Pentium(R) M processor 2.00GHz")
+MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR} )
+
 project(playground)
 project(startNode)
 
