@@ -68,3 +68,5 @@ LogicalLayer/build/
 
 build/
 .vscode/
+
+\.idea/
