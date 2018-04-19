@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-#set(CMAKE_BUILD_TYPE Release Debug)
-
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     message("debug mode")
 endif()
