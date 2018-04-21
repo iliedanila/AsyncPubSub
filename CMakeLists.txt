@@ -1,13 +1,5 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-    message("debug mode")
-endif()
-
-if(CMAKE_SYSTEM_PROCESSOR MATCHES arm)
-    message("arm mode")
-endif()
-
 project(playground)
 project(startNode)
 
@@ -15,9 +7,7 @@ set (CMAKE_CXX_STANDARD 14) # C++ 14
 
 include_directories(startNode/inc)
 include_directories(MeshNetwork/inc)
-# include_directories(MeshNetwork/boost/inc)
-#include_directories(c:/boost/include/boost-1_66)
-include_directories(/Users/ilie/workspace/boost/include)
+include_directories(MeshNetwork/boost/inc)
 include_directories(LogicalLayer/inc)
 
 # project dependencies
@@ -26,11 +16,16 @@ add_subdirectory(MeshNetwork)
 
 # link path
 if(APPLE)
-#    link_directories(MeshNetwork/boost/lib/macos/x64_release)
-    link_directories(/Users/ilie/workspace/boost/lib)
+    if (CMAKE_BUILD_TYPE MATCHES Release)
+        link_directories(MeshNetwork/boost/lib/macos/x64_release)
+        message("It's release")
+    elseif (CMAKE_BUILD_TYPE MATCHES Debug)
+        link_directories(MeshNetwork/boost/lib/macos/x64_debug)
+        message("It's debug")
+    endif()
 elseif(UNIX)
     if (CMAKE_SYSTEM_PROCESSOR MATCHES armv7l)
-        MESSAGE("armv7l")
+        MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR} )
     else()
         link_directories(MeshNetwork/boost/lib/linux/x64_release)
     ENDIF()
