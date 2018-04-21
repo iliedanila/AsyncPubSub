@@ -27,11 +27,14 @@ elseif(UNIX)
     if (CMAKE_SYSTEM_PROCESSOR MATCHES armv7l)
         MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR} )
     else()
-        link_directories(MeshNetwork/boost/lib/linux/x64_release)
-    ENDIF()
+        if (CMAKE_BUILD_TYPE MATCHES Release)
+            link_directories(MeshNetwork/boost/lib/linux/x64_release)
+        elseif (CMAKE_BUILD_TYPE MATCHES Debug)
+            link_directories(MeshNetwork/boost/lib/linux/x64_debug)
+        endif()
+    endif()
 elseif(WIN32)
-    # link_directories(MeshNetwork/boost/lib/win/x32/debug) # for some reason the default is debug
-    link_directories(c:/boost/lib)
+    link_directories(MeshNetwork/boost/lib/win/x32/debug) # for some reason the default is debug
 endif()
 
 # sources
