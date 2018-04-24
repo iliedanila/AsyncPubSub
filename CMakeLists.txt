@@ -1,74 +1,13 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-project(playground)
-project(startNode)
-
 set (CMAKE_CXX_STANDARD 14) # C++ 14
-message(STATUS "Processor: " ${CMAKE_SYSTEM_PROCESSOR})
-
-include_directories(startNode/inc)
-include_directories(MeshNetwork/inc)
-include_directories(MeshNetwork/boost/inc)
-include_directories(LogicalLayer/inc)
 
 # project dependencies
 add_subdirectory(LogicalLayer)
 add_subdirectory(MeshNetwork)
+add_subdirectory(Playground)
+add_subdirectory(StartNode)
 
-# link path
-if(APPLE)
-    if (CMAKE_BUILD_TYPE MATCHES Release)
-        link_directories(MeshNetwork/boost/lib/macos/x64_release)
-        message("It's release")
-    elseif (CMAKE_BUILD_TYPE MATCHES Debug)
-        link_directories(MeshNetwork/boost/lib/macos/x64_debug)
-        message("It's debug")
-    endif()
-elseif(UNIX)
-    if (CMAKE_SYSTEM_PROCESSOR MATCHES armv7l)
-        MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR} )
-        if (CMAKE_BUILD_TYPE MATCHES Release)
-            link_directories(MeshNetwork/boost/lib/arm/release)
-        elseif (CMAKE_BUILD_TYPE MATCHES Debug)
-            link_directories(MeshNetwork/boost/lib/arm/debug)
-        endif()
-    else()
-        if (CMAKE_BUILD_TYPE MATCHES Release)
-            link_directories(MeshNetwork/boost/lib/linux/x64_release)
-        elseif (CMAKE_BUILD_TYPE MATCHES Debug)
-            link_directories(MeshNetwork/boost/lib/linux/x64_debug)
-        endif()
-    endif()
-elseif(WIN32)
-    link_directories(MeshNetwork/boost/lib/win/x32/debug) # for some reason the default is debug
-endif()
-
-# sources
-file (GLOB SOURCES_PLAYGROUND "playground/src/*.cpp")
-file (GLOB SOURCES_STARTNODE "startNode/src/*.cpp")
-
-# execs
-add_executable(playground ${SOURCES_PLAYGROUND})
-add_executable(startNode ${SOURCES_STARTNODE})
-
-# libraries
-target_link_libraries(playground LogicalLayer MeshNetwork)
-target_link_libraries(startNode LogicalLayer MeshNetwork)
-
-if(UNIX)
-    target_link_libraries(playground boost_date_time)
-    target_link_libraries(playground boost_regex)
-    target_link_libraries(playground boost_serialization)
-    target_link_libraries(playground boost_system)
-
-    target_link_libraries(startNode boost_date_time)
-    target_link_libraries(startNode boost_regex)
-    target_link_libraries(startNode boost_serialization)
-    target_link_libraries(startNode boost_system)
-
-    target_link_libraries(playground pthread)
-    target_link_libraries(startNode pthread)
-endif()
 
 # MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )
 # MESSAGE( STATUS "CMAKE_CURRENT_BINARY_DIR: " ${CMAKE_CURRENT_BINARY_DIR} )
