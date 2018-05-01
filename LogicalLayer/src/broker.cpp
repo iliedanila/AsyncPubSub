@@ -18,36 +18,36 @@ namespace LogicalLayer
     :
         node(_node)
     {
-        node.IOService().post(
+        node.getIOService().post(
             [this]
             {
-                node.AcceptMessages(
-                    std::bind(
-                        &Broker::HandleIncomingMessage,
-                        this,
-                        std::placeholders::_1
-                    )
+                node.acceptMessages(
+                        std::bind(
+                                &Broker::handleIncomingMessage,
+                                this,
+                                std::placeholders::_1
+                        )
                 );
             }
         );
 
-        node.IOService().post(
+        node.getIOService().post(
             [this] 
             {
-                BroadcastIdentity();
+                broadcastIdentity();
             }
         );
 
-        node.IOService().post(
+        node.getIOService().post(
             [this]
             {
-                node.NotifyNewNodeStatus(
-                    std::bind(
-                        &Broker::HandleNewNodeStatus,
-                        this,
-                        std::placeholders::_1,
-                        std::placeholders::_2
-                    )
+                node.notifyNewNodeStatus(
+                        std::bind(
+                                &Broker::handleNewNodeStatus,
+                                this,
+                                std::placeholders::_1,
+                                std::placeholders::_2
+                        )
                 );
             }
         );
@@ -58,9 +58,9 @@ namespace LogicalLayer
     {
     }
 
-    void Broker::HandleIncomingMessage(NetworkLayer::DataMessage& message)
+    void Broker::handleIncomingMessage(NetworkLayer::DataMessage &message)
     {
-        std::stringstream ss(std::move(message.Buffer()));
+        std::stringstream ss(std::move(message.getBuffer()));
         boost::archive::text_iarchive iarchive(ss);
 
         LogicalLayer::MessageVariant messageV;
@@ -69,60 +69,60 @@ namespace LogicalLayer
         boost::apply_visitor(MessageVisitor<Broker>(*this), messageV);
     }
 
-    void Broker::BroadcastIdentity() const
+    void Broker::broadcastIdentity() const
     {
-        for(auto nodeName : node.GetAccessibleNodes())
+        for(auto nodeName : node.getAccessibleNodes())
         {
-            SendIdentity(nodeName);
+            sendIdentity(nodeName);
         }
     }
 
-    void Broker::SendIdentity(std::string nodeName) const
+    void Broker::sendIdentity(std::string nodeName) const
     {
-        LogicalLayer::MessageVariant messageV(BrokerIdentity(node.Name()));
+        LogicalLayer::MessageVariant messageV(BrokerIdentity(node.getName()));
         std::stringstream ss;
         boost::archive::text_oarchive oarchive(ss);
         oarchive << messageV;
         auto messageContent = ss.str();
 
         auto callback = std::bind(
-            &Broker::DefaultCallback,
+                &Broker::defaultCallback,
             this,
             std::placeholders::_1,
             std::placeholders::_2);
 
-        node.IOService().post(
+        node.getIOService().post(
             [this, nodeName, callback, messageContent]
             {
-                node.SndMessage(nodeName, messageContent, callback);
+                node.sndMessage(nodeName, messageContent, callback);
             }
         );
     }
 
-    void Broker::DefaultCallback(
-        std::string nodeName, 
-        NetworkLayer::SendError error) const
+    void Broker::defaultCallback(
+            std::string nodeName,
+            NetworkLayer::SendError error) const
     {
         // TODO: add some implementation.
         // maybe log...
     }
 
-    void Broker::HandleNewNodeStatus(const std::string nodeName, bool isAlive)
+    void Broker::handleNewNodeStatus(const std::string nodeName, bool isAlive)
     {
         if(isAlive)
         {
-            node.Log("New node in network: " + nodeName);
-            SendIdentity(nodeName);
+            node.log("New node in network: " + nodeName);
+            sendIdentity(nodeName);
         }
         else
         {
-            node.Log("Removing node " + nodeName + " from publishers and subscribers.");
+            node.log("Removing node " + nodeName + " from publishers and subscribers.");
             activeSubscribers.erase(nodeName);
             activePublishers.erase(nodeName);
         }
     }
 
-    std::vector<std::string> Broker::GetPublishersForSubscription(const SubscriptionT& subscription)
+    std::vector<std::string> Broker::getPublishersForSubscription(const SubscriptionT &subscription)
     {
         std::vector<std::string> publisherList;
         for(auto& publisher : activePublishers)
@@ -140,8 +140,8 @@ namespace LogicalLayer
         return publisherList;
     }
 
-    std::map<std::string, SubscriptionT> Broker::GetSubscribersForPublisher(
-        const PublisherIdentityT& publisherIdentity)
+    std::map<std::string, SubscriptionT> Broker::getSubscribersForPublisher(
+            const PublisherIdentityT &publisherIdentity)
     {
         std::map<std::string, SubscriptionT> subscriberList;
         for(auto& subscriber : activeSubscribers)
@@ -162,10 +162,10 @@ namespace LogicalLayer
         return subscriberList;
     }
 
-    void Broker::SendStartPublish(
-        std::string publisher,
-        std::string subscriberName,
-        SubscriptionT subscription)
+    void Broker::sendStartPublish(
+            std::string publisher,
+            std::string subscriberName,
+            SubscriptionT subscription)
     {
         StartPublish startPublishMessage(subscriberName, subscription);
         LogicalLayer::MessageVariant messageV(startPublishMessage);
@@ -175,46 +175,46 @@ namespace LogicalLayer
         auto messageContent = ss.str();
 
         auto callback = std::bind(
-            &Broker::DefaultCallback,
+                &Broker::defaultCallback,
             this,
             std::placeholders::_1,
             std::placeholders::_2
         );
 
-        node.IOService().post(
+        node.getIOService().post(
             [this, publisher, messageContent, callback]
             {
-                node.SndMessage(publisher, messageContent, callback);
+                node.sndMessage(publisher, messageContent, callback);
             }
         );
     }
 
     template <>
-    void Broker::HandleMessage(BrokerIdentity& message)
+    void Broker::handleMessage(BrokerIdentity& message)
     {
-        node.Log("Received BrokerIdentity: " + message.BrokerName());
+        node.log("Received BrokerIdentity: " + message.getBrokerName());
     }
 
     template <>
-    void Broker::HandleMessage(SubscriptionMessage& message)
+    void Broker::handleMessage(SubscriptionMessage& message)
     {
-        node.Log("Received subscription from " + message.SubscriberName());
+        node.log("Received subscription from " + message.getSubscriberName());
 
-        if(message.GetAction() == SubscriptionMessage::eAdd)
+        if(message.getAction() == SubscriptionMessage::eAdd)
         {
-            activeSubscribers[message.SubscriberName()].insert(message.Subscription());
-            auto publishers = GetPublishersForSubscription(message.Subscription());
+            activeSubscribers[message.getSubscriberName()].insert(message.getSubscription());
+            auto publishers = getPublishersForSubscription(message.getSubscription());
             for(auto publisher : publishers)
             {
-                SendStartPublish(publisher, message.SubscriberName(), message.Subscription());
+                sendStartPublish(publisher, message.getSubscriberName(), message.getSubscription());
             }
         }
         else
         {
-            auto iterator = activeSubscribers.find(message.SubscriberName());
+            auto iterator = activeSubscribers.find(message.getSubscriberName());
             if(iterator != activeSubscribers.end())
             {
-                iterator->second.erase(message.Subscription());
+                iterator->second.erase(message.getSubscription());
             }
 
             // TODO: send stop publish.
@@ -222,27 +222,27 @@ namespace LogicalLayer
     }
 
     template <>
-    void Broker::HandleMessage(PublisherIdentityMessage& message)
+    void Broker::handleMessage(PublisherIdentityMessage& message)
     {
-        node.Log("Received PublisherIdentity: " + message.Publisher());
+        node.log("Received PublisherIdentity: " + message.getPublisherName());
 
-        activePublishers[message.Publisher()] = message.GetPublisherIdentity();
-        auto subscribers = GetSubscribersForPublisher(message.GetPublisherIdentity());
+        activePublishers[message.getPublisherName()] = message.getPublisherIdentity();
+        auto subscribers = getSubscribersForPublisher(message.getPublisherIdentity());
         for (auto subscriberSubscriptions : subscribers)
         {
-            SendStartPublish(
-                message.Publisher(),
-                subscriberSubscriptions.first,
-                subscriberSubscriptions.second
+            sendStartPublish(
+                    message.getPublisherName(),
+                    subscriberSubscriptions.first,
+                    subscriberSubscriptions.second
             );
         }
     }
 
     template<>
-    void Broker::HandleMessage(StartPublish& message)
+    void Broker::handleMessage(StartPublish& message)
     {}
 
     template<>
-    void Broker::HandleMessage(PublisherData& message)
+    void Broker::handleMessage(PublisherData& message)
     {}
 }

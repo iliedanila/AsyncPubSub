@@ -29,32 +29,32 @@ namespace LogicalLayer
         explicit Subscriber(NetworkLayer::Node& node);
         ~Subscriber();
 
-        void AddSubscription(SubscriptionT& subscription, PublisherDataHandlerT handler);
-        void RemoveSubscription(SubscriptionT& subscription);
+        void addSubscription(SubscriptionT &subscription, PublisherDataHandlerT handler);
+        void removeSubscription(SubscriptionT &subscription);
 
     private:
         friend struct MessageVisitor<Subscriber>;
 
-        void HandleIncomingMessage(NetworkLayer::DataMessage& message);
+        void handleIncomingMessage(NetworkLayer::DataMessage &message);
 
-        void SendSubscription(
-            const SubscriptionT& subscription, 
-            const std::string& brokerName,
-            SubscriptionMessage::Action) const;
+        void sendSubscription(
+                const SubscriptionT &subscription,
+                const std::string &brokerName,
+                SubscriptionMessage::Action) const;
 
-        void SendNewSubscription(SubscriptionT& subscription);
-        void SendRemoveSubscription(SubscriptionT& subscription);
-        void SendAllSubscriptions(const std::string& brokerName);
-        void HandleNewBroker(BrokerIdentity& message);
+        void sendNewSubscription(SubscriptionT &subscription);
+        void sendRemoveSubscription(SubscriptionT &subscription);
+        void sendAllSubscriptions(const std::string &brokerName);
+        void handleNewBroker(BrokerIdentity &message);
 
-        void HandleNewNodeStatus(const std::string nodeName, bool isAlive);
+        void handleNewNodeStatus(const std::string nodeName, bool isAlive);
 
-        void HandleBrokerAck(
-            const std::string nodeName,
-            NetworkLayer::SendError error) const;
+        void handleBrokerAck(
+                const std::string nodeName,
+                NetworkLayer::SendError error) const;
 
         template<typename MessageT>
-        void HandleMessage(MessageT& message);
+        void handleMessage(MessageT& message);
 
         NetworkLayer::Node& node;
         std::set<std::string> brokers;

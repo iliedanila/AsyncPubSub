@@ -33,9 +33,9 @@ namespace LogicalLayer
             action(_action)
         {}
 
-        const std::string& SubscriberName() const { return subscriberName; }
-        const SubscriptionT& Subscription() const { return subscription; }
-        const Action& GetAction() const { return action; }
+        const std::string& getSubscriberName() const { return subscriberName; }
+        const SubscriptionT& getSubscription() const { return subscription; }
+        const Action& getAction() const { return action; }
 
     private:
         template<class Archive>

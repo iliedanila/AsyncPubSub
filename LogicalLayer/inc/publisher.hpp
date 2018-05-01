@@ -28,24 +28,24 @@ namespace LogicalLayer
             PublisherIdentityT& publisherIdentity);
         ~Publisher();
 
-        void StartPublishing(PublishFunctionT _publishFunction, uint32_t millisecondsRepeat);
-        void StopPublishing();
-        const std::string& Name() const;
+        void startPublishing(PublishFunctionT _publishFunction, uint32_t millisecondsRepeat);
+        void stopPublishing();
+        const std::string& getName() const;
 
     private:
         friend struct MessageVisitor<Publisher>;
-        void HandleIncomingMessage(NetworkLayer::DataMessage& message);
+        void handleIncomingMessage(NetworkLayer::DataMessage &message);
 
-        void HandleNewNodeStatus(std::string nodeName, bool isAlive);
+        void handleNewNodeStatus(std::string nodeName, bool isAlive);
 
-        void DefaultHandleAck(
-            const std::string nodeName,
-            NetworkLayer::SendError error) const;
+        void defaultHandleAck(
+                const std::string nodeName,
+                NetworkLayer::SendError error) const;
 
         template<typename MessageT>
-        void HandleMessage(MessageT& message);
+        void handleMessage(MessageT& message);
 
-        void OnTimerExpired(boost::system::error_code error);
+        void onTimerExpired(boost::system::error_code error);
 
         PublisherIdentityT identity;
         NetworkLayer::Node& node;

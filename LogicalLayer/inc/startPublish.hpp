@@ -23,8 +23,8 @@ namespace LogicalLayer
             subscription(_subscription)
         {}
 
-        const std::string& SubscriberName() const { return subscriberName; }
-        const SubscriptionT& Subscription() const { return subscription; }
+        const std::string& getSubscriberName() const { return subscriberName; }
+        const SubscriptionT& getSubscription() const { return subscription; }
 
     private:
         template<class Archive>

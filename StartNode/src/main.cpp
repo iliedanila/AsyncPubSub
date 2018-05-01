@@ -44,20 +44,20 @@ int main(int argc, const char * argv[])
         if (args.HasArgument("--accept"))
         {
             auto acceptParameters = args.GetParameters("--accept", 1);
-            node.Accept(std::stoi(acceptParameters[0]));
+            node.accept(std::stoi(acceptParameters[0]));
         }
         
         // Connect.
         while (args.HasArgument("--connect"))
         {
             auto connectParameters = args.GetParameters("--connect", 2);
-            node.Connect(connectParameters[0], std::stoi(connectParameters[1]), false);
+            node.connect(connectParameters[0], std::stoi(connectParameters[1]), false);
         }
 
         while (args.HasArgument("--connect-reconnect"))
         {
             auto connectParameters = args.GetParameters("--connect-reconnect", 2);
-            node.Connect(connectParameters[0], std::stoi(connectParameters[1]), true);
+            node.connect(connectParameters[0], std::stoi(connectParameters[1]), true);
         }
         
         // Publisher Subscriber Broker
@@ -83,13 +83,12 @@ int main(int argc, const char * argv[])
                 publisher.reset(new LogicalLayer::Publisher(node, publisherIdentity));
 
                 auto intervalParameters = args.GetParameters("--interval", 1);
-                publisher->StartPublishing(
-                    [&]() -> LogicalLayer::PublisherData
-                    {
-                        return LogicalLayer::PublisherData(
-                            node.Name(),
-                            "Message from Publisher");
-                    }, std::stoi(intervalParameters[0]));
+                publisher->startPublishing(
+                        [&]() -> LogicalLayer::PublisherData {
+                            return LogicalLayer::PublisherData(
+                                    node.getName(),
+                                    "Message from Publisher");
+                        }, std::stoi(intervalParameters[0]));
             }
             else if (asParameters[0] == "subscriber")
             {
@@ -103,13 +102,12 @@ int main(int argc, const char * argv[])
                 }
                 if (subscription.size() > 0)
                 {
-                    subscriber->AddSubscription(
-                        subscription,
-                        [&node]
-                        (LogicalLayer::PublisherData& publisherData)
-                        {
-                            node.Log("Publisher data: " + publisherData.Data());
-                        }
+                    subscriber->addSubscription(
+                            subscription,
+                            [&node]
+                                    (LogicalLayer::PublisherData &publisherData) {
+                                node.log("Publisher data: " + publisherData.getData());
+                            }
                     );
                 }
             }

@@ -23,22 +23,22 @@ namespace LogicalLayer
     private:
         friend struct MessageVisitor<Broker>;
 
-        void HandleIncomingMessage(NetworkLayer::DataMessage& message);
-        void BroadcastIdentity() const;
-        void SendIdentity(std::string nodeName) const;
-        void DefaultCallback(
-            std::string nodeName,
-            NetworkLayer::SendError error) const;
+        void handleIncomingMessage(NetworkLayer::DataMessage &message);
+        void broadcastIdentity() const;
+        void sendIdentity(std::string nodeName) const;
+        void defaultCallback(
+                std::string nodeName,
+                NetworkLayer::SendError error) const;
 
-        void HandleNewNodeStatus(const std::string nodeName, bool isAlive);
+        void handleNewNodeStatus(const std::string nodeName, bool isAlive);
 
         template<typename MessageT>
-        void HandleMessage(MessageT& message);
+        void handleMessage(MessageT& message);
 
-        std::vector<std::string> GetPublishersForSubscription(const SubscriptionT& subscription);
-        std::map<std::string, SubscriptionT> GetSubscribersForPublisher(
-            const PublisherIdentityT& publisherIdentity);
-        void SendStartPublish(std::string publisher, std::string subscriber, SubscriptionT subscription);
+        std::vector<std::string> getPublishersForSubscription(const SubscriptionT &subscription);
+        std::map<std::string, SubscriptionT> getSubscribersForPublisher(
+                const PublisherIdentityT &publisherIdentity);
+        void sendStartPublish(std::string publisher, std::string subscriber, SubscriptionT subscription);
 
         NetworkLayer::Node& node;
         std::map<std::string, std::set<SubscriptionT>> activeSubscribers;

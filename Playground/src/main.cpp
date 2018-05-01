@@ -27,12 +27,12 @@ int main()
     // Test
     // -------------------------------------------------------------------------
     NetworkLayer::Node loggerNode("logger", ioservice, true);
-    loggerNode.Accept(8888);
+    loggerNode.accept(8888);
 
     NetworkLayer::Node brokerNode("broker", ioservice);
     LogicalLayer::Broker broker(brokerNode);
-    brokerNode.Accept(7777);
-    brokerNode.Connect("localhost", 8888, false);
+    brokerNode.accept(7777);
+    brokerNode.connect("localhost", 8888, false);
     
     std::vector<std::shared_ptr<NetworkLayer::Node>> nodes;
     std::vector<std::shared_ptr<LogicalLayer::Subscriber>> subscribers;
@@ -41,16 +41,15 @@ int main()
     for(auto i = 0; i < 1; i++)
     {
         auto node = std::make_shared<NetworkLayer::Node>("subscriber" + std::to_string(i), ioservice);
-        node->Connect("localhost", 7777, false);
+        node->connect("localhost", 7777, false);
         auto subscriber = std::make_shared<LogicalLayer::Subscriber>(*node);
         LogicalLayer::SubscriptionT subscription{ { "data" } };
-        subscriber->AddSubscription(
-            subscription,
-            [node]
-            (LogicalLayer::PublisherData& data)
-            {
-                node->Log("Publisher data: " + data.Data());
-            }
+        subscriber->addSubscription(
+                subscription,
+                [node]
+                        (LogicalLayer::PublisherData &data) {
+                    node->log("Publisher data: " + data.getData());
+                }
         );
         nodes.push_back(node);
         subscribers.push_back(subscriber);
@@ -59,10 +58,10 @@ int main()
     for(auto i = 0; i < 1; i++)
     {
         auto node = std::make_shared<NetworkLayer::Node>("publisher" + std::to_string(i), ioservice);
-        node->Connect("localhost", 7777, false);
+        node->connect("localhost", 7777, false);
         LogicalLayer::PublisherIdentityT publisherIdentity{ { "data" } };
         auto publisher = std::make_shared<LogicalLayer::Publisher>(*node, publisherIdentity);
-        publisher->StartPublishing(std::bind(&GetPublisherData, node->Name(), "Message from main()"), 2000);
+        publisher->startPublishing(std::bind(&GetPublisherData, node->getName(), "Message from main()"), 2000);
         nodes.push_back(node);
         publishers.push_back(publisher);
     }
@@ -93,14 +92,14 @@ int main()
             ioservice.post([&] {
                 for(auto& publisher : publishers)
                 {
-                    publisher->StopPublishing();
+                    publisher->stopPublishing();
                 }
                 for(auto& node : nodes)
                 {
-                    node->Close();
+                    node->close();
                 }
-                brokerNode.Close();
-                loggerNode.Close();
+                brokerNode.close();
+                loggerNode.close();
             });
             t.join();
         }
@@ -110,7 +109,7 @@ int main()
             ioservice.post([&publishers] {
                 for(auto& publisher : publishers)
                 {
-                    publisher->StopPublishing();
+                    publisher->stopPublishing();
                 }
             });
         }
@@ -120,7 +119,8 @@ int main()
             ioservice.post([&] {
                 for(auto& publisher : publishers)
                 {
-                    publisher->StartPublishing(std::bind(&GetPublisherData, publisher->Name(), "Message from main"), 2000);
+                    publisher->startPublishing(std::bind(&GetPublisherData, publisher->getName(), "Message from main"),
+                                               2000);
                 }
             });
         }

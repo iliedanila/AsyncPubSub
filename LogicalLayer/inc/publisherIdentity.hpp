@@ -25,8 +25,8 @@ namespace LogicalLayer
             publisherIdentity(_publisherIdentity)
         {}
 
-        const std::string& Publisher() const { return publisher; }
-        const PublisherIdentityT& GetPublisherIdentity() const { return publisherIdentity; }
+        const std::string& getPublisherName() const { return publisher; }
+        const PublisherIdentityT& getPublisherIdentity() const { return publisherIdentity; }
         
     private:
         template<class Archive>

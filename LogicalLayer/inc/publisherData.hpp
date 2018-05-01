@@ -24,14 +24,14 @@ namespace LogicalLayer
             data(_data)
         {}
 
-        void AddSubscription(SubscriptionT _subscription)
+        void addSubscription(SubscriptionT _subscription)
         {
             subscription = _subscription;
         }
 
-        const std::string& PublisherName() const { return publisherName; }
-        const std::string& Data() const { return data; }
-        const SubscriptionT Subscription() const { return subscription; }
+        const std::string& getPublisherName() const { return publisherName; }
+        const std::string& getData() const { return data; }
+        const SubscriptionT getSubscription() const { return subscription; }
 
     private:
         template<class Archive>
