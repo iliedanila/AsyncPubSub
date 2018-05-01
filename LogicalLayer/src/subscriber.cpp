@@ -29,19 +29,19 @@ namespace LogicalLayer
             }
         );
 
-        node.getIOService().post(
-            [this]
-            {
-                node.notifyNewNodeStatus(
-                        std::bind(
-                                &Subscriber::handleNewNodeStatus,
-                                this,
-                                std::placeholders::_1,
-                                std::placeholders::_2
-                        )
-                );
-            }
-        );
+//        node.getIOService().post(
+//            [this]
+//            {
+//                node.notifyNewNodeStatus(
+//                        std::bind(
+//                                &Subscriber::handleNewNodeStatus,
+//                                this,
+//                                std::placeholders::_1,
+//                                std::placeholders::_2
+//                        )
+//                );
+//            }
+//        );
 
     }
 
@@ -179,7 +179,7 @@ namespace LogicalLayer
         auto it = subscriptions.find(message.getSubscription());
         if (it != subscriptions.end())
         {
-            it->second(message);
+            node.getIOService().post(std::bind(it->second, message));
         }
     }
 }
