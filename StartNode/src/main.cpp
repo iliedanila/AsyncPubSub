@@ -84,8 +84,8 @@ int main(int argc, const char * argv[])
 
                 auto intervalParameters = args.GetParameters("--interval", 1);
                 publisher->startPublishing(
-                        [&]() -> LogicalLayer::PublisherData {
-                            return LogicalLayer::PublisherData(
+                        [&]() -> LogicalLayer::SubscriptionData {
+                            return LogicalLayer::SubscriptionData(
                                     node.getName(),
                                     "Message from Publisher");
                         }, std::stoi(intervalParameters[0]));
@@ -105,7 +105,7 @@ int main(int argc, const char * argv[])
                     subscriber->addSubscription(
                             subscription,
                             [&node]
-                                    (LogicalLayer::PublisherData &publisherData) {
+                                    (LogicalLayer::SubscriptionData &publisherData) {
                                 node.log("Publisher data: " + publisherData.getData());
                             }
                     );

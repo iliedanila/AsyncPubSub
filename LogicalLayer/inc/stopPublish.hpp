@@ -1,5 +1,5 @@
-#ifndef _START_PUBLISH_HPP_
-#define _START_PUBLISH_HPP_
+#ifndef _STOP_PUBLISH_HPP_
+#define _STOP_PUBLISH_HPP_
 
 #include <string>
 #include <boost/serialization/access.hpp>
@@ -10,13 +10,13 @@
 namespace LogicalLayer
 {
 
-class StartPublish
+class StopPublish
 {
 public:
-    StartPublish() {}
-    ~StartPublish() {}
+    StopPublish(){}
+    ~StopPublish () {}
 
-    explicit StartPublish(
+    explicit StopPublish(
         const std::string aSubscriberName,
         SubscriptionT aSubscription)
     :
@@ -43,4 +43,4 @@ private:
 
 }
 
-#endif
+#endif //_STOP_PUBLISH_HPP_

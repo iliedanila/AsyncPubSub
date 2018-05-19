@@ -1,8 +1,10 @@
 #include "publisher.hpp"
-#include <functional>
 #include "node.hpp"
 #include "messageVisitor.hpp"
 #include "../inc/allMessages.hpp"
+#include "allMessages.hpp"
+#include "publisherData.hpp"
+
 #include <boost/serialization/variant.hpp>
 #include <iostream>
 #include <boost/archive/text_iarchive.hpp>
@@ -53,12 +55,12 @@ namespace LogicalLayer
 
     void Publisher::startPublishing(PublishFunctionT _publishFunction, uint32_t millisecondsRepeat)
     {
-        publishFunction = _publishFunction;
+        getPublisherData = _publishFunction;
         millisecondsRepeatPublish = millisecondsRepeat;
         publishTimer.cancel();
         publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
         publishTimer.async_wait(
-            std::bind(&Publisher::onTimerExpired, this, std::placeholders::_1)
+            std::bind(&Publisher::collectPublishData, this, std::placeholders::_1)
         );
     }
 
@@ -101,45 +103,47 @@ namespace LogicalLayer
         // TODO: add some implementation.
     }
 
-    void Publisher::onTimerExpired(boost::system::error_code error)
+    void Publisher::collectPublishData (boost::system::error_code error)
     {
-        if (!publishFunction)
+        if (!getPublisherData || error || subscribers.empty ())
             return;
 
-        if(error)
-        {
-            return;
-        }
-
-        auto message = publishFunction();
+        PublisherData publisherData(activeDataTypes);
+        getPublisherData(publisherData);
 
         auto callback = std::bind(
-                &Publisher::defaultHandleAck,
+            &Publisher::defaultHandleAck,
             this,
             std::placeholders::_1,
             std::placeholders::_2);
 
-        for(auto subscriberNameSubscription : subscribers)
+        for (auto& subscriberNameSubscriptions: subscribers)
         {
-            node.getIOService().post(
-                [this, subscriberNameSubscription, message, callback]
+            for (auto& subscription : subscriberNameSubscriptions.second)
+            {
+                SubscriptionData subscriptionData(node.getName (), subscription);
+                for (auto& dataType : subscription)
                 {
-                    PublisherData localMessage(message.getPublisherName(), message.getData());
-                    SubscriptionT subscription = subscriberNameSubscription.second;
-                    localMessage.addSubscription(subscription);
-                    MessageVariant messageV(localMessage);
-                    std::stringstream ss;
-                    boost::archive::text_oarchive oarchive(ss);
-                    oarchive << messageV;
-                    auto messageContent = ss.str();
-
-                    node.sndMessage(subscriberNameSubscription.first, messageContent, callback);
+                    subscriptionData.addData (dataType, publisherData.getData (dataType));
                 }
-            );
+
+                MessageVariant messageV(subscriptionData);
+                std::stringstream ss;
+                boost::archive::text_oarchive oarchive(ss);
+                oarchive << messageV;
+                auto messageContent = ss.str ();
+                auto subscriberName = subscriberNameSubscriptions.first;
+
+                node.getIOService ().post (
+                    [this, subscriberName, messageContent, callback]
+                    {
+                        node.sndMessage (subscriberName, messageContent, callback);
+                    });
+            }
         }
 
         publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
-        publishTimer.async_wait(std::bind(&Publisher::onTimerExpired, this, std::placeholders::_1));
+        publishTimer.async_wait(std::bind(&Publisher::collectPublishData, this, std::placeholders::_1));
     }
 
     template <>
@@ -167,7 +171,7 @@ namespace LogicalLayer
     }
 
     template <>
-    void Publisher::handleMessage(SubscriptionMessage& message)
+    void Publisher::handleMessage(AddRemoveSubscriptionMessage& message)
     {}
 
     template <>
@@ -178,10 +182,38 @@ namespace LogicalLayer
     void Publisher::handleMessage(StartPublish& message)
     {
         node.log("Start sending data to " + message.getSubscriberName());
-        subscribers.insert(std::make_pair(message.getSubscriberName(), message.getSubscription()));
+        subscribers[message.getSubscriberName()].insert (message.getSubscription());
+
+        for (auto& dataType : message.getSubscription())
+        {
+            activeDataTypes.insert (std::make_pair (dataType, ""));
+        }
     }
 
     template <>
-    void Publisher::handleMessage(PublisherData& message)
+    void Publisher::handleMessage (StopPublish& message)
+    {
+        node.log("Start sending data to " + message.getSubscriberName());
+        subscribers[message.getSubscriberName()].erase (message.getSubscription ());
+        if (subscribers[message.getSubscriberName()].empty ())
+        {
+            subscribers.erase (message.getSubscriberName());
+        }
+
+        activeDataTypes.clear ();
+        for (auto& subscriber : subscribers)
+        {
+            for (auto& subscription : subscriber.second)
+            {
+                for (auto& dataType : subscription)
+                {
+                    activeDataTypes.insert (std::make_pair (dataType, ""));
+                }
+            }
+        }
+    }
+
+    template <>
+    void Publisher::handleMessage(SubscriptionData& message)
     {}
 }

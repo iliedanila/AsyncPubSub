@@ -1,5 +1,6 @@
 #ifndef HIGH_LEVEL_VISITOR_HPP
 #define HIGH_LEVEL_VISITOR_HPP
+
 #include <boost/variant/static_visitor.hpp>
 
 namespace LogicalLayer

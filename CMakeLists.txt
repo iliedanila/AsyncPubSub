@@ -6,7 +6,7 @@ set (CMAKE_CXX_STANDARD 14) # C++ 14
 add_subdirectory(LogicalLayer)
 add_subdirectory(MeshNetwork)
 add_subdirectory(Playground)
-add_subdirectory(StartNode)
+#add_subdirectory(StartNode)
 
 
 # MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )

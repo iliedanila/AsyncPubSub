@@ -2,6 +2,7 @@
 #include "../inc/allMessages.hpp"
 #include "dataMessage.hpp"
 #include "node.hpp"
+#include "brokerIdentity.hpp"
 
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/serialization/variant.hpp>
@@ -49,7 +50,7 @@ namespace LogicalLayer
     {
     }
 
-    void Subscriber::addSubscription(SubscriptionT &subscription, PublisherDataHandlerT handler)
+    void Subscriber::addSubscription(SubscriptionT subscription, SubscriptionDataHandlerT handler)
     {
         subscriptions.insert(std::make_pair(subscription, handler));
         sendNewSubscription(subscription);
@@ -75,9 +76,9 @@ namespace LogicalLayer
     void Subscriber::sendSubscription(
             const SubscriptionT &_subscription,
             const std::string &brokerName,
-            SubscriptionMessage::Action action) const
+            AddRemoveSubscriptionMessage::Action action) const
     {
-        SubscriptionMessage subscription(node.getName(), _subscription, action);
+        AddRemoveSubscriptionMessage subscription(node.getName(), _subscription, action);
         MessageVariant messageV(subscription);
         std::stringstream ss;
         boost::archive::text_oarchive oarchive(ss);
@@ -102,7 +103,7 @@ namespace LogicalLayer
     {
         for(auto& brokerName : brokers)
         {
-            sendSubscription(subscription, brokerName, SubscriptionMessage::eAdd);
+            sendSubscription(subscription, brokerName, AddRemoveSubscriptionMessage::eAdd);
         }
     }
 
@@ -110,7 +111,7 @@ namespace LogicalLayer
     {
         for (auto& brokerName : brokers)
         {
-            sendSubscription(subscription, brokerName, SubscriptionMessage::eRemove);
+            sendSubscription(subscription, brokerName, AddRemoveSubscriptionMessage::eRemove);
         }
     }
 
@@ -121,7 +122,7 @@ namespace LogicalLayer
 
         for(auto& subscription : subscriptions)
         {
-            sendSubscription(subscription.first, brokerName, SubscriptionMessage::eAdd);
+            sendSubscription(subscription.first, brokerName, AddRemoveSubscriptionMessage::eAdd);
         }
     }
 
@@ -156,13 +157,17 @@ namespace LogicalLayer
     }
 
     template <>
+    void Subscriber::handleMessage (StopPublish& message)
+    {}
+
+    template <>
     void Subscriber::handleMessage(BrokerIdentity& message)
     {
         handleNewBroker(message);
     }
 
     template <>
-    void Subscriber::handleMessage(SubscriptionMessage& message)
+    void Subscriber::handleMessage(AddRemoveSubscriptionMessage& message)
     {}
 
     template <>
@@ -174,7 +179,7 @@ namespace LogicalLayer
     {}
 
     template<>
-    void Subscriber::handleMessage(PublisherData& message)
+    void Subscriber::handleMessage(SubscriptionData& message)
     {
         auto it = subscriptions.find(message.getSubscription());
         if (it != subscriptions.end())

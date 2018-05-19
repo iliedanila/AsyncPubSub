@@ -9,15 +9,19 @@
 #include "broker.hpp"
 #include "subscriber.hpp"
 #include "publisher.hpp"
+#include "subscriptionData.hpp"
+#include "publisherData.hpp"
 
 using namespace boost::asio;
 using namespace ip;
 using namespace std::chrono_literals;
 
-LogicalLayer::PublisherData GetPublisherData(std::string publisherName, std::string message)
+void populateData(LogicalLayer::PublisherData& publisherData)
 {
-    LogicalLayer::PublisherData publisherData(publisherName, message);
-    return publisherData;
+    for(auto& dataTypes : publisherData.getData ())
+    {
+        dataTypes.second = "Dummy value here.";
+    }
 }
 
 int main()
@@ -43,12 +47,22 @@ int main()
         auto node = std::make_shared<NetworkLayer::Node>("subscriber" + std::to_string(i), ioservice);
         node->connect("localhost", 7777, false);
         auto subscriber = std::make_shared<LogicalLayer::Subscriber>(*node);
-        LogicalLayer::SubscriptionT subscription{ { "data" } };
+        std::set<std::string> subscription = { "MyCustomType1", "MyCustomType2" };
+
         subscriber->addSubscription(
                 subscription,
                 [node]
-                        (LogicalLayer::PublisherData &data) {
-                    node->log("Publisher data: " + data.getData());
+                (LogicalLayer::SubscriptionData &data)
+                {
+                    std::string receivedData;
+                    for (auto& typeData : data.getData())
+                    {
+                        receivedData += typeData.first;
+                        receivedData += ": ";
+                        receivedData += typeData.second;
+                        receivedData += "\t";
+                    }
+                    node->log("Publisher data: " + receivedData);
                 }
         );
         nodes.push_back(node);
@@ -59,9 +73,11 @@ int main()
     {
         auto node = std::make_shared<NetworkLayer::Node>("publisher" + std::to_string(i), ioservice);
         node->connect("localhost", 7777, false);
-        LogicalLayer::PublisherIdentityT publisherIdentity{ { "data" } };
+        std::set<std::string> publisherIdentity = { "MyCustomType1", "MyCustomType2", "MyCustomType3" };
         auto publisher = std::make_shared<LogicalLayer::Publisher>(*node, publisherIdentity);
-        publisher->startPublishing(std::bind(&GetPublisherData, node->getName(), "Message from main()"), 2000);
+
+        publisher->startPublishing(std::bind(&populateData, std::placeholders::_1), 2000);
+
         nodes.push_back(node);
         publishers.push_back(publisher);
     }
@@ -119,8 +135,7 @@ int main()
             ioservice.post([&] {
                 for(auto& publisher : publishers)
                 {
-                    publisher->startPublishing(std::bind(&GetPublisherData, publisher->getName(), "Message from main"),
-                                               2000);
+                    publisher->startPublishing(std::bind(&populateData, std::placeholders::_1), 2000);
                 }
             });
         }

@@ -5,12 +5,10 @@
 #include <functional>
 #include <map>
 
+#include "addRemoveSubscription.hpp"
 #include "messageVisitor.hpp"
-#include "brokerIdentity.hpp"
-#include "subscription.hpp"
 #include "sendError.hpp"
-
-
+#include "common.hpp"
 
 namespace NetworkLayer {
     class DataMessage;
@@ -19,47 +17,48 @@ namespace NetworkLayer {
 
 namespace LogicalLayer
 {
-    class PublisherData;
 
-    class Subscriber
-    {
-    public:
-        typedef std::function<void(PublisherData& publisherData)> PublisherDataHandlerT;
+class SubscriptionData;
+class BrokerIdentity;
 
-        explicit Subscriber(NetworkLayer::Node& node);
-        ~Subscriber();
+class Subscriber
+{
+public:
+    explicit Subscriber(NetworkLayer::Node& node);
+    ~Subscriber();
 
-        void addSubscription(SubscriptionT &subscription, PublisherDataHandlerT handler);
-        void removeSubscription(SubscriptionT &subscription);
+    void addSubscription(SubscriptionT subscription, SubscriptionDataHandlerT handler);
+    void removeSubscription(SubscriptionT &subscription);
 
-    private:
-        friend struct MessageVisitor<Subscriber>;
+private:
+    friend struct MessageVisitor<Subscriber>;
 
-        void handleIncomingMessage(NetworkLayer::DataMessage &message);
+    void handleIncomingMessage(NetworkLayer::DataMessage &message);
 
-        void sendSubscription(
-                const SubscriptionT &subscription,
-                const std::string &brokerName,
-                SubscriptionMessage::Action) const;
+    void sendSubscription(
+            const SubscriptionT &subscription,
+            const std::string &brokerName,
+            AddRemoveSubscriptionMessage::Action) const;
 
-        void sendNewSubscription(SubscriptionT &subscription);
-        void sendRemoveSubscription(SubscriptionT &subscription);
-        void sendAllSubscriptions(const std::string &brokerName);
-        void handleNewBroker(BrokerIdentity &message);
+    void sendNewSubscription(SubscriptionT &subscription);
+    void sendRemoveSubscription(SubscriptionT &subscription);
+    void sendAllSubscriptions(const std::string &brokerName);
+    void handleNewBroker(BrokerIdentity& message);
 
-        void handleNewNodeStatus(const std::string nodeName, bool isAlive);
+    void handleNewNodeStatus(const std::string nodeName, bool isAlive);
 
-        void handleBrokerAck(
-                const std::string nodeName,
-                NetworkLayer::SendError error) const;
+    void handleBrokerAck(
+            const std::string nodeName,
+            NetworkLayer::SendError error) const;
 
-        template<typename MessageT>
-        void handleMessage(MessageT& message);
+    template<typename MessageT>
+    void handleMessage(MessageT& message);
 
-        NetworkLayer::Node& node;
-        std::set<std::string> brokers;
-        std::map<SubscriptionT, PublisherDataHandlerT> subscriptions;
-    };
+    NetworkLayer::Node& node;
+    std::set<std::string> brokers;
+    std::map<SubscriptionT, SubscriptionDataHandlerT> subscriptions;
+};
+
 }
 
 #endif

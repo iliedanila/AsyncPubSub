@@ -1,53 +1,42 @@
 #ifndef _PUBLISHER_DATA_HPP_
 #define _PUBLISHER_DATA_HPP_
-#include <string>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/set.hpp>
 
-#include "subscription.hpp"
+#include <string>
+#include <map>
+
+#include "publisherIdentity.hpp"
 
 namespace LogicalLayer
 {
-    class PublisherData
+
+class PublisherData
+{
+public:
+    explicit PublisherData(const std::map<std::string, std::string>& activeSubscriptions)
+    :
+        typeDataMap(activeSubscriptions)
     {
-    public:
-        PublisherData() {}
-        ~PublisherData() {}
+    }
 
-        explicit PublisherData(
-            const std::string& _publisherName,
-            /*const SubscriptionT& _subscription,*/
-            const std::string& _data)
-        :
-            publisherName(_publisherName),
-            /*subscription(_subscription),*/
-            data(_data)
-        {}
+    void addData(const std::string& dataType, const std::string& data)
+    {
+        typeDataMap[dataType] = data;
+    }
 
-        void addSubscription(SubscriptionT _subscription)
-        {
-            subscription = _subscription;
-        }
+    std::string getData(const std::string& aDataType)
+    {
+        return typeDataMap[aDataType];
+    }
 
-        const std::string& getPublisherName() const { return publisherName; }
-        const std::string& getData() const { return data; }
-        const SubscriptionT getSubscription() const { return subscription; }
-
-    private:
-        template<class Archive>
-        void serialize(Archive & ar, const unsigned int version)
-        {
-            ar & publisherName;
-            ar & subscription;
-            ar & data;
-        }
-
-        friend class boost::serialization::access;
-
-        std::string publisherName;
-        SubscriptionT subscription;
-        std::string data;
+    std::map<std::string, std::string>& getData()
+    {
+        return typeDataMap;
     };
+
+private:
+    std::map<std::string, std::string> typeDataMap;
+};
+
 }
 
-#endif
+#endif //_PUBLISHER_DATA_HPP_
