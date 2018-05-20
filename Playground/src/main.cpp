@@ -139,6 +139,40 @@ int main()
                 }
             });
         }
+
+        if (boost::algorithm::starts_with(command, "remove"))
+        {
+            ioservice.post ([&]{
+               for (auto& subscriber : subscribers)
+               {
+                   std::set<std::string> subscription = { "MyCustomType1", "MyCustomType2" };
+                   subscriber->removeSubscription (subscription);
+               }
+            });
+        }
+
+        if (boost::algorithm::starts_with(command, "add"))
+        {
+            ioservice.post ([&]{
+                for (auto& subscriber : subscribers)
+                {
+                    std::set<std::string> subscription = { "MyCustomType1", "MyCustomType2" };
+                    subscriber->addSubscription (
+                        subscription,
+                        [](LogicalLayer::SubscriptionData &data){
+                            std::string receivedData;
+                            for (auto& typeData : data.getData())
+                            {
+                                receivedData += typeData.first;
+                                receivedData += ": ";
+                                receivedData += typeData.second;
+                                receivedData += "\t";
+                            }
+                            std::cout << "Publisher data: " + receivedData << '\n';
+                        });
+                }
+            });
+        }
     } while (!exit);
     
     return 0;

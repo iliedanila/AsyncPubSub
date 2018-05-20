@@ -106,7 +106,14 @@ namespace LogicalLayer
     void Publisher::collectPublishData (boost::system::error_code error)
     {
         if (!getPublisherData || error || subscribers.empty ())
+        {
+            if (!error)
+            {
+                publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
+                publishTimer.async_wait(std::bind(&Publisher::collectPublishData, this, std::placeholders::_1));
+            }
             return;
+        }
 
         PublisherData publisherData(activeDataTypes);
         getPublisherData(publisherData);
@@ -193,7 +200,7 @@ namespace LogicalLayer
     template <>
     void Publisher::handleMessage (StopPublish& message)
     {
-        node.log("Start sending data to " + message.getSubscriberName());
+        node.log("Stop sending data to " + message.getSubscriberName());
         subscribers[message.getSubscriberName()].erase (message.getSubscription ());
         if (subscribers[message.getSubscriberName()].empty ())
         {
