@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-set (CMAKE_CXX_STANDARD 14) # C++ 14
+set (CMAKE_CXX_STANDARD 11)
 
 # project dependencies
 add_subdirectory(LogicalLayer)
 add_subdirectory(MeshNetwork)
 add_subdirectory(Playground)
+
 #add_subdirectory(StartNode)
 
 
