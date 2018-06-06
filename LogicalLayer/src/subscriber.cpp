@@ -2,6 +2,7 @@
 #include "../inc/allMessages.hpp"
 #include "dataMessage.hpp"
 #include "node.hpp"
+#include "brokerIdentity.hpp"
 
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/serialization/variant.hpp>
@@ -16,32 +17,32 @@ namespace LogicalLayer
     :
         node(_node)
     {
-        node.IOService().post(
+        node.getIOService().post(
             [this]
             {
-                node.AcceptMessages(
-                    std::bind(
-                        &Subscriber::HandleIncomingMessage,
-                        this,
-                        std::placeholders::_1
-                    )
+                node.acceptMessages(
+                        std::bind(
+                                &Subscriber::handleIncomingMessage,
+                                this,
+                                std::placeholders::_1
+                        )
                 );
             }
         );
 
-        node.IOService().post(
-            [this]
-            {
-                node.NotifyNewNodeStatus(
-                    std::bind(
-                        &Subscriber::HandleNewNodeStatus,
-                        this,
-                        std::placeholders::_1,
-                        std::placeholders::_2
-                    )
-                );
-            }
-        );
+//        node.getIOService().post(
+//            [this]
+//            {
+//                node.notifyNewNodeStatus(
+//                        std::bind(
+//                                &Subscriber::handleNewNodeStatus,
+//                                this,
+//                                std::placeholders::_1,
+//                                std::placeholders::_2
+//                        )
+//                );
+//            }
+//        );
 
     }
 
@@ -49,21 +50,21 @@ namespace LogicalLayer
     {
     }
 
-    void Subscriber::AddSubscription(SubscriptionT& subscription, PublisherDataHandlerT handler)
+    void Subscriber::addSubscription(SubscriptionT subscription, SubscriptionDataHandlerT handler)
     {
         subscriptions.insert(std::make_pair(subscription, handler));
-        SendNewSubscription(subscription);
+        sendNewSubscription(subscription);
     }
 
-    void Subscriber::RemoveSubscription(SubscriptionT& subscription)
+    void Subscriber::removeSubscription(SubscriptionT &subscription)
     {
         subscriptions.erase(subscription);
-        SendRemoveSubscription(subscription);
+        sendRemoveSubscription(subscription);
     }
 
-    void Subscriber::HandleIncomingMessage(NetworkLayer::DataMessage& message)
+    void Subscriber::handleIncomingMessage(NetworkLayer::DataMessage &message)
     {
-        std::stringstream ss(std::move(message.Buffer()));
+        std::stringstream ss(std::move(message.getBuffer()));
         boost::archive::text_iarchive iarchive(ss);
 
         MessageVariant messageV;
@@ -72,12 +73,12 @@ namespace LogicalLayer
         boost::apply_visitor(MessageVisitor<Subscriber>(*this), messageV);
     }
 
-    void Subscriber::SendSubscription(
-        const SubscriptionT& _subscription, 
-        const std::string& brokerName,
-        SubscriptionMessage::Action action) const
+    void Subscriber::sendSubscription(
+            const SubscriptionT &_subscription,
+            const std::string &brokerName,
+            AddRemoveSubscriptionMessage::Action action) const
     {
-        SubscriptionMessage subscription(node.Name(), _subscription, action);
+        AddRemoveSubscriptionMessage subscription(node.getName(), _subscription, action);
         MessageVariant messageV(subscription);
         std::stringstream ss;
         boost::archive::text_oarchive oarchive(ss);
@@ -85,101 +86,105 @@ namespace LogicalLayer
         auto messageContent = ss.str();
 
         auto callback = std::bind(
-            &Subscriber::HandleBrokerAck,
+                &Subscriber::handleBrokerAck,
             this,
             std::placeholders::_1,
             std::placeholders::_2);
 
-        node.IOService().post(
+        node.getIOService().post(
             [this, brokerName, messageContent, callback]
             {
-                node.SndMessage(brokerName, messageContent, callback);
+                node.sndMessage(brokerName, messageContent, callback);
             }
         );
     }
 
-    void Subscriber::SendNewSubscription(SubscriptionT& subscription)
+    void Subscriber::sendNewSubscription(SubscriptionT &subscription)
     {
         for(auto& brokerName : brokers)
         {
-            SendSubscription(subscription, brokerName, SubscriptionMessage::eAdd);
+            sendSubscription(subscription, brokerName, AddRemoveSubscriptionMessage::eAdd);
         }
     }
 
-    void Subscriber::SendRemoveSubscription(SubscriptionT& subscription)
+    void Subscriber::sendRemoveSubscription(SubscriptionT &subscription)
     {
         for (auto& brokerName : brokers)
         {
-            SendSubscription(subscription, brokerName, SubscriptionMessage::eRemove);
+            sendSubscription(subscription, brokerName, AddRemoveSubscriptionMessage::eRemove);
         }
     }
 
-    void Subscriber::SendAllSubscriptions(const std::string& brokerName)
+    void Subscriber::sendAllSubscriptions(const std::string &brokerName)
     {
         if (subscriptions.empty())
             return;
 
         for(auto& subscription : subscriptions)
         {
-            SendSubscription(subscription.first, brokerName, SubscriptionMessage::eAdd);
+            sendSubscription(subscription.first, brokerName, AddRemoveSubscriptionMessage::eAdd);
         }
     }
 
-    void Subscriber::HandleNewBroker(BrokerIdentity& message)
+    void Subscriber::handleNewBroker(BrokerIdentity &message)
     {
-        node.Log("New broker found: " + message.BrokerName());
-        if (brokers.find(message.BrokerName()) != brokers.end())
+        node.log("New broker found: " + message.getBrokerName());
+        if (brokers.find(message.getBrokerName()) != brokers.end())
             return;
 
-        brokers.insert(message.BrokerName());
-        SendAllSubscriptions(message.BrokerName());
+        brokers.insert(message.getBrokerName());
+        sendAllSubscriptions(message.getBrokerName());
     }
 
-    void Subscriber::HandleNewNodeStatus(const std::string nodeName, bool isAlive)
+    void Subscriber::handleNewNodeStatus(const std::string nodeName, bool isAlive)
     {
         if (isAlive)
         {
-            node.Log("New node in network: " + nodeName);
+            node.log("New node in network: " + nodeName);
         }
         else
         {
-            node.Log("Removing eventual brokers named " + nodeName);
+            node.log("Removing eventual brokers named " + nodeName);
             brokers.erase(nodeName);
         }
     }
 
-    void Subscriber::HandleBrokerAck(
-        const std::string nodeName, 
-        NetworkLayer::SendError error) const
+    void Subscriber::handleBrokerAck(
+            const std::string nodeName,
+            NetworkLayer::SendError error) const
     {
         // TODO: add some implementation.
     }
 
     template <>
-    void Subscriber::HandleMessage(BrokerIdentity& message)
+    void Subscriber::handleMessage (StopPublish& message)
+    {}
+
+    template <>
+    void Subscriber::handleMessage(BrokerIdentity& message)
     {
-        HandleNewBroker(message);
+        handleNewBroker(message);
     }
 
     template <>
-    void Subscriber::HandleMessage(SubscriptionMessage& message)
+    void Subscriber::handleMessage(AddRemoveSubscriptionMessage& message)
     {}
 
     template <>
-    void Subscriber::HandleMessage(PublisherIdentityMessage& message)
+    void Subscriber::handleMessage(PublisherIdentityMessage& message)
     {}
 
     template <>
-    void Subscriber::HandleMessage(StartPublish& message)
+    void Subscriber::handleMessage(StartPublish& message)
     {}
 
     template<>
-    void Subscriber::HandleMessage(PublisherData& message)
+    void Subscriber::handleMessage(SubscriptionData& message)
     {
-        auto it = subscriptions.find(message.Subscription());
+        auto it = subscriptions.find(message.getSubscription());
         if (it != subscriptions.end())
         {
-            it->second(message);
+            node.getIOService().post(std::bind(it->second, message));
         }
     }
 }

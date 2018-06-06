@@ -9,5 +9,6 @@ include_directories(../MeshNetwork/inc)
 include_directories(../MeshNetwork/boost/inc)
 
 file(GLOB SOURCES "src/*.cpp")
+file(GLOB HEADERS "inc/*.hpp")
 
-add_library(LogicalLayer STATIC ${SOURCES})
+add_library(LogicalLayer STATIC ${HEADERS} ${SOURCES})

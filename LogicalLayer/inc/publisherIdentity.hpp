@@ -4,43 +4,45 @@
 #include <vector>
 #include <string>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/map.hpp>
+#include <boost/serialization/set.hpp>
 #include <set>
+
+#include "common.hpp"
 
 namespace LogicalLayer
 {
-    typedef std::set<std::string> PublisherIdentityT;
-    
-    class PublisherIdentityMessage
+
+class PublisherIdentityMessage
+{
+public:
+    PublisherIdentityMessage() {}
+    ~PublisherIdentityMessage() {}
+
+    explicit PublisherIdentityMessage(
+        std::string aPublisherName,
+        PublisherIdentityT& aPublisherIdentity)
+    :
+        publisherName(aPublisherName),
+        publisherIdentity(aPublisherIdentity)
+    {}
+
+    const std::string& getPublisherName() const { return publisherName; }
+    const PublisherIdentityT& getPublisherIdentity() const { return publisherIdentity; }
+
+private:
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
     {
-    public:
-        PublisherIdentityMessage() {}
-        ~PublisherIdentityMessage() {}
+        ar & publisherName;
+        ar & publisherIdentity;
+    }
 
-        explicit PublisherIdentityMessage(
-            std::string _publisher,
-            PublisherIdentityT& _publisherIdentity)
-        :
-            publisher(_publisher),
-            publisherIdentity(_publisherIdentity)
-        {}
+    friend class boost::serialization::access;
 
-        const std::string& Publisher() const { return publisher; }
-        const PublisherIdentityT& GetPublisherIdentity() const { return publisherIdentity; }
-        
-    private:
-        template<class Archive>
-        void serialize(Archive & ar, const unsigned int version)
-        {
-            ar & publisher;
-            ar & publisherIdentity;
-        }
+    std::string publisherName;
+    PublisherIdentityT publisherIdentity;
+};
 
-        friend class boost::serialization::access;
-
-        std::string publisher;
-        PublisherIdentityT publisherIdentity;
-    };
 }
 
 #endif

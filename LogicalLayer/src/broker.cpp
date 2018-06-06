@@ -14,235 +14,268 @@
 
 namespace LogicalLayer
 {
-    Broker::Broker(NetworkLayer::Node& _node)
-    :
-        node(_node)
-    {
-        node.IOService().post(
-            [this]
-            {
-                node.AcceptMessages(
-                    std::bind(
-                        &Broker::HandleIncomingMessage,
-                        this,
-                        std::placeholders::_1
-                    )
-                );
-            }
-        );
-
-        node.IOService().post(
-            [this] 
-            {
-                BroadcastIdentity();
-            }
-        );
-
-        node.IOService().post(
-            [this]
-            {
-                node.NotifyNewNodeStatus(
-                    std::bind(
-                        &Broker::HandleNewNodeStatus,
-                        this,
-                        std::placeholders::_1,
-                        std::placeholders::_2
-                    )
-                );
-            }
-        );
-
-    }
-
-    Broker::~Broker()
-    {
-    }
-
-    void Broker::HandleIncomingMessage(NetworkLayer::DataMessage& message)
-    {
-        std::stringstream ss(std::move(message.Buffer()));
-        boost::archive::text_iarchive iarchive(ss);
-
-        LogicalLayer::MessageVariant messageV;
-        iarchive >> messageV;
-
-        boost::apply_visitor(MessageVisitor<Broker>(*this), messageV);
-    }
-
-    void Broker::BroadcastIdentity() const
-    {
-        for(auto nodeName : node.GetAccessibleNodes())
+Broker::Broker(NetworkLayer::Node& _node)
+:
+    node(_node)
+{
+    node.getIOService().post(
+        [this]
         {
-            SendIdentity(nodeName);
+            node.acceptMessages(
+                    std::bind(
+                            &Broker::handleIncomingMessage,
+                            this,
+                            std::placeholders::_1
+                    )
+            );
         }
-    }
+    );
 
-    void Broker::SendIdentity(std::string nodeName) const
+    node.getIOService().post(
+        [this]
+        {
+            broadcastIdentity();
+        }
+    );
+
+    node.getIOService().post(
+        [this]
+        {
+            node.notifyNewNodeStatus(
+                    std::bind(
+                            &Broker::handleNewNodeStatus,
+                            this,
+                            std::placeholders::_1,
+                            std::placeholders::_2
+                    )
+            );
+        }
+    );
+
+}
+
+Broker::~Broker()
+{
+}
+
+void Broker::handleIncomingMessage(NetworkLayer::DataMessage &message)
+{
+    std::stringstream ss(std::move(message.getBuffer()));
+    boost::archive::text_iarchive iarchive(ss);
+
+    LogicalLayer::MessageVariant messageV;
+    iarchive >> messageV;
+
+    boost::apply_visitor(MessageVisitor<Broker>(*this), messageV);
+}
+
+void Broker::broadcastIdentity() const
+{
+    for(auto nodeName : node.getAccessibleNodes())
     {
-        LogicalLayer::MessageVariant messageV(BrokerIdentity(node.Name()));
-        std::stringstream ss;
-        boost::archive::text_oarchive oarchive(ss);
-        oarchive << messageV;
-        auto messageContent = ss.str();
-
-        auto callback = std::bind(
-            &Broker::DefaultCallback,
-            this,
-            std::placeholders::_1,
-            std::placeholders::_2);
-
-        node.IOService().post(
-            [this, nodeName, callback, messageContent]
-            {
-                node.SndMessage(nodeName, messageContent, callback);
-            }
-        );
+        sendIdentity(nodeName);
     }
+}
 
-    void Broker::DefaultCallback(
-        std::string nodeName, 
+void Broker::sendIdentity(std::string nodeName) const
+{
+    LogicalLayer::MessageVariant messageV(BrokerIdentity(node.getName()));
+    std::stringstream ss;
+    boost::archive::text_oarchive oarchive(ss);
+    oarchive << messageV;
+    auto messageContent = ss.str();
+
+    auto callback = std::bind(
+            &Broker::defaultCallback,
+        this,
+        std::placeholders::_1,
+        std::placeholders::_2);
+
+    node.getIOService().post(
+        [this, nodeName, callback, messageContent]
+        {
+            node.sndMessage(nodeName, messageContent, callback);
+        }
+    );
+}
+
+void Broker::defaultCallback(
+        std::string nodeName,
         NetworkLayer::SendError error) const
+{
+    // TODO: add some implementation.
+    // maybe log...
+}
+
+void Broker::handleNewNodeStatus(const std::string nodeName, bool isAlive)
+{
+    if(isAlive)
     {
-        // TODO: add some implementation.
-        // maybe log...
+        node.log("New node in network: " + nodeName);
+        sendIdentity(nodeName);
+    }
+    else
+    {
+        node.log("Removing node " + nodeName + " from publishers and subscribers.");
+        activeSubscribers.erase(nodeName);
+        activePublishers.erase(nodeName);
+    }
+}
+
+std::vector<std::string> Broker::getPublishersForSubscription(const SubscriptionT &subscription)
+{
+    std::vector<std::string> publisherList;
+    for(auto& publisher : activePublishers)
+    {
+        if(std::includes(
+            publisher.second.begin(),
+            publisher.second.end(),
+            subscription.begin(),
+            subscription.end()))
+        {
+            publisherList.push_back(publisher.first);
+        }
     }
 
-    void Broker::HandleNewNodeStatus(const std::string nodeName, bool isAlive)
-    {
-        if(isAlive)
-        {
-            node.Log("New node in network: " + nodeName);
-            SendIdentity(nodeName);
-        }
-        else
-        {
-            node.Log("Removing node " + nodeName + " from publishers and subscribers.");
-            activeSubscribers.erase(nodeName);
-            activePublishers.erase(nodeName);
-        }
-    }
+    return publisherList;
+}
 
-    std::vector<std::string> Broker::GetPublishersForSubscription(const SubscriptionT& subscription)
+std::map<std::string, SubscriptionT> Broker::getSubscribersForPublisher(
+        const PublisherIdentityT &publisherIdentity)
+{
+    std::map<std::string, SubscriptionT> subscriberList;
+    for(auto& subscriber : activeSubscribers)
     {
-        std::vector<std::string> publisherList;
-        for(auto& publisher : activePublishers)
+        for(auto& subscription : subscriber.second)
         {
             if(std::includes(
-                publisher.second.begin(), 
-                publisher.second.end(),
+                publisherIdentity.begin(),
+                publisherIdentity.end(),
                 subscription.begin(),
                 subscription.end()))
             {
-                publisherList.push_back(publisher.first);
+                subscriberList.insert(std::make_pair(subscriber.first, subscription));
             }
         }
-
-        return publisherList;
     }
 
-    std::map<std::string, SubscriptionT> Broker::GetSubscribersForPublisher(
-        const PublisherIdentityT& publisherIdentity)
-    {
-        std::map<std::string, SubscriptionT> subscriberList;
-        for(auto& subscriber : activeSubscribers)
-        {
-            for(auto& subscription : subscriber.second)
-            {
-                if(std::includes(
-                    publisherIdentity.begin(),
-                    publisherIdentity.end(),
-                    subscription.begin(),
-                    subscription.end()))
-                {
-                    subscriberList.insert(std::make_pair(subscriber.first, subscription));
-                }
-            }
-        }
+    return subscriberList;
+}
 
-        return subscriberList;
-    }
-
-    void Broker::SendStartPublish(
+void Broker::sendStartPublish(
         std::string publisher,
         std::string subscriberName,
         SubscriptionT subscription)
-    {
-        StartPublish startPublishMessage(subscriberName, subscription);
-        LogicalLayer::MessageVariant messageV(startPublishMessage);
-        std::stringstream ss;
-        boost::archive::text_oarchive oarchive(ss);
-        oarchive << messageV;
-        auto messageContent = ss.str();
+{
+    StartPublish startPublishMessage(subscriberName, subscription);
+    LogicalLayer::MessageVariant messageV(startPublishMessage);
+    std::stringstream ss;
+    boost::archive::text_oarchive oarchive(ss);
+    oarchive << messageV;
+    auto messageContent = ss.str();
 
-        auto callback = std::bind(
-            &Broker::DefaultCallback,
+    auto callback = std::bind(
+            &Broker::defaultCallback,
+        this,
+        std::placeholders::_1,
+        std::placeholders::_2
+    );
+
+    node.getIOService().post(
+        [this, publisher, messageContent, callback]
+        {
+            node.sndMessage(publisher, messageContent, callback);
+        }
+    );
+}
+
+void Broker::sendStopPublish(std::string publisher, std::string subscriberName, SubscriptionT subscription)
+{
+    StopPublish stopPublishMessage(subscriberName, subscription);
+    LogicalLayer::MessageVariant messageV(stopPublishMessage);
+    std::stringstream ss;
+    boost::archive::text_oarchive oarchive(ss);
+    oarchive << messageV;
+    auto messageContent = ss.str();
+
+    auto callback = std::bind(
+            &Broker::defaultCallback,
             this,
             std::placeholders::_1,
             std::placeholders::_2
-        );
+    );
 
-        node.IOService().post(
+    node.getIOService().post(
             [this, publisher, messageContent, callback]
             {
-                node.SndMessage(publisher, messageContent, callback);
+                node.sndMessage(publisher, messageContent, callback);
             }
-        );
-    }
+    );
+}
 
-    template <>
-    void Broker::HandleMessage(BrokerIdentity& message)
+template <>
+void Broker::handleMessage(BrokerIdentity& message)
+{
+    node.log("Received BrokerIdentity: " + message.getBrokerName());
+}
+
+template <>
+void Broker::handleMessage(AddRemoveSubscriptionMessage& message)
+{
+    node.log("Received subscription from " + message.getSubscriberName());
+
+    if(message.getAction() == AddRemoveSubscriptionMessage::eAdd)
     {
-        node.Log("Received BrokerIdentity: " + message.BrokerName());
-    }
-
-    template <>
-    void Broker::HandleMessage(SubscriptionMessage& message)
-    {
-        node.Log("Received subscription from " + message.SubscriberName());
-
-        if(message.GetAction() == SubscriptionMessage::eAdd)
+        activeSubscribers[message.getSubscriberName()].insert(message.getSubscription());
+        auto publishers = getPublishersForSubscription(message.getSubscription());
+        for(auto publisher : publishers)
         {
-            activeSubscribers[message.SubscriberName()].insert(message.Subscription());
-            auto publishers = GetPublishersForSubscription(message.Subscription());
-            for(auto publisher : publishers)
-            {
-                SendStartPublish(publisher, message.SubscriberName(), message.Subscription());
-            }
-        }
-        else
-        {
-            auto iterator = activeSubscribers.find(message.SubscriberName());
-            if(iterator != activeSubscribers.end())
-            {
-                iterator->second.erase(message.Subscription());
-            }
-
-            // TODO: send stop publish.
+            sendStartPublish(publisher, message.getSubscriberName(), message.getSubscription());
         }
     }
-
-    template <>
-    void Broker::HandleMessage(PublisherIdentityMessage& message)
+    else
     {
-        node.Log("Received PublisherIdentity: " + message.Publisher());
-
-        activePublishers[message.Publisher()] = message.GetPublisherIdentity();
-        auto subscribers = GetSubscribersForPublisher(message.GetPublisherIdentity());
-        for (auto subscriberSubscriptions : subscribers)
+        auto iterator = activeSubscribers.find(message.getSubscriberName());
+        if(iterator != activeSubscribers.end())
         {
-            SendStartPublish(
-                message.Publisher(),
+            iterator->second.erase(message.getSubscription());
+        }
+
+        auto publishers = getPublishersForSubscription(message.getSubscription());
+        for (auto publisher : publishers)
+        {
+            sendStopPublish (publisher, message.getSubscriberName (), message.getSubscription ());
+        }
+    }
+}
+
+template <>
+void Broker::handleMessage(PublisherIdentityMessage& message)
+{
+    node.log("Received PublisherIdentity: " + message.getPublisherName());
+
+    activePublishers[message.getPublisherName()] = message.getPublisherIdentity();
+    auto subscribers = getSubscribersForPublisher(message.getPublisherIdentity());
+    for (auto subscriberSubscriptions : subscribers)
+    {
+        sendStartPublish(
+                message.getPublisherName(),
                 subscriberSubscriptions.first,
                 subscriberSubscriptions.second
-            );
-        }
+        );
     }
+}
 
-    template<>
-    void Broker::HandleMessage(StartPublish& message)
-    {}
+template<>
+void Broker::handleMessage(StartPublish& message)
+{}
 
-    template<>
-    void Broker::HandleMessage(PublisherData& message)
-    {}
+template<>
+void Broker::handleMessage (StopPublish& message)
+{}
+
+template<>
+void Broker::handleMessage(SubscriptionData& message)
+{}
+
 }

@@ -1,5 +1,6 @@
 #ifndef HIGH_LEVEL_VISITOR_HPP
 #define HIGH_LEVEL_VISITOR_HPP
+
 #include <boost/variant/static_visitor.hpp>
 
 namespace LogicalLayer
@@ -16,7 +17,7 @@ struct MessageVisitor : public boost::static_visitor<>
     template <typename MessageT>
     void operator()(MessageT& message) const
     {
-        node.HandleMessage(message);
+        node.handleMessage(message);
     }
 
 private:

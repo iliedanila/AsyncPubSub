@@ -1,53 +1,59 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-set(CMAKE_BUILD_TYPE Release Debug)
-
-project(playground)
-project(startNode)
-
-set (CMAKE_CXX_STANDARD 14) # C++ 14
-
-include_directories(startNode/inc)
-include_directories(MeshNetwork/inc)
-include_directories(MeshNetwork/boost/inc)
-include_directories(LogicalLayer/inc)
+set (CMAKE_CXX_STANDARD 11)
 
 # project dependencies
 add_subdirectory(LogicalLayer)
 add_subdirectory(MeshNetwork)
+add_subdirectory(Playground)
 
-# link path
-if(APPLE)
-    link_directories(MeshNetwork/boost/lib/macos/x64_release)
-elseif(UNIX)
-    link_directories(MeshNetwork/boost/lib/linux/x64_release)
-elseif(WIN32)
-    link_directories(MeshNetwork/boost/lib/win/x32/debug) # for some reason the default is debug
-endif()
+#add_subdirectory(StartNode)
 
-# sources
-file (GLOB SOURCES_PLAYGROUND "playground/src/*.cpp")
-file (GLOB SOURCES_STARTNODE "startNode/src/*.cpp")
 
-# execs
-add_executable(playground ${SOURCES_PLAYGROUND})
-add_executable(startNode ${SOURCES_STARTNODE})
-
-# libraries
-target_link_libraries(playground LogicalLayer MeshNetwork)
-target_link_libraries(startNode LogicalLayer MeshNetwork)
-
-if(UNIX)
-    target_link_libraries(playground boost_date_time)
-    target_link_libraries(playground boost_regex)
-    target_link_libraries(playground boost_serialization)
-    target_link_libraries(playground boost_system)
-
-    target_link_libraries(startNode boost_date_time)
-    target_link_libraries(startNode boost_regex)
-    target_link_libraries(startNode boost_serialization)
-    target_link_libraries(startNode boost_system)
-
-    target_link_libraries(playground pthread)
-    target_link_libraries(startNode pthread)
-endif()
+# MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )
+# MESSAGE( STATUS "CMAKE_CURRENT_BINARY_DIR: " ${CMAKE_CURRENT_BINARY_DIR} )
+# MESSAGE( STATUS "CMAKE_SOURCE_DIR:         " ${CMAKE_SOURCE_DIR} )
+# MESSAGE( STATUS "CMAKE_CURRENT_SOURCE_DIR: " ${CMAKE_CURRENT_SOURCE_DIR} )
+# MESSAGE( STATUS "PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR} )
+# MESSAGE( STATUS "PROJECT_SOURCE_DIR: " ${PROJECT_SOURCE_DIR} )
+# MESSAGE( STATUS "EXECUTABLE_OUTPUT_PATH: " ${EXECUTABLE_OUTPUT_PATH} )
+# MESSAGE( STATUS "LIBRARY_OUTPUT_PATH:     " ${LIBRARY_OUTPUT_PATH} )
+# MESSAGE( STATUS "CMAKE_MODULE_PATH: " ${CMAKE_MODULE_PATH} )
+# MESSAGE( STATUS "CMAKE_COMMAND: " ${CMAKE_COMMAND} )
+# MESSAGE( STATUS "CMAKE_ROOT: " ${CMAKE_ROOT} )
+# MESSAGE( STATUS "CMAKE_CURRENT_LIST_FILE: " ${CMAKE_CURRENT_LIST_FILE} )
+# MESSAGE( STATUS "CMAKE_CURRENT_LIST_LINE: " ${CMAKE_CURRENT_LIST_LINE} )
+# MESSAGE( STATUS "CMAKE_INCLUDE_PATH: " ${CMAKE_INCLUDE_PATH} )
+# MESSAGE( STATUS "CMAKE_LIBRARY_PATH: " ${CMAKE_LIBRARY_PATH} )
+# MESSAGE( STATUS "CMAKE_SYSTEM: " ${CMAKE_SYSTEM} )
+# MESSAGE( STATUS "CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME} )
+# MESSAGE( STATUS "CMAKE_SYSTEM_VERSION: " ${CMAKE_SYSTEM_VERSION} )
+# MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR} )
+# MESSAGE( STATUS "UNIX: " ${UNIX} )
+# MESSAGE( STATUS "WIN32: " ${WIN32} )
+# MESSAGE( STATUS "APPLE: " ${APPLE} )
+# MESSAGE( STATUS "MINGW: " ${MINGW} )
+# MESSAGE( STATUS "CYGWIN: " ${CYGWIN} )
+# MESSAGE( STATUS "BORLAND: " ${BORLAND} )
+# MESSAGE( STATUS "MSVC: " ${MSVC} )
+# MESSAGE( STATUS "MSVC_IDE: " ${MSVC_IDE} )
+# MESSAGE( STATUS "MSVC60: " ${MSVC60} )
+# MESSAGE( STATUS "MSVC70: " ${MSVC70} )
+# MESSAGE( STATUS "MSVC71: " ${MSVC71} )
+# MESSAGE( STATUS "MSVC80: " ${MSVC80} )
+# MESSAGE( STATUS "CMAKE_COMPILER_2005: " ${CMAKE_COMPILER_2005} )
+# MESSAGE( STATUS "CMAKE_SKIP_RULE_DEPENDENCY: " ${CMAKE_SKIP_RULE_DEPENDENCY} )
+# MESSAGE( STATUS "CMAKE_SKIP_INSTALL_ALL_DEPENDENCY: " ${CMAKE_SKIP_INSTALL_ALL_DEPENDENCY} )
+# MESSAGE( STATUS "CMAKE_SKIP_RPATH: " ${CMAKE_SKIP_RPATH} )
+# MESSAGE( STATUS "CMAKE_VERBOSE_MAKEFILE: " ${CMAKE_VERBOSE_MAKEFILE} )
+# MESSAGE( STATUS "CMAKE_SUPPRESS_REGENERATION: " ${CMAKE_SUPPRESS_REGENERATION} )
+# MESSAGE( STATUS "CMAKE_C_FLAGS: " ${CMAKE_C_FLAGS} )
+# MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
+# MESSAGE( STATUS "CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE} )
+# MESSAGE( STATUS "BUILD_SHARED_LIBS: " ${BUILD_SHARED_LIBS} )
+# MESSAGE( STATUS "CMAKE_C_COMPILER: " ${CMAKE_C_COMPILER} )
+# MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
+# MESSAGE( STATUS "CMAKE_COMPILER_IS_GNUCC: " ${CMAKE_COMPILER_IS_GNUCC} )
+# MESSAGE( STATUS "CMAKE_COMPILER_IS_GNUCXX : " ${CMAKE_COMPILER_IS_GNUCXX} )
+# MESSAGE( STATUS "CMAKE_AR: " ${CMAKE_AR} )
+# MESSAGE( STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB} )

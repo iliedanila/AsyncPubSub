@@ -1,31 +1,43 @@
-#ifndef _START_PUBLISH_HPP_
-#define _START_PUBLISH_HPP_
+#ifndef _SUBSCRIPTION_HPP_
+#define _SUBSCRIPTION_HPP_
 
-#include <string>
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/utility.hpp>
 #include <boost/serialization/set.hpp>
+#include <boost/serialization/map.hpp>
+#include <vector>
+#include <set>
 
 #include "common.hpp"
 
 namespace LogicalLayer
 {
 
-class StartPublish
+class AddRemoveSubscriptionMessage
 {
 public:
-    StartPublish() {}
-    ~StartPublish() {}
+    enum Action
+    {
+        eAdd = 1,
+        eRemove
+    };
 
-    explicit StartPublish(
+    AddRemoveSubscriptionMessage() {}
+    ~AddRemoveSubscriptionMessage() {}
+
+    explicit AddRemoveSubscriptionMessage(
         const std::string aSubscriberName,
-        SubscriptionT aSubscription)
+        const SubscriptionT& aSubscription,
+        Action anAction)
     :
         subscriberName(aSubscriberName),
-        subscription(aSubscription)
+        subscription(aSubscription),
+        action(anAction)
     {}
 
     const std::string& getSubscriberName() const { return subscriberName; }
     const SubscriptionT& getSubscription() const { return subscription; }
+    const Action& getAction() const { return action; }
 
 private:
     template<class Archive>
@@ -33,12 +45,14 @@ private:
     {
         ar & subscriberName;
         ar & subscription;
+        ar & action;
     }
 
     friend class boost::serialization::access;
 
     std::string subscriberName;
     SubscriptionT subscription;
+    Action action;
 };
 
 }

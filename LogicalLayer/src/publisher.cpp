@@ -1,8 +1,10 @@
 #include "publisher.hpp"
-#include <functional>
 #include "node.hpp"
 #include "messageVisitor.hpp"
 #include "../inc/allMessages.hpp"
+#include "allMessages.hpp"
+#include "publisherData.hpp"
+
 #include <boost/serialization/variant.hpp>
 #include <iostream>
 #include <boost/archive/text_iarchive.hpp>
@@ -16,31 +18,31 @@ namespace LogicalLayer
     :
         identity(_publisherIdentity),
         node(_node),
-        publishTimer(node.IOService())
+        publishTimer(node.getIOService())
     {
-        node.IOService().post(
+        node.getIOService().post(
             [this]
             {
-                node.AcceptMessages(
-                    std::bind(
-                        &Publisher::HandleIncomingMessage,
-                        this,
-                        std::placeholders::_1
-                    )
+                node.acceptMessages(
+                        std::bind(
+                                &Publisher::handleIncomingMessage,
+                                this,
+                                std::placeholders::_1
+                        )
                 );
             }
         );
 
-        node.IOService().post(
+        node.getIOService().post(
             [this]
             {
-                node.NotifyNewNodeStatus(
-                    std::bind(
-                        &Publisher::HandleNewNodeStatus,
-                        this,
-                        std::placeholders::_1,
-                        std::placeholders::_2
-                    )
+                node.notifyNewNodeStatus(
+                        std::bind(
+                                &Publisher::handleNewNodeStatus,
+                                this,
+                                std::placeholders::_1,
+                                std::placeholders::_2
+                        )
                 );
             }
         );
@@ -48,36 +50,36 @@ namespace LogicalLayer
 
     Publisher::~Publisher()
     {
-        StopPublishing();
+        stopPublishing();
     }
 
-    void Publisher::StartPublishing(PublishFunctionT _publishFunction, uint32_t millisecondsRepeat)
+    void Publisher::startPublishing(PublishFunctionT _publishFunction, uint32_t millisecondsRepeat)
     {
-        publishFunction = _publishFunction;
+        getPublisherData = _publishFunction;
         millisecondsRepeatPublish = millisecondsRepeat;
         publishTimer.cancel();
         publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
         publishTimer.async_wait(
-            std::bind(&Publisher::OnTimerExpired, this, std::placeholders::_1)
+            std::bind(&Publisher::collectPublishData, this, std::placeholders::_1)
         );
     }
 
-    void Publisher::StopPublishing()
+    void Publisher::stopPublishing()
     {
-        node.Log("Stop publishing.");
+        node.log("Stop publishing.");
         publishTimer.cancel();
         //subscribers.clear();
         //TODO:
     }
     
-    const std::string& Publisher::Name() const
+    const std::string& Publisher::getName() const
     {
-        return node.Name();
+        return node.getName();
     }
 
-    void Publisher::HandleIncomingMessage(NetworkLayer::DataMessage& message)
+    void Publisher::handleIncomingMessage(NetworkLayer::DataMessage &message)
     {
-        std::stringstream ss(std::move(message.Buffer()));
+        std::stringstream ss(std::move(message.getBuffer()));
         boost::archive::text_iarchive iarchive(ss);
 
         MessageVariant messageV;
@@ -86,7 +88,7 @@ namespace LogicalLayer
         boost::apply_visitor(MessageVisitor<Publisher>(*this), messageV);
     }
 
-    void Publisher::HandleNewNodeStatus(std::string nodeName, bool isAlive)
+    void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive)
     {
         if(!isAlive)
         {
@@ -94,58 +96,67 @@ namespace LogicalLayer
         }
     }
 
-    void Publisher::DefaultHandleAck(
-        const std::string nodeName, 
-        NetworkLayer::SendError error) const
+    void Publisher::defaultHandleAck(
+            const std::string nodeName,
+            NetworkLayer::SendError error) const
     {
         // TODO: add some implementation.
     }
 
-    void Publisher::OnTimerExpired(boost::system::error_code error)
+    void Publisher::collectPublishData (boost::system::error_code error)
     {
-        if (!publishFunction)
-            return;
-
-        if(error)
+        if (!getPublisherData || error || subscribers.empty ())
         {
+            if (!error)
+            {
+                publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
+                publishTimer.async_wait(std::bind(&Publisher::collectPublishData, this, std::placeholders::_1));
+            }
             return;
         }
 
-        auto message = publishFunction();
+        PublisherData publisherData(activeDataTypes);
+        getPublisherData(publisherData);
 
         auto callback = std::bind(
-            &Publisher::DefaultHandleAck,
+            &Publisher::defaultHandleAck,
             this,
             std::placeholders::_1,
             std::placeholders::_2);
 
-        for(auto subscriberNameSubscription : subscribers)
+        for (auto& subscriberNameSubscriptions: subscribers)
         {
-            node.IOService().post(
-                [this, subscriberNameSubscription, message, callback]
+            for (auto& subscription : subscriberNameSubscriptions.second)
+            {
+                SubscriptionData subscriptionData(node.getName (), subscription);
+                for (auto& dataType : subscription)
                 {
-                    PublisherData localMessage(message.PublisherName(), message.Data());
-                    SubscriptionT subscription = subscriberNameSubscription.second;
-                    localMessage.AddSubscription(subscription);
-                    MessageVariant messageV(localMessage);
-                    std::stringstream ss;
-                    boost::archive::text_oarchive oarchive(ss);
-                    oarchive << messageV;
-                    auto messageContent = ss.str();
-
-                    node.SndMessage(subscriberNameSubscription.first, messageContent, callback);
+                    subscriptionData.addData (dataType, publisherData.getData (dataType));
                 }
-            );
+
+                MessageVariant messageV(subscriptionData);
+                std::stringstream ss;
+                boost::archive::text_oarchive oarchive(ss);
+                oarchive << messageV;
+                auto messageContent = ss.str ();
+                auto subscriberName = subscriberNameSubscriptions.first;
+
+                node.getIOService ().post (
+                    [this, subscriberName, messageContent, callback]
+                    {
+                        node.sndMessage (subscriberName, messageContent, callback);
+                    });
+            }
         }
 
         publishTimer.expires_from_now(boost::posix_time::milliseconds(millisecondsRepeatPublish));
-        publishTimer.async_wait(std::bind(&Publisher::OnTimerExpired, this, std::placeholders::_1));
+        publishTimer.async_wait(std::bind(&Publisher::collectPublishData, this, std::placeholders::_1));
     }
 
     template <>
-    void Publisher::HandleMessage(BrokerIdentity& message)
+    void Publisher::handleMessage(BrokerIdentity& message)
     {
-        PublisherIdentityMessage pMessage(node.Name(), identity);
+        PublisherIdentityMessage pMessage(node.getName(), identity);
         MessageVariant messageV(pMessage);
         std::stringstream ss;
         boost::archive::text_oarchive oarchive(ss);
@@ -153,35 +164,63 @@ namespace LogicalLayer
         auto messageContent = ss.str();
 
         auto callback = std::bind(
-            &Publisher::DefaultHandleAck,
+                &Publisher::defaultHandleAck,
             this,
             std::placeholders::_1,
             std::placeholders::_2);
 
-        node.IOService().post(
+        node.getIOService().post(
             [this, message, messageContent, callback]
             {
-                node.SndMessage(message.BrokerName(), messageContent, callback);
+                node.sndMessage(message.getBrokerName(), messageContent, callback);
             }
         );
     }
 
     template <>
-    void Publisher::HandleMessage(SubscriptionMessage& message)
+    void Publisher::handleMessage(AddRemoveSubscriptionMessage& message)
     {}
 
     template <>
-    void Publisher::HandleMessage(PublisherIdentityMessage& message)
+    void Publisher::handleMessage(PublisherIdentityMessage& message)
     {}
 
     template <>
-    void Publisher::HandleMessage(StartPublish& message)
+    void Publisher::handleMessage(StartPublish& message)
     {
-        node.Log("Start sending data to " + message.SubscriberName());
-        subscribers.insert(std::make_pair(message.SubscriberName(), message.Subscription()));
+        node.log("Start sending data to " + message.getSubscriberName());
+        subscribers[message.getSubscriberName()].insert (message.getSubscription());
+
+        for (auto& dataType : message.getSubscription())
+        {
+            activeDataTypes.insert (std::make_pair (dataType, ""));
+        }
     }
 
     template <>
-    void Publisher::HandleMessage(PublisherData& message)
+    void Publisher::handleMessage (StopPublish& message)
+    {
+        node.log("Stop sending data to " + message.getSubscriberName());
+        subscribers[message.getSubscriberName()].erase (message.getSubscription ());
+        if (subscribers[message.getSubscriberName()].empty ())
+        {
+            subscribers.erase (message.getSubscriberName());
+        }
+
+        activeDataTypes.clear ();
+        for (auto& subscriber : subscribers)
+        {
+            for (auto& subscription : subscriber.second)
+            {
+                for (auto& dataType : subscription)
+                {
+                    activeDataTypes.insert (std::make_pair (dataType, ""));
+                }
+            }
+        }
+    }
+
+    template <>
+    void Publisher::handleMessage(SubscriptionData& message)
     {}
 }
