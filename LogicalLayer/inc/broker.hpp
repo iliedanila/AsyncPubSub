@@ -7,6 +7,7 @@
 
 #include <map>
 #include <set>
+#include <vector>
 
 namespace NetworkLayer {
     class DataMessage;
