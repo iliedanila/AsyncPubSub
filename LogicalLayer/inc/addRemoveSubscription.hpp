@@ -3,7 +3,6 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/utility.hpp>
-#include <boost/serialization/set.hpp>
 #include <boost/serialization/map.hpp>
 #include <vector>
 #include <set>
