@@ -12,9 +12,7 @@ link_directories(${Boost_LIBRARY_DIR})
 add_subdirectory(LogicalLayer)
 add_subdirectory(MeshNetwork)
 add_subdirectory(Playground)
-
 #add_subdirectory(StartNode)
-
 
 # MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )
 # MESSAGE( STATUS "CMAKE_CURRENT_BINARY_DIR: " ${CMAKE_CURRENT_BINARY_DIR} )
