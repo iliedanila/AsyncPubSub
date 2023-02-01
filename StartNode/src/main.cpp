@@ -7,6 +7,8 @@
 #include "broker.hpp"
 #include "subscriber.hpp"
 #include "publisher.hpp"
+#include "publisherData.hpp"
+#include "subscriptionData.hpp"
 
 
 int main(int argc, const char * argv[])
@@ -84,10 +86,11 @@ int main(int argc, const char * argv[])
 
                 auto intervalParameters = args.GetParameters("--interval", 1);
                 publisher->startPublishing(
-                        [&]() -> LogicalLayer::SubscriptionData {
-                            return LogicalLayer::SubscriptionData(
-                                    node.getName(),
-                                    "Message from Publisher");
+                        [&](LogicalLayer::PublisherData& publisherData) {
+                            for(auto& dataTypes : publisherData.getData ())
+                            {
+                                dataTypes.second = "Dummy value here.";
+                            }
                         }, std::stoi(intervalParameters[0]));
             }
             else if (asParameters[0] == "subscriber")
@@ -106,8 +109,16 @@ int main(int argc, const char * argv[])
                             subscription,
                             [&node]
                                     (LogicalLayer::SubscriptionData &publisherData) {
-                                node.log("Publisher data: " + publisherData.getData());
-                            }
+                                        std::string receivedData;
+                                        for (auto& typeData : publisherData.getData())
+                                        {
+                                            receivedData += typeData.first;
+                                            receivedData += ": ";
+                                            receivedData += typeData.second;
+                                            receivedData += "\t";
+                                        }
+                                        node.log("Publisher data: " + receivedData);
+                                    }   
                     );
                 }
             }
