@@ -2,49 +2,42 @@
 #define _SUBSCRIPTION_HPP_
 
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/utility.hpp>
 #include <boost/serialization/map.hpp>
-#include <vector>
+#include <boost/serialization/utility.hpp>
 #include <set>
+#include <vector>
 
 #include "common.hpp"
 
-namespace LogicalLayer
-{
+namespace LogicalLayer {
 
-class AddRemoveSubscriptionMessage
-{
-public:
-    enum Action
-    {
-        eAdd = 1,
-        eRemove
-    };
+class AddRemoveSubscriptionMessage {
+   public:
+    enum Action { eAdd = 1, eRemove };
 
     AddRemoveSubscriptionMessage() {}
+
     ~AddRemoveSubscriptionMessage() {}
 
-    explicit AddRemoveSubscriptionMessage(
-        const std::string aSubscriberName,
-        const SubscriptionT& aSubscription,
-        Action anAction)
-    :
-        subscriberName(aSubscriberName),
-        subscription(aSubscription),
-        action(anAction)
-    {}
+    explicit AddRemoveSubscriptionMessage(const std::string aSubscriberName,
+                                          const SubscriptionT& aSubscription,
+                                          Action anAction)
+        : subscriberName(aSubscriberName),
+          subscription(aSubscription),
+          action(anAction) {}
 
     const std::string& getSubscriberName() const { return subscriberName; }
+
     const SubscriptionT& getSubscription() const { return subscription; }
+
     const Action& getAction() const { return action; }
 
-private:
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-        ar & subscriberName;
-        ar & subscription;
-        ar & action;
+   private:
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version) {
+        ar& subscriberName;
+        ar& subscription;
+        ar& action;
     }
 
     friend class boost::serialization::access;
@@ -54,6 +47,6 @@ private:
     Action action;
 };
 
-}
+}  // namespace LogicalLayer
 
 #endif

@@ -1,50 +1,47 @@
 #ifndef _LOGICAL_LAYER_PUBLISHER_HPP_
 #define _LOGICAL_LAYER_PUBLISHER_HPP_
 
+#include "common.hpp"
 #include "messageVisitor.hpp"
 #include "sendError.hpp"
-#include "common.hpp"
 
 //#include <boost/date_time/posix_time/posix_time_config.hpp>
 #include <boost/asio/deadline_timer.hpp>
-#include <set>
-#include <map>
 #include <functional>
+#include <map>
+#include <set>
 
 namespace NetworkLayer {
-    class DataMessage;
-    class Node;
-}
+class DataMessage;
+class Node;
+}  // namespace NetworkLayer
 
-namespace LogicalLayer
-{
+namespace LogicalLayer {
 
-class Publisher
-{
-public:
-    explicit Publisher(
-        NetworkLayer::Node& node,
-        PublisherIdentityT& publisherIdentity);
+class Publisher {
+   public:
+    explicit Publisher(NetworkLayer::Node& node,
+                       PublisherIdentityT& publisherIdentity);
     ~Publisher();
 
-    void startPublishing(PublishFunctionT _publishFunction, uint32_t millisecondsRepeat);
+    void startPublishing(PublishFunctionT _publishFunction,
+                         uint32_t millisecondsRepeat);
     void stopPublishing();
     const std::string& getName() const;
 
-private:
+   private:
     friend struct MessageVisitor<Publisher>;
-    void handleIncomingMessage(NetworkLayer::DataMessage &message);
+    void handleIncomingMessage(NetworkLayer::DataMessage& message);
 
     void handleNewNodeStatus(std::string nodeName, bool isAlive);
 
-    void defaultHandleAck(
-            const std::string nodeName,
-            NetworkLayer::SendError error) const;
+    void defaultHandleAck(const std::string nodeName,
+                          NetworkLayer::SendError error) const;
 
-    template<typename MessageT>
+    template <typename MessageT>
     void handleMessage(MessageT& message);
 
-    void collectPublishData (boost::system::error_code error);
+    void collectPublishData(boost::system::error_code error);
 
     PublisherIdentityT identity;
     NetworkLayer::Node& node;
@@ -55,6 +52,6 @@ private:
     std::map<std::string, std::string> activeDataTypes;
 };
 
-}
+}  // namespace LogicalLayer
 
 #endif

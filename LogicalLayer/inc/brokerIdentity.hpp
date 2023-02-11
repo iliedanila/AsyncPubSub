@@ -4,33 +4,29 @@
 #include <boost/serialization/access.hpp>
 #include <string>
 
-namespace LogicalLayer
-{
+namespace LogicalLayer {
 
-class BrokerIdentity
-{
-public:
+class BrokerIdentity {
+   public:
     BrokerIdentity() {}
+
     ~BrokerIdentity() {}
 
     explicit BrokerIdentity(const std::string _nodeName)
-    :
-        nodeName(_nodeName)
-    {}
+        : nodeName(_nodeName) {}
 
     std::string getBrokerName() const { return nodeName; }
 
-private:
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-        ar & nodeName;
+   private:
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version) {
+        ar& nodeName;
     }
 
     friend class boost::serialization::access;
     std::string nodeName;
 };
 
-}
+}  // namespace LogicalLayer
 
 #endif
