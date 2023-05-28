@@ -3,9 +3,13 @@ Asynchronous Publisher - Subscriber library on top of a self-routing node networ
 
 This allows to create a dynamic network of publishers and subscribers (you can add/remove nodes while the system is running, add/remove subscriptions or start/stop certain publishers).
 
-There are solution files for `Visual Studio 2017` on Windows, `xcode` on Mac OS, and `codelite` on Linux.
+# Requirements:
+* boost - install with `sudo apt install libboost-all-dev` on Ubuntu and `brew install boost` on MacOS
 
 Feel free to submit inquiries about the above software at `danila.ilie@gmail.com`
+
+# Build:
+`./build.sh`
 
 # Usage example:
 
