@@ -5,8 +5,10 @@
 #include "node.hpp"
 #include "publisherData.hpp"
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
+// #include <boost/archive/text_iarchive.hpp>
+// #include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/variant.hpp>
 #include <iostream>
 
@@ -56,7 +58,7 @@ const std::string& Publisher::getName() const {
 
 void Publisher::handleIncomingMessage(NetworkLayer::DataMessage& message) {
     std::stringstream ss(std::move(message.getBuffer()));
-    boost::archive::text_iarchive iarchive(ss);
+    boost::archive::binary_iarchive iarchive(ss);
 
     MessageVariant messageV;
     iarchive >> messageV;
@@ -102,7 +104,7 @@ void Publisher::collectPublishData(boost::system::error_code error) {
 
             MessageVariant messageV(subscriptionData);
             std::stringstream ss;
-            boost::archive::text_oarchive oarchive(ss);
+            boost::archive::binary_oarchive oarchive(ss);
             oarchive << messageV;
             auto messageContent = ss.str();
             auto subscriberName = subscriberNameSubscriptions.first;
@@ -125,7 +127,7 @@ void Publisher::handleMessage(BrokerIdentity& message) {
     PublisherIdentityMessage pMessage(node.getName(), identity);
     MessageVariant messageV(pMessage);
     std::stringstream ss;
-    boost::archive::text_oarchive oarchive(ss);
+    boost::archive::binary_oarchive oarchive(ss);
     oarchive << messageV;
     auto messageContent = ss.str();
 

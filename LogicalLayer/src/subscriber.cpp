@@ -4,8 +4,10 @@
 #include "dataMessage.hpp"
 #include "node.hpp"
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
+// #include <boost/archive/text_iarchive.hpp>
+// #include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/variant.hpp>
 #include <boost/variant/apply_visitor.hpp>
 #include <iostream>
@@ -48,7 +50,7 @@ void Subscriber::removeSubscription(SubscriptionT& subscription) {
 
 void Subscriber::handleIncomingMessage(NetworkLayer::DataMessage& message) {
     std::stringstream ss(std::move(message.getBuffer()));
-    boost::archive::text_iarchive iarchive(ss);
+    boost::archive::binary_iarchive iarchive(ss);
 
     MessageVariant messageV;
     iarchive >> messageV;
@@ -63,7 +65,7 @@ void Subscriber::sendSubscription(
                                               action);
     MessageVariant messageV(subscription);
     std::stringstream ss;
-    boost::archive::text_oarchive oarchive(ss);
+    boost::archive::binary_oarchive oarchive(ss);
     oarchive << messageV;
     auto messageContent = ss.str();
 

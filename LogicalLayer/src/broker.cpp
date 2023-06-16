@@ -1,8 +1,10 @@
 #include <boost/serialization/variant.hpp>
 #include <iostream>
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
+// #include <boost/archive/text_iarchive.hpp>
+// #include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include "../inc/allMessages.hpp"
 #include "broker.hpp"
 #include "brokerIdentity.hpp"
@@ -32,7 +34,7 @@ Broker::~Broker() {}
 
 void Broker::handleIncomingMessage(NetworkLayer::DataMessage& message) {
     std::stringstream ss(std::move(message.getBuffer()));
-    boost::archive::text_iarchive iarchive(ss);
+    boost::archive::binary_iarchive iarchive(ss);
 
     LogicalLayer::MessageVariant messageV;
     iarchive >> messageV;
@@ -49,7 +51,7 @@ void Broker::broadcastIdentity() const {
 void Broker::sendIdentity(std::string nodeName) const {
     LogicalLayer::MessageVariant messageV(BrokerIdentity(node.getName()));
     std::stringstream ss;
-    boost::archive::text_oarchive oarchive(ss);
+    boost::archive::binary_oarchive oarchive(ss);
     oarchive << messageV;
     auto messageContent = ss.str();
 
@@ -114,7 +116,7 @@ void Broker::sendStartPublish(std::string publisher, std::string subscriberName,
     StartPublish startPublishMessage(subscriberName, subscription);
     LogicalLayer::MessageVariant messageV(startPublishMessage);
     std::stringstream ss;
-    boost::archive::text_oarchive oarchive(ss);
+    boost::archive::binary_oarchive oarchive(ss);
     oarchive << messageV;
     auto messageContent = ss.str();
 
@@ -131,7 +133,7 @@ void Broker::sendStopPublish(std::string publisher, std::string subscriberName,
     StopPublish stopPublishMessage(subscriberName, subscription);
     LogicalLayer::MessageVariant messageV(stopPublishMessage);
     std::stringstream ss;
-    boost::archive::text_oarchive oarchive(ss);
+    boost::archive::binary_oarchive oarchive(ss);
     oarchive << messageV;
     auto messageContent = ss.str();
 
