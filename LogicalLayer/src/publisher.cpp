@@ -14,7 +14,7 @@
 
 namespace LogicalLayer {
 Publisher::Publisher(NetworkLayer::Node& _node,
-                     PublisherIdentityT& _publisherIdentity)
+                     PublisherIdentityT _publisherIdentity)
     : identity(_publisherIdentity),
       node(_node),
       publishTimer(node.getIOService()) {

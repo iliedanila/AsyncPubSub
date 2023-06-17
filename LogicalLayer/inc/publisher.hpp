@@ -21,7 +21,7 @@ namespace LogicalLayer {
 class Publisher {
    public:
     explicit Publisher(NetworkLayer::Node& node,
-                       PublisherIdentityT& publisherIdentity);
+                       PublisherIdentityT publisherIdentity);
     ~Publisher();
 
     void startPublishing(PublishFunctionT _publishFunction,
