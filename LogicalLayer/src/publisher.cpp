@@ -67,9 +67,9 @@ void Publisher::handleIncomingMessage(NetworkLayer::DataMessage& message) {
 }
 
 void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive) {
-    if (!isAlive) {
-        subscribers.erase(nodeName);
-    }
+    // if (!isAlive) {
+        // subscribers.erase(nodeName);
+    // }
 }
 
 void Publisher::defaultHandleAck(const std::string nodeName,
