@@ -19,20 +19,6 @@ Subscriber::Subscriber(NetworkLayer::Node& _node) : node(_node) {
         node.acceptMessages(std::bind(&Subscriber::handleIncomingMessage, this,
                                       std::placeholders::_1));
     });
-
-    //        node.getIOService().post(
-    //            [this]
-    //            {
-    //                node.notifyNewNodeStatus(
-    //                        std::bind(
-    //                                &Subscriber::handleNewNodeStatus,
-    //                                this,
-    //                                std::placeholders::_1,
-    //                                std::placeholders::_2
-    //                        )
-    //                );
-    //            }
-    //        );
 }
 
 Subscriber::~Subscriber() {}
