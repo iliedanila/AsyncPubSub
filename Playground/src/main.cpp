@@ -23,7 +23,7 @@ void populateData(LogicalLayer::PublisherData& publisherData) {
 }
 
 int main() {
-    io_service ioservice;
+    io_context ioservice;
 
     // Test
     // -------------------------------------------------------------------------
@@ -95,7 +95,7 @@ int main() {
         std::string command(consoleCommand);
         if (boost::algorithm::starts_with(command, "exit")) {
             exit = true;
-            ioservice.post([&] {
+            post(ioservice, [&] {
                 for (auto& publisher : publishers) {
                     publisher->stopPublishing();
                 }
@@ -109,7 +109,7 @@ int main() {
         }
 
         if (boost::algorithm::starts_with(command, "stop")) {
-            ioservice.post([&publishers] {
+            post(ioservice, [&publishers] {
                 for (auto& publisher : publishers) {
                     publisher->stopPublishing();
                 }
@@ -117,7 +117,7 @@ int main() {
         }
 
         if (boost::algorithm::starts_with(command, "start")) {
-            ioservice.post([&] {
+            post(ioservice, [&] {
                 for (auto& publisher : publishers) {
                     publisher->startPublishing(
                         std::bind(&populateData, std::placeholders::_1), 2000);
@@ -126,7 +126,7 @@ int main() {
         }
 
         if (boost::algorithm::starts_with(command, "remove")) {
-            ioservice.post([&] {
+            post(ioservice, [&] {
                 for (auto& subscriber : subscribers) {
                     std::set<std::string> subscription = {"MyCustomType1",
                                                           "MyCustomType2"};
@@ -136,7 +136,7 @@ int main() {
         }
 
         if (boost::algorithm::starts_with(command, "add")) {
-            ioservice.post([&] {
+            post(ioservice, [&] {
                 for (auto& subscriber : subscribers) {
                     std::set<std::string> subscription = {"MyCustomType1",
                                                           "MyCustomType2"};

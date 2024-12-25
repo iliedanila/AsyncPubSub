@@ -15,7 +15,7 @@
 
 namespace LogicalLayer {
 Subscriber::Subscriber(NetworkLayer::Node& _node) : node(_node) {
-    node.getIOService().post([this] {
+    boost::asio::post(node.getIOService(), [this] {
         node.acceptMessages(std::bind(&Subscriber::handleIncomingMessage, this,
                                       std::placeholders::_1));
     });
@@ -58,9 +58,10 @@ void Subscriber::sendSubscription(
     auto callback = std::bind(&Subscriber::handleBrokerAck, this,
                               std::placeholders::_1, std::placeholders::_2);
 
-    node.getIOService().post([this, brokerName, messageContent, callback] {
-        node.sndMessage(brokerName, messageContent, callback);
-    });
+    boost::asio::post(node.getIOService(),
+                      [this, brokerName, messageContent, callback] {
+                          node.sndMessage(brokerName, messageContent, callback);
+                      });
 }
 
 void Subscriber::sendNewSubscription(SubscriptionT& subscription) {
@@ -131,7 +132,7 @@ template <>
 void Subscriber::handleMessage(SubscriptionData& message) {
     auto it = subscriptions.find(message.getSubscription());
     if (it != subscriptions.end()) {
-        node.getIOService().post(std::bind(it->second, message));
+        boost::asio::post(node.getIOService(), std::bind(it->second, message));
     }
 }
 }  // namespace LogicalLayer

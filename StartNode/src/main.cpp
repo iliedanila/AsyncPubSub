@@ -11,7 +11,7 @@
 #include "subscriptionData.hpp"
 
 int main(int argc, const char* argv[]) {
-    boost::asio::io_service io_service;
+    boost::asio::io_context io_context;
 
     try {
         if (argc < 3) {
@@ -35,7 +35,7 @@ int main(int argc, const char* argv[]) {
         }
         auto nameParameter = args.GetParameters("--name", 1);
 
-        NetworkLayer::Node node(nameParameter[0], io_service,
+        NetworkLayer::Node node(nameParameter[0], io_context,
                                 args.HasArgument("--logger"));
 
         // Accept.
@@ -111,7 +111,7 @@ int main(int argc, const char* argv[]) {
             }
         }
 
-        io_service.run();
+        io_context.run();
     } catch (std::exception& e) {
         std::cout << e.what() << "\n";
     }

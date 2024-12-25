@@ -16,14 +16,14 @@
 
 namespace LogicalLayer {
 Broker::Broker(NetworkLayer::Node& _node) : node(_node) {
-    node.getIOService().post([this] {
+    boost::asio::post(node.getIOService(), [this] {
         node.acceptMessages(std::bind(&Broker::handleIncomingMessage, this,
                                       std::placeholders::_1));
     });
 
-    node.getIOService().post([this] { broadcastIdentity(); });
+    boost::asio::post(node.getIOService(), [this] { broadcastIdentity(); });
 
-    node.getIOService().post([this] {
+    boost::asio::post(node.getIOService(), [this] {
         node.notifyNewNodeStatus(std::bind(&Broker::handleNewNodeStatus, this,
                                            std::placeholders::_1,
                                            std::placeholders::_2));
@@ -58,9 +58,10 @@ void Broker::sendIdentity(std::string nodeName) const {
     auto callback = std::bind(&Broker::defaultCallback, this,
                               std::placeholders::_1, std::placeholders::_2);
 
-    node.getIOService().post([this, nodeName, callback, messageContent] {
-        node.sndMessage(nodeName, messageContent, callback);
-    });
+    boost::asio::post(node.getIOService(),
+                      [this, nodeName, callback, messageContent] {
+                          node.sndMessage(nodeName, messageContent, callback);
+                      });
 }
 
 void Broker::defaultCallback(std::string nodeName,
@@ -123,9 +124,10 @@ void Broker::sendStartPublish(std::string publisher, std::string subscriberName,
     auto callback = std::bind(&Broker::defaultCallback, this,
                               std::placeholders::_1, std::placeholders::_2);
 
-    node.getIOService().post([this, publisher, messageContent, callback] {
-        node.sndMessage(publisher, messageContent, callback);
-    });
+    boost::asio::post(node.getIOService(),
+                      [this, publisher, messageContent, callback] {
+                          node.sndMessage(publisher, messageContent, callback);
+                      });
 }
 
 void Broker::sendStopPublish(std::string publisher, std::string subscriberName,
@@ -140,9 +142,10 @@ void Broker::sendStopPublish(std::string publisher, std::string subscriberName,
     auto callback = std::bind(&Broker::defaultCallback, this,
                               std::placeholders::_1, std::placeholders::_2);
 
-    node.getIOService().post([this, publisher, messageContent, callback] {
-        node.sndMessage(publisher, messageContent, callback);
-    });
+    boost::asio::post(node.getIOService(),
+                      [this, publisher, messageContent, callback] {
+                          node.sndMessage(publisher, messageContent, callback);
+                      });
 }
 
 template <>

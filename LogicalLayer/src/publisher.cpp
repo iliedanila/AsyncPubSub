@@ -18,12 +18,12 @@ Publisher::Publisher(NetworkLayer::Node& _node,
     : identity(_publisherIdentity),
       node(_node),
       publishTimer(node.getIOService()) {
-    node.getIOService().post([this] {
+    boost::asio::post(node.getIOService(), [this] {
         node.acceptMessages(std::bind(&Publisher::handleIncomingMessage, this,
                                       std::placeholders::_1));
     });
 
-    node.getIOService().post([this] {
+    boost::asio::post(node.getIOService(), [this] {
         node.notifyNewNodeStatus(std::bind(&Publisher::handleNewNodeStatus,
                                            this, std::placeholders::_1,
                                            std::placeholders::_2));
@@ -68,7 +68,7 @@ void Publisher::handleIncomingMessage(NetworkLayer::DataMessage& message) {
 
 void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive) {
     // if (!isAlive) {
-        // subscribers.erase(nodeName);
+    // subscribers.erase(nodeName);
     // }
 }
 
@@ -109,10 +109,10 @@ void Publisher::collectPublishData(boost::system::error_code error) {
             auto messageContent = ss.str();
             auto subscriberName = subscriberNameSubscriptions.first;
 
-            node.getIOService().post(
-                [this, subscriberName, messageContent, callback] {
-                    node.sndMessage(subscriberName, messageContent, callback);
-                });
+            boost::asio::post(node.getIOService(), [this, subscriberName,
+                                                    messageContent, callback] {
+                node.sndMessage(subscriberName, messageContent, callback);
+            });
         }
     }
 
@@ -134,9 +134,10 @@ void Publisher::handleMessage(BrokerIdentity& message) {
     auto callback = std::bind(&Publisher::defaultHandleAck, this,
                               std::placeholders::_1, std::placeholders::_2);
 
-    node.getIOService().post([this, message, messageContent, callback] {
-        node.sndMessage(message.getBrokerName(), messageContent, callback);
-    });
+    boost::asio::post(
+        node.getIOService(), [this, message, messageContent, callback] {
+            node.sndMessage(message.getBrokerName(), messageContent, callback);
+        });
 }
 
 template <>
