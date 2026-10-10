@@ -8,6 +8,7 @@
 #include "../inc/allMessages.hpp"
 #include "broker.hpp"
 #include "brokerIdentity.hpp"
+#include "messageDecoder.hpp"
 #include "messageVisitor.hpp"
 #include "node.hpp"
 
@@ -33,13 +34,13 @@ Broker::Broker(NetworkLayer::Node& _node) : node(_node) {
 Broker::~Broker() {}
 
 void Broker::handleIncomingMessage(NetworkLayer::DataMessage& message) {
-    std::stringstream ss(std::move(message.getBuffer()));
-    boost::archive::binary_iarchive iarchive(ss);
-
-    LogicalLayer::MessageVariant messageV;
-    iarchive >> messageV;
-
-    boost::apply_visitor(MessageVisitor<Broker>(*this), messageV);
+    auto decoded = decodeMessage(message.getBuffer());
+    if (!decoded) {
+        node.log("Dropping malformed message from " +
+                 message.getSourceNodeName());
+        return;
+    }
+    boost::apply_visitor(MessageVisitor<Broker>(*this), *decoded);
 }
 
 void Broker::broadcastIdentity() const {
@@ -77,8 +78,24 @@ void Broker::handleNewNodeStatus(const std::string nodeName, bool isAlive) {
     } else {
         node.log("Removing node " + nodeName +
                  " from publishers and subscribers.");
+        stopPublishingTo(nodeName);
         activeSubscribers.erase(nodeName);
         activePublishers.erase(nodeName);
+    }
+}
+
+// If the subscriber is only rerouting, it re-sends its subscriptions when we
+// announce ourselves to it again, and publishing resumes.
+void Broker::stopPublishingTo(const std::string& subscriberName) {
+    auto subscriber = activeSubscribers.find(subscriberName);
+    if (subscriber == activeSubscribers.end()) {
+        return;
+    }
+    for (const auto& subscription : subscriber->second) {
+        for (const auto& publisher :
+             getPublishersForSubscription(subscription)) {
+            sendStopPublish(publisher, subscriberName, subscription);
+        }
     }
 }
 

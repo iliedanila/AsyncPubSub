@@ -43,6 +43,7 @@ class Broker {
                           SubscriptionT subscription);
     void sendStopPublish(std::string publisher, std::string subscriber,
                          SubscriptionT subscription);
+    void stopPublishingTo(const std::string& subscriberName);
 
     NetworkLayer::Node& node;
     std::map<std::string, std::set<SubscriptionT>> activeSubscribers;

@@ -5,8 +5,7 @@
 #include "messageVisitor.hpp"
 #include "sendError.hpp"
 
-//#include <boost/date_time/posix_time/posix_time_config.hpp>
-#include <boost/asio/deadline_timer.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <functional>
 #include <map>
 #include <set>
@@ -43,10 +42,12 @@ class Publisher {
 
     void collectPublishData(boost::system::error_code error);
 
+    void rebuildActiveDataTypes();
+
     PublisherIdentityT identity;
     NetworkLayer::Node& node;
     PublishFunctionT getPublisherData;
-    boost::asio::deadline_timer publishTimer;
+    boost::asio::steady_timer publishTimer;
     uint32_t millisecondsRepeatPublish;
     std::map<std::string, std::set<SubscriptionT>> subscribers;
     std::map<std::string, std::string> activeDataTypes;

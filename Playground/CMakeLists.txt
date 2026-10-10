@@ -4,7 +4,7 @@ set (CMAKE_CXX_STANDARD 17) # C++ 17
 
 project(playground)
 
-find_package(Boost REQUIRED date_time regex system serialization)
+find_package(Boost REQUIRED system serialization)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIR})
 
@@ -21,9 +21,15 @@ add_executable(playground ${SOURCES})
 target_link_libraries(playground LogicalLayer MeshNetwork)
 
 if(UNIX)
-    target_link_libraries(playground Boost::date_time)
-    target_link_libraries(playground Boost::regex)
     target_link_libraries(playground Boost::serialization)
     target_link_libraries(playground Boost::system)
     target_link_libraries(playground pthread)
+endif()
+
+if(BUILD_TESTING)
+    # Uses the playground's fixed ports 7777 and 8888.
+    add_test(NAME cli.playgroundExitsOnEof
+             COMMAND sh -c "$<TARGET_FILE:playground> < /dev/null")
+    set_tests_properties(cli.playgroundExitsOnEof PROPERTIES
+        TIMEOUT 15 RUN_SERIAL TRUE)
 endif()

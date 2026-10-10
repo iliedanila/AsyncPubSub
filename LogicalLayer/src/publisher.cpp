@@ -1,6 +1,7 @@
 #include "publisher.hpp"
 #include "../inc/allMessages.hpp"
 #include "allMessages.hpp"
+#include "messageDecoder.hpp"
 #include "messageVisitor.hpp"
 #include "node.hpp"
 #include "publisherData.hpp"
@@ -39,8 +40,8 @@ void Publisher::startPublishing(PublishFunctionT _publishFunction,
     getPublisherData = _publishFunction;
     millisecondsRepeatPublish = millisecondsRepeat;
     publishTimer.cancel();
-    publishTimer.expires_from_now(
-        boost::posix_time::milliseconds(millisecondsRepeatPublish));
+    publishTimer.expires_after(
+        std::chrono::milliseconds(millisecondsRepeatPublish));
     publishTimer.async_wait(
         std::bind(&Publisher::collectPublishData, this, std::placeholders::_1));
 }
@@ -57,19 +58,29 @@ const std::string& Publisher::getName() const {
 }
 
 void Publisher::handleIncomingMessage(NetworkLayer::DataMessage& message) {
-    std::stringstream ss(std::move(message.getBuffer()));
-    boost::archive::binary_iarchive iarchive(ss);
-
-    MessageVariant messageV;
-    iarchive >> messageV;
-
-    boost::apply_visitor(MessageVisitor<Publisher>(*this), messageV);
+    auto decoded = decodeMessage(message.getBuffer());
+    if (!decoded) {
+        node.log("Dropping malformed message from " +
+                 message.getSourceNodeName());
+        return;
+    }
+    boost::apply_visitor(MessageVisitor<Publisher>(*this), *decoded);
 }
 
-void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive) {
-    // if (!isAlive) {
-    // subscribers.erase(nodeName);
-    // }
+// Subscribers are dropped only on the broker's StopPublish: a reroute briefly
+// reports a subscriber unreachable here without the broker noticing, and
+// dropping it then would stop delivery for good.
+void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive) {}
+
+void Publisher::rebuildActiveDataTypes() {
+    activeDataTypes.clear();
+    for (auto& subscriber : subscribers) {
+        for (auto& subscription : subscriber.second) {
+            for (auto& dataType : subscription) {
+                activeDataTypes.insert(std::make_pair(dataType, ""));
+            }
+        }
+    }
 }
 
 void Publisher::defaultHandleAck(const std::string nodeName,
@@ -80,8 +91,8 @@ void Publisher::defaultHandleAck(const std::string nodeName,
 void Publisher::collectPublishData(boost::system::error_code error) {
     if (!getPublisherData || error || subscribers.empty()) {
         if (!error) {
-            publishTimer.expires_from_now(
-                boost::posix_time::milliseconds(millisecondsRepeatPublish));
+            publishTimer.expires_after(
+                std::chrono::milliseconds(millisecondsRepeatPublish));
             publishTimer.async_wait(std::bind(&Publisher::collectPublishData,
                                               this, std::placeholders::_1));
         }
@@ -116,8 +127,8 @@ void Publisher::collectPublishData(boost::system::error_code error) {
         }
     }
 
-    publishTimer.expires_from_now(
-        boost::posix_time::milliseconds(millisecondsRepeatPublish));
+    publishTimer.expires_after(
+        std::chrono::milliseconds(millisecondsRepeatPublish));
     publishTimer.async_wait(
         std::bind(&Publisher::collectPublishData, this, std::placeholders::_1));
 }
@@ -163,15 +174,7 @@ void Publisher::handleMessage(StopPublish& message) {
     if (subscribers[message.getSubscriberName()].empty()) {
         subscribers.erase(message.getSubscriberName());
     }
-
-    activeDataTypes.clear();
-    for (auto& subscriber : subscribers) {
-        for (auto& subscription : subscriber.second) {
-            for (auto& dataType : subscription) {
-                activeDataTypes.insert(std::make_pair(dataType, ""));
-            }
-        }
-    }
+    rebuildActiveDataTypes();
 }
 
 template <>

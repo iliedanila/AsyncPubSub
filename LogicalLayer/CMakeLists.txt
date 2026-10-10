@@ -16,3 +16,7 @@ file(GLOB SOURCES "src/*.cpp")
 file(GLOB HEADERS "inc/*.hpp")
 
 add_library(LogicalLayer STATIC ${HEADERS} ${SOURCES})
+
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

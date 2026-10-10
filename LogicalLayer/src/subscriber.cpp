@@ -2,6 +2,7 @@
 #include "../inc/allMessages.hpp"
 #include "brokerIdentity.hpp"
 #include "dataMessage.hpp"
+#include "messageDecoder.hpp"
 #include "node.hpp"
 
 // #include <boost/archive/text_iarchive.hpp>
@@ -19,6 +20,14 @@ Subscriber::Subscriber(NetworkLayer::Node& _node) : node(_node) {
         node.acceptMessages(std::bind(&Subscriber::handleIncomingMessage, this,
                                       std::placeholders::_1));
     });
+
+    // Forgetting a broker that left is what lets it be rediscovered, and
+    // sent our subscriptions again, when it comes back.
+    boost::asio::post(node.getIOService(), [this] {
+        node.notifyNewNodeStatus(std::bind(&Subscriber::handleNewNodeStatus,
+                                           this, std::placeholders::_1,
+                                           std::placeholders::_2));
+    });
 }
 
 Subscriber::~Subscriber() {}
@@ -35,13 +44,13 @@ void Subscriber::removeSubscription(SubscriptionT& subscription) {
 }
 
 void Subscriber::handleIncomingMessage(NetworkLayer::DataMessage& message) {
-    std::stringstream ss(std::move(message.getBuffer()));
-    boost::archive::binary_iarchive iarchive(ss);
-
-    MessageVariant messageV;
-    iarchive >> messageV;
-
-    boost::apply_visitor(MessageVisitor<Subscriber>(*this), messageV);
+    auto decoded = decodeMessage(message.getBuffer());
+    if (!decoded) {
+        node.log("Dropping malformed message from " +
+                 message.getSourceNodeName());
+        return;
+    }
+    boost::apply_visitor(MessageVisitor<Subscriber>(*this), *decoded);
 }
 
 void Subscriber::sendSubscription(
@@ -88,11 +97,10 @@ void Subscriber::sendAllSubscriptions(const std::string& brokerName) {
     }
 }
 
+// A broker announces itself whenever it (re)discovers us, possibly after
+// dropping our subscriptions, so they go out every time.
 void Subscriber::handleNewBroker(BrokerIdentity& message) {
     node.log("New broker found: " + message.getBrokerName());
-    if (brokers.find(message.getBrokerName()) != brokers.end())
-        return;
-
     brokers.insert(message.getBrokerName());
     sendAllSubscriptions(message.getBrokerName());
 }
