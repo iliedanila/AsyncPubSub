@@ -8,6 +8,7 @@
 #include "../inc/allMessages.hpp"
 #include "broker.hpp"
 #include "brokerIdentity.hpp"
+#include "messageDecoder.hpp"
 #include "messageVisitor.hpp"
 #include "node.hpp"
 
@@ -33,13 +34,13 @@ Broker::Broker(NetworkLayer::Node& _node) : node(_node) {
 Broker::~Broker() {}
 
 void Broker::handleIncomingMessage(NetworkLayer::DataMessage& message) {
-    std::stringstream ss(std::move(message.getBuffer()));
-    boost::archive::binary_iarchive iarchive(ss);
-
-    LogicalLayer::MessageVariant messageV;
-    iarchive >> messageV;
-
-    boost::apply_visitor(MessageVisitor<Broker>(*this), messageV);
+    auto decoded = decodeMessage(message.getBuffer());
+    if (!decoded) {
+        node.log("Dropping malformed message from " +
+                 message.getSourceNodeName());
+        return;
+    }
+    boost::apply_visitor(MessageVisitor<Broker>(*this), *decoded);
 }
 
 void Broker::broadcastIdentity() const {

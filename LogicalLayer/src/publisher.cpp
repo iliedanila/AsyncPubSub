@@ -1,6 +1,7 @@
 #include "publisher.hpp"
 #include "../inc/allMessages.hpp"
 #include "allMessages.hpp"
+#include "messageDecoder.hpp"
 #include "messageVisitor.hpp"
 #include "node.hpp"
 #include "publisherData.hpp"
@@ -57,19 +58,33 @@ const std::string& Publisher::getName() const {
 }
 
 void Publisher::handleIncomingMessage(NetworkLayer::DataMessage& message) {
-    std::stringstream ss(std::move(message.getBuffer()));
-    boost::archive::binary_iarchive iarchive(ss);
-
-    MessageVariant messageV;
-    iarchive >> messageV;
-
-    boost::apply_visitor(MessageVisitor<Publisher>(*this), messageV);
+    auto decoded = decodeMessage(message.getBuffer());
+    if (!decoded) {
+        node.log("Dropping malformed message from " +
+                 message.getSourceNodeName());
+        return;
+    }
+    boost::apply_visitor(MessageVisitor<Publisher>(*this), *decoded);
 }
 
+// A subscriber that comes back subscribes again through the broker.
 void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive) {
-    // if (!isAlive) {
-    // subscribers.erase(nodeName);
-    // }
+    if (isAlive || subscribers.erase(nodeName) == 0) {
+        return;
+    }
+    node.log("Subscriber " + nodeName + " left; stop sending data to it.");
+    rebuildActiveDataTypes();
+}
+
+void Publisher::rebuildActiveDataTypes() {
+    activeDataTypes.clear();
+    for (auto& subscriber : subscribers) {
+        for (auto& subscription : subscriber.second) {
+            for (auto& dataType : subscription) {
+                activeDataTypes.insert(std::make_pair(dataType, ""));
+            }
+        }
+    }
 }
 
 void Publisher::defaultHandleAck(const std::string nodeName,
@@ -163,15 +178,7 @@ void Publisher::handleMessage(StopPublish& message) {
     if (subscribers[message.getSubscriberName()].empty()) {
         subscribers.erase(message.getSubscriberName());
     }
-
-    activeDataTypes.clear();
-    for (auto& subscriber : subscribers) {
-        for (auto& subscription : subscriber.second) {
-            for (auto& dataType : subscription) {
-                activeDataTypes.insert(std::make_pair(dataType, ""));
-            }
-        }
-    }
+    rebuildActiveDataTypes();
 }
 
 template <>

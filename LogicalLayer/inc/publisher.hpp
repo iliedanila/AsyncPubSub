@@ -42,6 +42,8 @@ class Publisher {
 
     void collectPublishData(boost::system::error_code error);
 
+    void rebuildActiveDataTypes();
+
     PublisherIdentityT identity;
     NetworkLayer::Node& node;
     PublishFunctionT getPublisherData;
