@@ -1,6 +1,7 @@
 #ifndef arguments_h
 #define arguments_h
 
+#include <cstdint>
 #include <string>
 #include <vector>
 

@@ -4,7 +4,7 @@ set (CMAKE_CXX_STANDARD 17) # C++ 17
 
 project(playground)
 
-find_package(Boost REQUIRED system serialization)
+find_package(Boost REQUIRED serialization)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIR})
 
@@ -22,7 +22,6 @@ target_link_libraries(playground LogicalLayer MeshNetwork)
 
 if(UNIX)
     target_link_libraries(playground Boost::serialization)
-    target_link_libraries(playground Boost::system)
     target_link_libraries(playground pthread)
 endif()
 
