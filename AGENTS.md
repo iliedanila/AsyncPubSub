@@ -29,10 +29,9 @@ payloads.
   assumptions for reversible steps within the authorized scope; ask when a
   missing decision is necessary to proceed correctly.
 - For bugs, check the known-issues table first, then diagnose observed
-  behavior and reproduce it with a focused topology (`startNode` or
-  `playground`; a test once a suite exists). Check both peers of the
-  connection: a symptom on one node often originates on the other. Do not make
-  speculative fixes.
+  behavior and reproduce it with a failing test (or a `startNode` topology when
+  a test can't express it). Check both peers of the connection: a symptom on
+  one node often originates on the other. Do not make speculative fixes.
 - Make the smallest change that satisfies the request. Avoid unrelated
   refactors, premature abstractions, broad formatting, and speculative failure
   handling without a plausible contract or failure mode.
@@ -90,8 +89,7 @@ payloads.
 | `StartNode/` | CLI: one node, one role per process. Canonical entry point. | — |
 | `Playground/` | Logger + broker + 1 publisher + 1 subscriber in one process, driven from stdin. | — |
 
-There is no test suite and no CI. A clean build plus an observed run is the
-only verification available.
+There is a CTest suite (see Tests) and no CI.
 
 ## Build
 
@@ -104,33 +102,37 @@ cmake --build build/ --target startNode   # or playground / LogicalLayer / MeshN
 Outputs: `build/StartNode/startNode`, `build/Playground/playground`.
 
 Dependencies: CMake, a C++17 compiler, Boost. Code uses `asio`, `variant`,
-`algorithm/string` (header-only), `serialization` and `date_time`
-(`posix_time` for timers), and `system` (`error_code`). The executables'
-CMake files also link `regex`, which no source uses.
+`algorithm/string` (header-only), `serialization`, and `system`
+(`error_code`). Timers are `asio::steady_timer` with `std::chrono`.
 
-**Current toolchain status (checked 2026-10-10, CMake 4.4.3, Boost 1.92.0,
-Apple clang 21):** the build **fails** with
-`no member named 'deadline_timer' in namespace 'boost::asio'`
-(`MeshNetwork/inc/node.hpp:69`, `MeshNetwork/src/node.cpp:72,202`). Boost 1.92's
-`<boost/asio.hpp>` no longer pulls in `deadline_timer`; `publisher.hpp` includes
-it explicitly and only warns. Until the source is fixed, configure a separate
-build dir with the header forced in (the `-I` is needed because CMake's
-compiler probe runs before Boost's include path is added; the path shown is
-Homebrew's):
-
-```bash
-cmake -S . -B /tmp/aps-build -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_CXX_FLAGS='-I/opt/homebrew/include -include boost/asio/deadline_timer.hpp'
-cmake --build /tmp/aps-build -j
-```
-
-Expected noise after that: `deadline_timer is deprecated: Use system_timer`,
-CMake "Compatibility with CMake < 3.10" and policy `CMP0167` (FindBoost
-removed) warnings.
+Checked 2026-10-10 with CMake 4.4.3, Boost 1.92.0 and Apple clang 21: the
+build is clean apart from CMake's "Compatibility with CMake < 3.10" and policy
+`CMP0167` (FindBoost removed) warnings.
 
 Do not trust an old binary after a Boost upgrade: executables link Boost
 dynamically from `/opt/homebrew/opt/boost/lib`, so a binary built against an
 older Boost runs against the new dylibs. Rebuild.
+
+## Tests
+
+```bash
+cmake --build build && (cd build && ctest -j 8)
+```
+
+- `MeshNetwork/tests/` (`mesh.*`): `Node`/`Connection` behavior. Each test
+  builds a topology in-process on one `io_context` and drives it with the
+  helpers in `testSupport.hpp` (`runUntil`, `runUntilQuiet`, `CoutCapture`).
+  MeshNetwork also builds and runs these on its own (`cmake -S MeshNetwork`).
+- `LogicalLayer/tests/` (`logical.*`): broker, publisher and subscriber
+  behavior, using the same helpers.
+- `cli.*` (in `StartNode/` and `Playground/` CMake files): the executables'
+  argument and stdin handling.
+
+Tests use fixed ports 47000-47300; `cli.playgroundExitsOnEof` needs the
+playground's 7777 and 8888. A test destroys a `Node` only after `close()` and
+a short `handlersRunIn` drain, and destroys a role before its `Node`. Add
+the failing test first, register its name in the directory's
+`CMakeLists.txt`, then fix.
 
 ## Run
 
@@ -141,12 +143,12 @@ keep adding flags there, not via `boost::program_options`):
 |------|---------|
 | `--name N` | Required. Must be unique in the mesh (not checked). |
 | `--accept PORT` | Listen (IPv4 only). |
-| `--connect HOST PORT` | Connect once. |
-| `--connect-reconnect HOST PORT` | Connect; on failure or disconnect retry every 1 s. |
+| `--connect HOST PORT` | Connect once. Repeatable. |
+| `--connect-reconnect HOST PORT` | Connect; on failure or disconnect retry every 1 s. Repeatable. |
 | `--logger` | This node prints `LogMessage`s it receives. |
 | `--as broker\|publisher\|subscriber` | Role. Omit for a pure relay node. |
 | `--publish TYPE` | Publisher identity; repeatable. |
-| `--interval MS` | Publish period. **Required** with `--as publisher` (missing → out-of-range access). |
+| `--interval MS` | Publish period. Required with `--as publisher`. |
 | `--subscription TYPE` | Repeatable; all values form **one** subscription set. |
 
 A publisher matches a subscription when its identity set is a superset of the
@@ -164,29 +166,17 @@ stdbuf -oL $N --name subscriber --connect-reconnect localhost 7777 --as subscrib
 Pass: `broker.log` gains roughly one line per interval like
 `LOG -- 2026-10-10 16:14:06 -- subscriber -- Publisher data: dummyData: Dummy value here.`
 
-Observation pitfalls (all confirmed):
-
-- **Buffering.** stdout is block-buffered when redirected and there is no
-  signal handling, so `kill` loses unflushed output. Use `stdbuf -oL` (GNU
-  coreutils; also at `/usr/bin/stdbuf` on recent macOS) as above.
-  Stop nodes by PID or `pkill -f 'startNode --name X '`.
-- **One outgoing connection per process.** A second `--connect`/
-  `--connect-reconnect` cancels the first (`error connecting: Operation
-  canceled`) because `Node` has a single `connect_socket`. Build multi-link
-  topologies by pairing one outgoing connect per node with `--accept` on peers.
-- **The logger never prints its own logs.** Put `--logger` on a dedicated node
-  (no `--as`) when you need to see a role's `node.log()` output.
-- **Logger discovery doesn't reach late joiners.** Only the logger itself
-  advertises the logger route to new connections (`node.cpp:177`). Connect the
-  logger *directly* to the nodes you are observing, or start them in an order
-  where they are connected when the logger announces itself.
+Stdout is block-buffered when redirected and there is no signal handling, so
+`kill` loses unflushed output. Use `stdbuf -oL` (GNU coreutils; also at
+`/usr/bin/stdbuf` on recent macOS) as above, and stop nodes by PID or
+`pkill -f 'startNode --name X '`. Errors in flags or arguments print a message
+and exit with status 1.
 
 ### Playground
 
 Fixed ports 8888 (logger) and 7777 (broker). Commands on stdin: `start`,
 `stop`, `add`, `remove`, `exit`. Commands run immediately, so pace them with
-sleeps, and always finish with `exit` — on EOF the input loop spins at 100%
-CPU.
+sleeps. Closing stdin acts as `exit`.
 
 ```bash
 (sleep 3; echo remove; sleep 3; echo add; sleep 5; echo exit) | stdbuf -oL build/Playground/playground
@@ -200,20 +190,31 @@ works" needs an observed run, not a reading of the code.
 
 ## Architecture
 
-- **Framing:** 4-byte big-endian length + body (`MeshNetwork/inc/message.hpp`).
-  Body is a `boost::archive::binary_oarchive` of
+- **Framing:** 4-byte big-endian length + body (`MeshNetwork/inc/message.hpp`),
+  at most 16 MiB (`Message::eMaxBodyLength`). A frame that is too large or
+  doesn't decode closes that connection only. Body is a `boost::archive::binary_oarchive` of
   `NetworkLayer::MessageVariant` = `boost::variant<RoutingMessage, DataMessage,
   DataMessageAck, LogMessage, Handshake, HandshakeReply>`
   (`MeshNetwork/inc/allMessages.hpp`).
 - **Connection setup:** connector sends `Handshake`; acceptor replies
   `HandshakeReply`; both then send a `RoutingMessage` with their table.
-- **Routing:** distance-vector. `Node::nodeDistances` (hop count per node) and
-  `Node::nodePaths` (next-hop `Connection`) are updated in
-  `processAddNodePaths` / `processFailedNodes` and changes are flooded to other
-  neighbours. No sequence numbers, no max distance.
-- **Send API:** `Node::sndMessage(dest, data, cb)`. If there is no route, `cb`
-  fires immediately with `eNoPath`; otherwise it fires when a
-  `DataMessageAck` comes back. See known issues for cases where it never fires.
+- **Routing:** path-vector. `Node::routes` maps each destination to its hop
+  list (next hop first) and the next-hop `Connection`. `RoutingMessage` carries
+  `RouteAdvert`s (sender first) and `failedNodes` withdrawals. A node ignores
+  any advert containing itself, which keeps routes loop-free; such an advert
+  from its current next hop withdraws that route. A next hop's update replaces
+  its earlier route; another neighbour's route wins only by being shorter. Full
+  tables go out on connect; changes go to every neighbour, including the one
+  that caused them; a node told it is unreachable answers with its own advert.
+  There is no periodic refresh (`processAdverts`, `processFailedNodes`). A
+  reroute can reach `notifyNewNodeStatus` as "unreachable" then "reachable".
+- **Logger:** a flag on each advert. `Node::log()` prints locally on the
+  logger node and otherwise sends to the nearest logger in `routes`.
+- **Send API:** `Node::sndMessage(dest, data, cb)` calls `cb(dest, error)`
+  exactly once: `eSuccess` or `eNodeNotAccepting` from the destination's ack;
+  `eNoPath` if there is no route, a hop has none, or the route is withdrawn
+  while waiting (the message may still have been delivered);
+  `eMessageTooLarge` above the frame limit. Message IDs are a per-node counter.
 - **Logical layer:** `LogicalLayer::MessageVariant` = `boost::variant<
   BrokerIdentity, AddRemoveSubscriptionMessage, PublisherIdentityMessage,
   StartPublish, StopPublish, SubscriptionData>`, binary-serialized into
@@ -246,9 +247,9 @@ code and observed runs establish current behavior.
    value, so reordering or inserting alternatives breaks running nodes. Binary
    archives are not portable across architectures; treat a mesh as needing
    identical builds.
-5. **No `std::cout` in library code.** Use `Node::log()`. MeshNetwork already
-   has violations (`connection.cpp:83,111`, `node.cpp:43,66,69,319,334`);
-   don't add more. CLI front-ends may print.
+5. **No `std::cout` in library code.** Use `Node::log()`. MeshNetwork still
+   prints connection events and errors (`connection.cpp`, `node.cpp`), and the
+   logger node prints received logs; don't add more. CLI front-ends may print.
 6. **Submodule edits.** Changes under `MeshNetwork/` are commits in that repo
    plus a pointer bump in this one. Say so explicitly when proposing them.
 
@@ -268,29 +269,12 @@ code and observed runs establish current behavior.
 
 ## Known issues (as of 2026-10-10)
 
-Listed so they aren't mistaken for regressions. "Observed" = reproduced with
-the commands above; "code" = read in source, not reproduced.
+Listed so they aren't mistaken for regressions. "Code" = read in source, not
+reproduced.
 
 | Issue | Where | Evidence |
 |-------|-------|----------|
-| Build fails on Boost 1.92 (`deadline_timer`). | `node.hpp:69` | observed |
-| One malformed frame kills a node: `printf '\x00\x00\x00\x03abc' \| nc localhost 7777` → `input stream error`, process exits. Deserialization exception escapes `io_context.run()`. | `connection.cpp:102-106` | observed |
-| Second outgoing connect cancels the first. | `node.hpp:102`, `StartNode/src/main.cpp:48-59` | observed |
-| Logger drops its own logs; nodes joining later never learn the logger. | `node.cpp:177`, `node.cpp:433` | observed |
-| In a cyclic mesh a node adds itself as a remote node and routes messages to itself (`A -- New node in network: A`). | `processAddNodePaths`, `node.cpp:343-350` | observed |
-| Routing livelock: two neighbours at the same logger distance keep replying to each other (`<` should be strict, cf. `node.cpp:366`). In a triangle containing the logger, the two non-logger nodes idle at ~42% CPU each. | `node.cpp:408` | observed (CPU) |
-| Count-to-infinity: when a node leaves a ring, failure notices are answered with stale routes (`node.cpp:390-392`) and the dead route circulates. Ring A-B-C-D + X: killing X takes every ring node from 0% to ~28% CPU, sustained. `DataMessage::distance` is incremented but never capped. | `processFailedNodes` | observed (CPU) |
-| `closeConnection` never resets `loggerDistance`; after the logger link drops and returns, nodes further out stop logging. | `node.cpp:133-167` | code |
-| Subscriber never re-subscribes after a broker restart; with a publisher restart too, delivery stops for good. `Subscriber` never registers `handleNewNodeStatus`. | `subscriber.cpp:17-22` | observed |
-| Playground spins at 100% CPU on stdin EOF. | `Playground/src/main.cpp:93-158` | observed |
-| `eNoPath` (mid-route) and `eNodeNotAccepting` acks are built with source/destination swapped, so the sender never gets them. | `node.cpp:251,263` | code |
-| Send callback never fires if the route dies after sending (no timeout); entry stays in `ackCallbacks`. | `node.cpp:111-127` | code |
-| `messageID = std::hash(payload)`: identical payloads in flight collide and the later callback is dropped. | `node.cpp:117` | code |
-| A failed write leaves the queue head in place, so the connection never writes again. | `connection.cpp:35-45` | code |
-| Length header is trusted: a peer can make a node allocate up to 4 GiB. | `message.hpp:38-44` | code |
-| Publishers keep dead subscribers forever (deliberate, commit `651bc65`); broker sends no `StopPublish` on node loss. | `publisher.cpp:69-73`, `broker.cpp:73-83` | code |
-| `Node::connect` resolves DNS synchronously on the loop thread. | `node.cpp:53-54` | code |
-| `Arguments::GetParameters` doesn't bounds-check (`--name` as last arg is UB). | `arguments.cpp:24` | code |
+| A send callback can stay pending forever if its message or ack is lost while the destination stays reachable (no timeout). | `Node::sndMessage` | code |
 | No authentication or encryption; any TCP client can join the mesh. | — | code |
 
 ## Handoff
