@@ -4,7 +4,7 @@ set (CMAKE_CXX_STANDARD 17)
 
 project(startNode)
 
-find_package(Boost REQUIRED system serialization)
+find_package(Boost REQUIRED serialization)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIR})
 
@@ -23,7 +23,6 @@ target_link_libraries(startNode LogicalLayer MeshNetwork)
 
 if(UNIX)
     target_link_libraries(startNode Boost::serialization)
-    target_link_libraries(startNode Boost::system)
     target_link_libraries(startNode pthread)
 endif()
 

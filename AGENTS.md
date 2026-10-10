@@ -107,7 +107,11 @@ Dependencies: CMake, a C++17 compiler, Boost. Code uses `asio`, `variant`,
 
 Checked 2026-10-10 with CMake 4.4.3, Boost 1.92.0 and Apple clang 21: the
 build is clean apart from CMake's "Compatibility with CMake < 3.10" and policy
-`CMP0167` (FindBoost removed) warnings.
+`CMP0167` (FindBoost removed) warnings. The same day the `Dockerfile` image
+(Ubuntu 26.04.1 LTS, GCC 15.2, Boost 1.90, aarch64) built without compiler
+warnings and passed every test (`docker build -t asyncpubsub .`, then
+`docker run --rm asyncpubsub sh -c 'cd build && ctest'`). The `Dockerfile`
+uses `ubuntu:latest`, so that result can change.
 
 Do not trust an old binary after a Boost upgrade: executables link Boost
 dynamically from `/opt/homebrew/opt/boost/lib`, so a binary built against an
