@@ -71,7 +71,73 @@ void publisherForgetsDepartedSubscriber() {
 
     subscriberNode.close();
     MESH_CHECK(runUntil(
-        io, [&] { return out.contains("-- pub -- Subscriber sub left"); }, 3s));
+        io, [&] { return out.contains("-- pub -- Stop sending data to sub"); },
+        3s));
+}
+
+// The publisher's route to the subscriber moves from a relay node to the
+// broker's links; the broker's own routes never change.
+void publisherKeepsSubscriberAcrossReroute() {
+    io_context io;
+    Node brokerNode("broker", io), publisherNode("pub", io),
+        subscriberNode("sub", io), relayNode("X", io);
+    Broker broker(brokerNode);
+    Publisher publisher(publisherNode, {"t"});
+    Subscriber subscriber(subscriberNode);
+    publisher.startPublishing(fillWithDummyData, 50);
+    int deliveries = 0;
+    subscriber.addSubscription(
+        {"t"}, [&](LogicalLayer::SubscriptionData&) { ++deliveries; });
+    brokerNode.accept(47240);
+    subscriberNode.accept(47242);
+    relayNode.accept(47243);
+
+    publisherNode.connect("localhost", 47243);
+    relayNode.connect("localhost", 47242);
+    MESH_CHECK(
+        runUntil(io, [&] { return publisherNode.isNodeAccessible("sub"); }));
+    publisherNode.connect("localhost", 47240);
+    subscriberNode.connect("localhost", 47240);
+    MESH_CHECK(runUntil(io, [&] { return deliveries > 0; }));
+
+    relayNode.close();
+    handlersRunIn(io, 500ms);  // routes settle; publishing never goes quiet
+    const int deliveriesAfterReroute = deliveries;
+    MESH_CHECK(
+        runUntil(io, [&] { return deliveries > deliveriesAfterReroute; }, 3s));
+}
+
+// Both the broker's and the subscriber's routes to each other move from one
+// relay node to another.
+void deliveryResumesAfterBrokerReroute() {
+    io_context io;
+    Node brokerNode("broker", io), publisherNode("pub", io),
+        subscriberNode("sub", io), relayX("X", io), relayY("Y", io);
+    Broker broker(brokerNode);
+    Publisher publisher(publisherNode, {"t"});
+    Subscriber subscriber(subscriberNode);
+    publisher.startPublishing(fillWithDummyData, 50);
+    int deliveries = 0;
+    subscriber.addSubscription(
+        {"t"}, [&](LogicalLayer::SubscriptionData&) { ++deliveries; });
+    brokerNode.accept(47250);
+    relayX.accept(47251);
+    relayY.accept(47252);
+
+    relayX.connect("localhost", 47250);
+    subscriberNode.connect("localhost", 47251);
+    MESH_CHECK(
+        runUntil(io, [&] { return brokerNode.isNodeAccessible("sub"); }));
+    relayY.connect("localhost", 47250);
+    subscriberNode.connect("localhost", 47252);
+    publisherNode.connect("localhost", 47250);
+    MESH_CHECK(runUntil(io, [&] { return deliveries > 0; }));
+
+    relayX.close();
+    handlersRunIn(io, 500ms);  // routes settle; publishing never goes quiet
+    const int deliveriesAfterReroute = deliveries;
+    MESH_CHECK(
+        runUntil(io, [&] { return deliveries > deliveriesAfterReroute; }, 3s));
 }
 
 // A broker and a publisher, started and stopped together.
@@ -137,6 +203,10 @@ int main(int argc, char** argv) {
              publisherForgetsDepartedSubscriber},
             {"subscriberRecoversAfterBrokerAndPublisherRestart",
              subscriberRecoversAfterBrokerAndPublisherRestart},
+            {"publisherKeepsSubscriberAcrossReroute",
+             publisherKeepsSubscriberAcrossReroute},
+            {"deliveryResumesAfterBrokerReroute",
+             deliveryResumesAfterBrokerReroute},
         },
         argc, argv);
 }

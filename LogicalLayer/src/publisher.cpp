@@ -67,14 +67,10 @@ void Publisher::handleIncomingMessage(NetworkLayer::DataMessage& message) {
     boost::apply_visitor(MessageVisitor<Publisher>(*this), *decoded);
 }
 
-// A subscriber that comes back subscribes again through the broker.
-void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive) {
-    if (isAlive || subscribers.erase(nodeName) == 0) {
-        return;
-    }
-    node.log("Subscriber " + nodeName + " left; stop sending data to it.");
-    rebuildActiveDataTypes();
-}
+// Subscribers are dropped only on the broker's StopPublish: a reroute briefly
+// reports a subscriber unreachable here without the broker noticing, and
+// dropping it then would stop delivery for good.
+void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive) {}
 
 void Publisher::rebuildActiveDataTypes() {
     activeDataTypes.clear();

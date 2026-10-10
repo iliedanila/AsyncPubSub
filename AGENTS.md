@@ -221,7 +221,10 @@ works" needs an observed run, not a reading of the code.
   `DataMessage`'s buffer. Flow: broker sends `BrokerIdentity` to every node it
   sees → subscribers send subscriptions, publishers send identity → broker
   matches and sends `StartPublish`/`StopPublish` to publishers → publishers
-  send `SubscriptionData` straight to subscribers on a timer.
+  send `SubscriptionData` straight to subscribers on a timer. Only the broker
+  stops a publisher: when it loses a subscriber it sends `StopPublish`, and
+  subscribers re-send their subscriptions every time a broker announces
+  itself, so a reroute pauses delivery instead of ending it.
 - **One role per `Node`:** `Node` holds a single `acceptMessages` callback and
   a single `notifyNewNodeStatus` callback; a second registration replaces the
   first.
@@ -275,6 +278,8 @@ reproduced.
 | Issue | Where | Evidence |
 |-------|-------|----------|
 | A send callback can stay pending forever if its message or ack is lost while the destination stays reachable (no timeout). | `Node::sndMessage` | code |
+| A publisher keeps sending to a subscriber that left if no broker saw it leave (for example, no broker was running at the time). | `Broker::stopPublishingTo` | code |
+| If the broker's route to a publisher changes between a `StopPublish` and the next `StartPublish`, they can arrive reversed and the publisher stops sending to that subscriber. | `Broker::handleNewNodeStatus` | code |
 | No authentication or encryption; any TCP client can join the mesh. | — | code |
 
 ## Handoff

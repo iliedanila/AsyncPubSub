@@ -78,8 +78,24 @@ void Broker::handleNewNodeStatus(const std::string nodeName, bool isAlive) {
     } else {
         node.log("Removing node " + nodeName +
                  " from publishers and subscribers.");
+        stopPublishingTo(nodeName);
         activeSubscribers.erase(nodeName);
         activePublishers.erase(nodeName);
+    }
+}
+
+// If the subscriber is only rerouting, it re-sends its subscriptions when we
+// announce ourselves to it again, and publishing resumes.
+void Broker::stopPublishingTo(const std::string& subscriberName) {
+    auto subscriber = activeSubscribers.find(subscriberName);
+    if (subscriber == activeSubscribers.end()) {
+        return;
+    }
+    for (const auto& subscription : subscriber->second) {
+        for (const auto& publisher :
+             getPublishersForSubscription(subscription)) {
+            sendStopPublish(publisher, subscriberName, subscription);
+        }
     }
 }
 

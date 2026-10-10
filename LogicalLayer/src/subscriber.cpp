@@ -97,11 +97,10 @@ void Subscriber::sendAllSubscriptions(const std::string& brokerName) {
     }
 }
 
+// A broker announces itself whenever it (re)discovers us, possibly after
+// dropping our subscriptions, so they go out every time.
 void Subscriber::handleNewBroker(BrokerIdentity& message) {
     node.log("New broker found: " + message.getBrokerName());
-    if (brokers.find(message.getBrokerName()) != brokers.end())
-        return;
-
     brokers.insert(message.getBrokerName());
     sendAllSubscriptions(message.getBrokerName());
 }

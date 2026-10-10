@@ -10,6 +10,8 @@ set(LOGICAL_TESTS
     garbagePayloadIsDropped
     publisherForgetsDepartedSubscriber
     subscriberRecoversAfterBrokerAndPublisherRestart
+    publisherKeepsSubscriberAcrossReroute
+    deliveryResumesAfterBrokerReroute
 )
 foreach(test IN LISTS LOGICAL_TESTS)
     add_test(NAME logical.${test} COMMAND logicalTests ${test})
