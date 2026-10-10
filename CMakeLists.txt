@@ -8,6 +8,8 @@ find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIR})
 
+include(CTest)
+
 # project dependencies
 add_subdirectory(LogicalLayer)
 add_subdirectory(MeshNetwork)

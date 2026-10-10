@@ -39,8 +39,8 @@ void Publisher::startPublishing(PublishFunctionT _publishFunction,
     getPublisherData = _publishFunction;
     millisecondsRepeatPublish = millisecondsRepeat;
     publishTimer.cancel();
-    publishTimer.expires_from_now(
-        boost::posix_time::milliseconds(millisecondsRepeatPublish));
+    publishTimer.expires_after(
+        std::chrono::milliseconds(millisecondsRepeatPublish));
     publishTimer.async_wait(
         std::bind(&Publisher::collectPublishData, this, std::placeholders::_1));
 }
@@ -80,8 +80,8 @@ void Publisher::defaultHandleAck(const std::string nodeName,
 void Publisher::collectPublishData(boost::system::error_code error) {
     if (!getPublisherData || error || subscribers.empty()) {
         if (!error) {
-            publishTimer.expires_from_now(
-                boost::posix_time::milliseconds(millisecondsRepeatPublish));
+            publishTimer.expires_after(
+                std::chrono::milliseconds(millisecondsRepeatPublish));
             publishTimer.async_wait(std::bind(&Publisher::collectPublishData,
                                               this, std::placeholders::_1));
         }
@@ -116,8 +116,8 @@ void Publisher::collectPublishData(boost::system::error_code error) {
         }
     }
 
-    publishTimer.expires_from_now(
-        boost::posix_time::milliseconds(millisecondsRepeatPublish));
+    publishTimer.expires_after(
+        std::chrono::milliseconds(millisecondsRepeatPublish));
     publishTimer.async_wait(
         std::bind(&Publisher::collectPublishData, this, std::placeholders::_1));
 }
