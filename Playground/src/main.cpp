@@ -83,16 +83,14 @@ int main() {
 
     // Receive console commands here.
     // Post them to the above thread.
-    enum { commandSize = 1024 };
-
-    char consoleCommand[commandSize];
-
     std::cout << "Insert command: \n";
     auto exit = false;
 
     do {
-        std::cin.getline(consoleCommand, commandSize);
-        std::string command(consoleCommand);
+        std::string command;
+        if (!std::getline(std::cin, command)) {
+            command = "exit";  // stdin closed
+        }
         if (boost::algorithm::starts_with(command, "exit")) {
             exit = true;
             post(ioservice, [&] {

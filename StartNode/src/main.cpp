@@ -68,6 +68,10 @@ int main(int argc, const char* argv[]) {
             if (asParameters[0] == "broker") {
                 broker.reset(new LogicalLayer::Broker(node));
             } else if (asParameters[0] == "publisher") {
+                if (!args.HasArgument("--interval")) {
+                    throw std::runtime_error(
+                        "--interval MS is required with --as publisher");
+                }
                 LogicalLayer::PublisherIdentityT publisherIdentity;
                 while (args.HasArgument("--publish")) {
                     auto identityParameters =
@@ -114,5 +118,6 @@ int main(int argc, const char* argv[]) {
         io_context.run();
     } catch (std::exception& e) {
         std::cout << e.what() << "\n";
+        return 1;
     }
 }
