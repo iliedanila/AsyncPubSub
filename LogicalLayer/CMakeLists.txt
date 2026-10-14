@@ -19,7 +19,9 @@ add_library(LogicalLayer STATIC
 # The headers use MeshNetwork's types and Boost.Serialization.
 target_include_directories(LogicalLayer PUBLIC inc)
 target_compile_features(LogicalLayer PUBLIC cxx_std_20)
-target_link_libraries(LogicalLayer PUBLIC MeshNetwork Boost::serialization)
+target_link_libraries(LogicalLayer
+    PUBLIC MeshNetwork Boost::serialization
+    PRIVATE AsyncPubSubWarnings)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)

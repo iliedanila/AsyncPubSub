@@ -4,7 +4,8 @@ add_executable(startNode
     inc/arguments.hpp
 )
 target_include_directories(startNode PRIVATE inc)
-target_link_libraries(startNode PRIVATE LogicalLayer Boost::headers)
+target_link_libraries(startNode
+    PRIVATE LogicalLayer Boost::headers AsyncPubSubWarnings)
 
 if(BUILD_TESTING)
     add_test(NAME cli.missingFlagValue COMMAND startNode --accept 47300 --name)

@@ -69,7 +69,8 @@ void Publisher::handleIncomingMessage(NetworkLayer::DataMessage& message) {
 // Subscribers are dropped only on the broker's StopPublish: a reroute briefly
 // reports a subscriber unreachable here without the broker noticing, and
 // dropping it then would stop delivery for good.
-void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive) {}
+void Publisher::handleNewNodeStatus(std::string /*nodeName*/,
+                                    bool /*isAlive*/) {}
 
 void Publisher::rebuildActiveDataTypes() {
     activeDataTypes.clear();
@@ -82,8 +83,8 @@ void Publisher::rebuildActiveDataTypes() {
     }
 }
 
-void Publisher::defaultHandleAck(const std::string nodeName,
-                                 NetworkLayer::SendError error) const {
+void Publisher::defaultHandleAck(const std::string /*nodeName*/,
+                                 NetworkLayer::SendError /*error*/) const {
     // TODO: add some implementation.
 }
 
@@ -149,9 +150,9 @@ void Publisher::handleMessage(BrokerIdentity& message) {
         });
 }
 
-void Publisher::handleMessage(AddRemoveSubscriptionMessage& message) {}
+void Publisher::handleMessage(AddRemoveSubscriptionMessage& /*message*/) {}
 
-void Publisher::handleMessage(PublisherIdentityMessage& message) {}
+void Publisher::handleMessage(PublisherIdentityMessage& /*message*/) {}
 
 void Publisher::handleMessage(StartPublish& message) {
     node.log("Start sending data to " + message.getSubscriberName());
@@ -171,5 +172,5 @@ void Publisher::handleMessage(StopPublish& message) {
     rebuildActiveDataTypes();
 }
 
-void Publisher::handleMessage(SubscriptionData& message) {}
+void Publisher::handleMessage(SubscriptionData& /*message*/) {}
 }  // namespace LogicalLayer

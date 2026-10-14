@@ -114,6 +114,13 @@ it with `docker build -t asyncpubsub .` and then
 `docker run --rm asyncpubsub ctest --preset release`. `ubuntu:latest` moves, so
 its results can change.
 
+Checked 2026-10-14 on Linux x86_64, not yet on macOS since the C++20 and CMake
+changes: Clang 18 with Boost 1.84 and 1.92, and GCC 15.2 and Clang 21 with
+Boost 1.90 in the `Dockerfile`'s Ubuntu 26.04.1 image, build without CMake or
+compiler warnings (also under the `debug` preset's warnings-as-errors) and
+pass every test. CMake 3.25.2, 3.28, 4.2.3 and 4.4.3 configure cleanly; Boost
+1.83 (Ubuntu 24.04's apt) is rejected at configure time.
+
 Do not trust an old binary after a Boost upgrade: executables link Boost
 dynamically from `/opt/homebrew/opt/boost/lib`, so a binary built against an
 older Boost runs against the new dylibs. Rebuild.
@@ -160,7 +167,7 @@ keep adding flags there, not via `boost::program_options`):
 A publisher matches a subscription when its identity set is a superset of the
 subscription set.
 
-### Smoke test (verified 2026-10-10)
+### Smoke test (verified 2026-10-14 on Linux)
 
 ```bash
 N=build/release/StartNode/startNode
@@ -273,6 +280,11 @@ code and observed runs establish current behavior.
 - `.clang-format`: Google base, 4-space indent, 80 columns,
   `PointerAlignment: Left`, `AllowShortIfStatementsOnASingleLine: Never`. Run
   `clang-format -i` on touched files.
+- Every target compiles with `-Wall -Wextra -Wpedantic` (`AsyncPubSubWarnings`,
+  `MeshNetworkWarnings`). The `debug` preset makes warnings errors
+  (`CMAKE_COMPILE_WARNING_AS_ERROR`); `release` and the `Dockerfile` only warn,
+  so a newer compiler cannot break them. Unused parameters get commented-out
+  names (`/*version*/`).
 - Braces on every `if` is a project convention; clang-format does not enforce
   it (`InsertBraces` is unset) and a few existing `if`s lack them.
 - Naming: `PascalCase` types, `camelCase` functions/members/files

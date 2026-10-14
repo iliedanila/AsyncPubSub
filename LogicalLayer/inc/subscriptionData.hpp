@@ -33,10 +33,10 @@ class SubscriptionData {
 
    private:
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version) {
-        ar& publisherName;
-        ar& subscription;
-        ar& data;
+    void serialize(Archive& ar, const unsigned int /*version*/) {
+        ar & publisherName;
+        ar & subscription;
+        ar & data;
     }
 
     friend class boost::serialization::access;

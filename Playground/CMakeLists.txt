@@ -1,7 +1,7 @@
 add_executable(playground src/main.cpp)
 # It runs the io_context on a std::thread.
 target_link_libraries(playground
-    PRIVATE LogicalLayer Boost::headers Threads::Threads)
+    PRIVATE LogicalLayer Boost::headers Threads::Threads AsyncPubSubWarnings)
 
 if(BUILD_TESTING)
     # Uses the playground's fixed ports 7777 and 8888.

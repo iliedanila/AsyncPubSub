@@ -14,6 +14,13 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 find_package(Boost 1.84 CONFIG REQUIRED COMPONENTS serialization)
 find_package(Threads REQUIRED)
 
+# Warnings for this project's own targets (MeshNetwork sets its own); Boost's
+# headers come in as system headers and stay quiet. The debug preset turns on
+# CMAKE_COMPILE_WARNING_AS_ERROR so they fail the build.
+add_library(AsyncPubSubWarnings INTERFACE)
+target_compile_options(AsyncPubSubWarnings INTERFACE
+    "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall;-Wextra;-Wpedantic>")
+
 include(CTest)
 
 add_subdirectory(MeshNetwork)

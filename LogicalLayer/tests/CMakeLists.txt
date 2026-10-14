@@ -1,5 +1,6 @@
 add_executable(logicalTests logicalTests.cpp)
-target_link_libraries(logicalTests PRIVATE LogicalLayer MeshNetworkTestSupport)
+target_link_libraries(logicalTests
+    PRIVATE LogicalLayer MeshNetworkTestSupport AsyncPubSubWarnings)
 
 set(LOGICAL_TESTS
     garbagePayloadIsDropped

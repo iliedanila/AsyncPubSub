@@ -19,8 +19,8 @@ class BrokerIdentity {
 
    private:
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version) {
-        ar& nodeName;
+    void serialize(Archive& ar, const unsigned int /*version*/) {
+        ar & nodeName;
     }
 
     friend class boost::serialization::access;

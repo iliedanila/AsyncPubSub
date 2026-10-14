@@ -64,8 +64,8 @@ void Broker::sendIdentity(std::string nodeName) const {
                       });
 }
 
-void Broker::defaultCallback(std::string nodeName,
-                             NetworkLayer::SendError error) const {
+void Broker::defaultCallback(std::string /*nodeName*/,
+                             NetworkLayer::SendError /*error*/) const {
     // TODO: add some implementation.
     // maybe log...
 }
@@ -209,10 +209,10 @@ void Broker::handleMessage(PublisherIdentityMessage& message) {
     }
 }
 
-void Broker::handleMessage(StartPublish& message) {}
+void Broker::handleMessage(StartPublish& /*message*/) {}
 
-void Broker::handleMessage(StopPublish& message) {}
+void Broker::handleMessage(StopPublish& /*message*/) {}
 
-void Broker::handleMessage(SubscriptionData& message) {}
+void Broker::handleMessage(SubscriptionData& /*message*/) {}
 
 }  // namespace LogicalLayer

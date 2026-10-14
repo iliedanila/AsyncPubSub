@@ -113,22 +113,22 @@ void Subscriber::handleNewNodeStatus(const std::string nodeName, bool isAlive) {
     }
 }
 
-void Subscriber::handleBrokerAck(const std::string nodeName,
-                                 NetworkLayer::SendError error) const {
+void Subscriber::handleBrokerAck(const std::string /*nodeName*/,
+                                 NetworkLayer::SendError /*error*/) const {
     // TODO: add some implementation.
 }
 
-void Subscriber::handleMessage(StopPublish& message) {}
+void Subscriber::handleMessage(StopPublish& /*message*/) {}
 
 void Subscriber::handleMessage(BrokerIdentity& message) {
     handleNewBroker(message);
 }
 
-void Subscriber::handleMessage(AddRemoveSubscriptionMessage& message) {}
+void Subscriber::handleMessage(AddRemoveSubscriptionMessage& /*message*/) {}
 
-void Subscriber::handleMessage(PublisherIdentityMessage& message) {}
+void Subscriber::handleMessage(PublisherIdentityMessage& /*message*/) {}
 
-void Subscriber::handleMessage(StartPublish& message) {}
+void Subscriber::handleMessage(StartPublish& /*message*/) {}
 
 void Subscriber::handleMessage(SubscriptionData& message) {
     auto it = subscriptions.find(message.getSubscription());
