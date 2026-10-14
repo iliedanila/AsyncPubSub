@@ -9,7 +9,7 @@ Claude Code reads this file directly as long as the repo has no `CLAUDE.md`,
 `.claude/CLAUDE.md` or `CLAUDE.local.md`. If one is ever added, it must contain
 `@AGENTS.md`, or this file stops loading.
 
-AsyncPubSub is a C++17 publish/subscribe system on top of a self-routing TCP
+AsyncPubSub is a C++20 publish/subscribe system on top of a self-routing TCP
 mesh. Every node is one process (or one `Node` object); nodes discover each
 other by exchanging routing tables, and pub/sub roles ride on top as opaque
 payloads.
@@ -101,7 +101,7 @@ cmake --build build/ --target startNode   # or playground / LogicalLayer / MeshN
 
 Outputs: `build/StartNode/startNode`, `build/Playground/playground`.
 
-Dependencies: CMake, a C++17 compiler, Boost. Code uses `asio`, `variant`,
+Dependencies: CMake, a C++20 compiler, Boost. Code uses `asio`, `variant`,
 `algorithm/string` (header-only), `serialization`, and `system`
 (`error_code`). Timers are `asio::steady_timer` with `std::chrono`.
 

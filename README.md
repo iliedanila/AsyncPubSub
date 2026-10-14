@@ -1,5 +1,5 @@
 # PubSub
-Asynchronous Publisher - Subscriber library on top of a self-routing node network (C++17)
+Asynchronous Publisher - Subscriber library on top of a self-routing node network (C++20)
 
 This allows to create a dynamic network of publishers and subscribers (you can add/remove nodes while the system is running, add/remove subscriptions or start/stop certain publishers).
 
