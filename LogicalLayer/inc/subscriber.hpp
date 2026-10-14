@@ -7,7 +7,6 @@
 
 #include "addRemoveSubscription.hpp"
 #include "common.hpp"
-#include "messageVisitor.hpp"
 #include "sendError.hpp"
 
 namespace NetworkLayer {
@@ -17,8 +16,11 @@ class Node;
 
 namespace LogicalLayer {
 
-class SubscriptionData;
 class BrokerIdentity;
+class PublisherIdentityMessage;
+class StartPublish;
+class StopPublish;
+class SubscriptionData;
 
 class Subscriber {
    public:
@@ -30,8 +32,6 @@ class Subscriber {
     void removeSubscription(SubscriptionT& subscription);
 
    private:
-    friend struct MessageVisitor<Subscriber>;
-
     void handleIncomingMessage(NetworkLayer::DataMessage& message);
 
     void sendSubscription(const SubscriptionT& subscription,
@@ -48,8 +48,14 @@ class Subscriber {
     void handleBrokerAck(const std::string nodeName,
                          NetworkLayer::SendError error) const;
 
-    template <typename MessageT>
-    void handleMessage(MessageT& message);
+    // One handler per MessageVariant alternative. handleIncomingMessage
+    // dispatches with std::visit, so a missing one is a compile error.
+    void handleMessage(BrokerIdentity& message);
+    void handleMessage(AddRemoveSubscriptionMessage& message);
+    void handleMessage(PublisherIdentityMessage& message);
+    void handleMessage(StartPublish& message);
+    void handleMessage(StopPublish& message);
+    void handleMessage(SubscriptionData& message);
 
     NetworkLayer::Node& node;
     std::set<std::string> brokers;

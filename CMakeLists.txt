@@ -9,7 +9,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # every C++20 source.
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
-find_package(Boost CONFIG REQUIRED COMPONENTS serialization)
+# 1.84 is the first Boost whose serialization handles std::variant in
+# boost/serialization/variant.hpp, the header that keeps the wire format.
+find_package(Boost 1.84 CONFIG REQUIRED COMPONENTS serialization)
 find_package(Threads REQUIRED)
 
 include(CTest)

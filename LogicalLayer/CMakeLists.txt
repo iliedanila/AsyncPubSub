@@ -8,7 +8,6 @@ add_library(LogicalLayer STATIC
     inc/brokerIdentity.hpp
     inc/common.hpp
     inc/messageDecoder.hpp
-    inc/messageVisitor.hpp
     inc/publisher.hpp
     inc/publisherData.hpp
     inc/publisherIdentity.hpp

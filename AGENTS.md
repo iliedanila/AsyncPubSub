@@ -105,9 +105,9 @@ workflow presets, each building into `build/<preset>/`. Outputs:
 
 Dependencies: CMake 3.25+, a C++20 compiler, and Boost 1.84+ (the first whose
 serialization handles `std::variant`) with the CMake package files it
-installs. Code uses `asio` (with C++20 coroutines), `variant`,
-`algorithm/string` (header-only), `serialization`, and `system`
-(`error_code`). Timers are `asio::steady_timer` with `std::chrono`.
+installs. Code uses `asio` (with C++20 coroutines), `algorithm/string`
+(header-only), `serialization`, and `system` (`error_code`). Timers are
+`asio::steady_timer` with `std::chrono`.
 
 The `Dockerfile` builds the release preset with GCC on `ubuntu:latest`. Check
 it with `docker build -t asyncpubsub .` and then
@@ -225,7 +225,7 @@ works" needs an observed run, not a reading of the code.
   `eNoPath` if there is no route, a hop has none, or the route is withdrawn
   while waiting (the message may still have been delivered);
   `eMessageTooLarge` above the frame limit. Message IDs are a per-node counter.
-- **Logical layer:** `LogicalLayer::MessageVariant` = `boost::variant<
+- **Logical layer:** `LogicalLayer::MessageVariant` = `std::variant<
   BrokerIdentity, AddRemoveSubscriptionMessage, PublisherIdentityMessage,
   StartPublish, StopPublish, SubscriptionData>`, binary-serialized into
   `DataMessage`'s buffer. Flow: broker sends `BrokerIdentity` to every node it
@@ -252,11 +252,10 @@ code and observed runs establish current behavior.
    bodies.
 3. **Adding a message** (either layer): define the type with a `serialize()`
    template; append it to the **end** of the relevant `MessageVariant`; add a
-   handler to every visitor target. `Node` takes a `handleMessage` overload,
-   and a missing one fails to compile at the `std::visit` in `Node::onRead`.
-   `Broker`, `Publisher` and `Subscriber` each take a `handleMessage<T>`
-   specialization, and a missing one shows up as an undefined-symbol **link**
-   error. Never dispatch with `dynamic_cast`/RTTI.
+   `handleMessage` overload to every visitor target (`Node`, or each of
+   `Broker`, `Publisher`, `Subscriber`). A missing overload is a compile
+   error at the `std::visit` that dispatches to it. Never dispatch with
+   `dynamic_cast`/RTTI.
 4. **Wire compatibility.** Boost serializes a variant as its index then the
    value, so reordering or inserting alternatives breaks running nodes. For
    `std::variant` that needs `boost/serialization/variant.hpp`, which writes

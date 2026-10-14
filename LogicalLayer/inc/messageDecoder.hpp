@@ -2,7 +2,6 @@
 #define _MESSAGE_DECODER_HPP_
 
 #include <boost/archive/binary_iarchive.hpp>
-#include <boost/serialization/variant.hpp>
 #include <optional>
 #include <sstream>
 #include <string>

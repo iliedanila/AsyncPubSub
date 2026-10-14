@@ -2,7 +2,6 @@
 #define _LOGICAL_LAYER_BROKER_HPP_
 
 #include "common.hpp"
-#include "messageVisitor.hpp"
 #include "sendError.hpp"
 
 #include <map>
@@ -16,14 +15,19 @@ class Node;
 
 namespace LogicalLayer {
 
+class BrokerIdentity;
+class AddRemoveSubscriptionMessage;
+class PublisherIdentityMessage;
+class StartPublish;
+class StopPublish;
+class SubscriptionData;
+
 class Broker {
    public:
     explicit Broker(NetworkLayer::Node& node);
     ~Broker();
 
    private:
-    friend struct MessageVisitor<Broker>;
-
     void handleIncomingMessage(NetworkLayer::DataMessage& message);
     void broadcastIdentity() const;
     void sendIdentity(std::string nodeName) const;
@@ -32,8 +36,14 @@ class Broker {
 
     void handleNewNodeStatus(const std::string nodeName, bool isAlive);
 
-    template <typename MessageT>
-    void handleMessage(MessageT& message);
+    // One handler per MessageVariant alternative. handleIncomingMessage
+    // dispatches with std::visit, so a missing one is a compile error.
+    void handleMessage(BrokerIdentity& message);
+    void handleMessage(AddRemoveSubscriptionMessage& message);
+    void handleMessage(PublisherIdentityMessage& message);
+    void handleMessage(StartPublish& message);
+    void handleMessage(StopPublish& message);
+    void handleMessage(SubscriptionData& message);
 
     std::vector<std::string> getPublishersForSubscription(
         const SubscriptionT& subscription);
