@@ -1,10 +1,5 @@
-find_package(Boost REQUIRED COMPONENTS serialization)
-find_package(Threads REQUIRED)
-
 add_executable(logicalTests logicalTests.cpp)
-target_include_directories(logicalTests PRIVATE ../../MeshNetwork/tests)
-target_link_libraries(logicalTests LogicalLayer MeshNetwork
-                      Boost::serialization Threads::Threads)
+target_link_libraries(logicalTests PRIVATE LogicalLayer MeshNetworkTestSupport)
 
 set(LOGICAL_TESTS
     garbagePayloadIsDropped

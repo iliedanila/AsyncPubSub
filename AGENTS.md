@@ -95,11 +95,13 @@ There is a CTest suite (see Tests) and no CI.
 
 ```bash
 git submodule update --init           # if MeshNetwork/ is empty
-./build.sh                            # configure (Release) + build into build/
-cmake --build build/ --target startNode   # or playground / LogicalLayer / MeshNetwork
+./build.sh                            # release preset: configure + build into build/release/
+cmake --build --preset release --target startNode   # or playground / LogicalLayer / MeshNetwork
 ```
 
-Outputs: `build/StartNode/startNode`, `build/Playground/playground`.
+`CMakePresets.json` has `debug` and `release` configure, build, test and
+workflow presets, each building into `build/<preset>/`. Outputs:
+`build/release/StartNode/startNode`, `build/release/Playground/playground`.
 
 Dependencies: CMake 3.25+, a C++20 compiler, and Boost 1.84+ (the first whose
 serialization handles `std::variant`) with the CMake package files it
@@ -107,13 +109,10 @@ installs. Code uses `asio` (with C++20 coroutines), `variant`,
 `algorithm/string` (header-only), `serialization`, and `system`
 (`error_code`). Timers are `asio::steady_timer` with `std::chrono`.
 
-Checked 2026-10-10 with CMake 4.4.3, Boost 1.92.0 and Apple clang 21: the
-build is clean apart from CMake's "Compatibility with CMake < 3.10" and policy
-`CMP0167` (FindBoost removed) warnings. The same day the `Dockerfile` image
-(Ubuntu 26.04.1 LTS, GCC 15.2, Boost 1.90, aarch64) built without compiler
-warnings and passed every test (`docker build -t asyncpubsub .`, then
-`docker run --rm asyncpubsub sh -c 'cd build && ctest'`). The `Dockerfile`
-uses `ubuntu:latest`, so that result can change.
+The `Dockerfile` builds the release preset with GCC on `ubuntu:latest`. Check
+it with `docker build -t asyncpubsub .` and then
+`docker run --rm asyncpubsub ctest --preset release`. `ubuntu:latest` moves, so
+its results can change.
 
 Do not trust an old binary after a Boost upgrade: executables link Boost
 dynamically from `/opt/homebrew/opt/boost/lib`, so a binary built against an
@@ -122,7 +121,8 @@ older Boost runs against the new dylibs. Rebuild.
 ## Tests
 
 ```bash
-cmake --build build && (cd build && ctest -j 8)
+cmake --workflow --preset debug       # configure, build and run every test
+ctest --preset debug -R '^mesh\.'      # after a build, rerun a subset
 ```
 
 - `MeshNetwork/tests/` (`mesh.*`): `Node`/`Connection` behavior. Each test
@@ -163,7 +163,7 @@ subscription set.
 ### Smoke test (verified 2026-10-10)
 
 ```bash
-N=build/StartNode/startNode
+N=build/release/StartNode/startNode
 stdbuf -oL $N --name broker --accept 7777 --as broker --logger > broker.log 2>&1 &
 stdbuf -oL $N --name publisher --connect-reconnect localhost 7777 --as publisher --publish dummyData --interval 1000 > pub.log 2>&1 &
 stdbuf -oL $N --name subscriber --connect-reconnect localhost 7777 --as subscriber --subscription dummyData > sub.log 2>&1 &
@@ -185,7 +185,7 @@ Fixed ports 8888 (logger) and 7777 (broker). Commands on stdin: `start`,
 sleeps. Closing stdin acts as `exit`.
 
 ```bash
-(sleep 3; echo remove; sleep 3; echo add; sleep 5; echo exit) | stdbuf -oL build/Playground/playground
+(sleep 3; echo remove; sleep 3; echo add; sleep 5; echo exit) | stdbuf -oL build/release/Playground/playground
 ```
 
 ### Reconnection
