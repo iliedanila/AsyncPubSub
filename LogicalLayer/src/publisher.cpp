@@ -2,7 +2,6 @@
 #include "../inc/allMessages.hpp"
 #include "allMessages.hpp"
 #include "messageDecoder.hpp"
-#include "messageVisitor.hpp"
 #include "node.hpp"
 #include "publisherData.hpp"
 
@@ -10,8 +9,8 @@
 // #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include <boost/serialization/variant.hpp>
 #include <iostream>
+#include <variant>
 
 namespace LogicalLayer {
 Publisher::Publisher(NetworkLayer::Node& _node,
@@ -64,13 +63,14 @@ void Publisher::handleIncomingMessage(NetworkLayer::DataMessage& message) {
                  message.getSourceNodeName());
         return;
     }
-    boost::apply_visitor(MessageVisitor<Publisher>(*this), *decoded);
+    std::visit([this](auto& message) { handleMessage(message); }, *decoded);
 }
 
 // Subscribers are dropped only on the broker's StopPublish: a reroute briefly
 // reports a subscriber unreachable here without the broker noticing, and
 // dropping it then would stop delivery for good.
-void Publisher::handleNewNodeStatus(std::string nodeName, bool isAlive) {}
+void Publisher::handleNewNodeStatus(std::string /*nodeName*/,
+                                    bool /*isAlive*/) {}
 
 void Publisher::rebuildActiveDataTypes() {
     activeDataTypes.clear();
@@ -83,8 +83,8 @@ void Publisher::rebuildActiveDataTypes() {
     }
 }
 
-void Publisher::defaultHandleAck(const std::string nodeName,
-                                 NetworkLayer::SendError error) const {
+void Publisher::defaultHandleAck(const std::string /*nodeName*/,
+                                 NetworkLayer::SendError /*error*/) const {
     // TODO: add some implementation.
 }
 
@@ -133,7 +133,6 @@ void Publisher::collectPublishData(boost::system::error_code error) {
         std::bind(&Publisher::collectPublishData, this, std::placeholders::_1));
 }
 
-template <>
 void Publisher::handleMessage(BrokerIdentity& message) {
     PublisherIdentityMessage pMessage(node.getName(), identity);
     MessageVariant messageV(pMessage);
@@ -151,13 +150,10 @@ void Publisher::handleMessage(BrokerIdentity& message) {
         });
 }
 
-template <>
-void Publisher::handleMessage(AddRemoveSubscriptionMessage& message) {}
+void Publisher::handleMessage(AddRemoveSubscriptionMessage& /*message*/) {}
 
-template <>
-void Publisher::handleMessage(PublisherIdentityMessage& message) {}
+void Publisher::handleMessage(PublisherIdentityMessage& /*message*/) {}
 
-template <>
 void Publisher::handleMessage(StartPublish& message) {
     node.log("Start sending data to " + message.getSubscriberName());
     subscribers[message.getSubscriberName()].insert(message.getSubscription());
@@ -167,7 +163,6 @@ void Publisher::handleMessage(StartPublish& message) {
     }
 }
 
-template <>
 void Publisher::handleMessage(StopPublish& message) {
     node.log("Stop sending data to " + message.getSubscriberName());
     subscribers[message.getSubscriberName()].erase(message.getSubscription());
@@ -177,6 +172,5 @@ void Publisher::handleMessage(StopPublish& message) {
     rebuildActiveDataTypes();
 }
 
-template <>
-void Publisher::handleMessage(SubscriptionData& message) {}
+void Publisher::handleMessage(SubscriptionData& /*message*/) {}
 }  // namespace LogicalLayer

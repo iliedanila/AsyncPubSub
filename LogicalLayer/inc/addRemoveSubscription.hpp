@@ -34,10 +34,10 @@ class AddRemoveSubscriptionMessage {
 
    private:
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version) {
-        ar& subscriberName;
-        ar& subscription;
-        ar& action;
+    void serialize(Archive& ar, const unsigned int /*version*/) {
+        ar & subscriberName;
+        ar & subscription;
+        ar & action;
     }
 
     friend class boost::serialization::access;

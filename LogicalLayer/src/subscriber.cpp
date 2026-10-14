@@ -9,10 +9,9 @@
 // #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include <boost/serialization/variant.hpp>
-#include <boost/variant/apply_visitor.hpp>
 #include <iostream>
 #include <sstream>
+#include <variant>
 
 namespace LogicalLayer {
 Subscriber::Subscriber(NetworkLayer::Node& _node) : node(_node) {
@@ -50,7 +49,7 @@ void Subscriber::handleIncomingMessage(NetworkLayer::DataMessage& message) {
                  message.getSourceNodeName());
         return;
     }
-    boost::apply_visitor(MessageVisitor<Subscriber>(*this), *decoded);
+    std::visit([this](auto& message) { handleMessage(message); }, *decoded);
 }
 
 void Subscriber::sendSubscription(
@@ -114,29 +113,23 @@ void Subscriber::handleNewNodeStatus(const std::string nodeName, bool isAlive) {
     }
 }
 
-void Subscriber::handleBrokerAck(const std::string nodeName,
-                                 NetworkLayer::SendError error) const {
+void Subscriber::handleBrokerAck(const std::string /*nodeName*/,
+                                 NetworkLayer::SendError /*error*/) const {
     // TODO: add some implementation.
 }
 
-template <>
-void Subscriber::handleMessage(StopPublish& message) {}
+void Subscriber::handleMessage(StopPublish& /*message*/) {}
 
-template <>
 void Subscriber::handleMessage(BrokerIdentity& message) {
     handleNewBroker(message);
 }
 
-template <>
-void Subscriber::handleMessage(AddRemoveSubscriptionMessage& message) {}
+void Subscriber::handleMessage(AddRemoveSubscriptionMessage& /*message*/) {}
 
-template <>
-void Subscriber::handleMessage(PublisherIdentityMessage& message) {}
+void Subscriber::handleMessage(PublisherIdentityMessage& /*message*/) {}
 
-template <>
-void Subscriber::handleMessage(StartPublish& message) {}
+void Subscriber::handleMessage(StartPublish& /*message*/) {}
 
-template <>
 void Subscriber::handleMessage(SubscriptionData& message) {
     auto it = subscriptions.find(message.getSubscription());
     if (it != subscriptions.end()) {

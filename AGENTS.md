@@ -9,7 +9,7 @@ Claude Code reads this file directly as long as the repo has no `CLAUDE.md`,
 `.claude/CLAUDE.md` or `CLAUDE.local.md`. If one is ever added, it must contain
 `@AGENTS.md`, or this file stops loading.
 
-AsyncPubSub is a C++17 publish/subscribe system on top of a self-routing TCP
+AsyncPubSub is a C++20 publish/subscribe system on top of a self-routing TCP
 mesh. Every node is one process (or one `Node` object); nodes discover each
 other by exchanging routing tables, and pub/sub roles ride on top as opaque
 payloads.
@@ -95,23 +95,31 @@ There is a CTest suite (see Tests) and no CI.
 
 ```bash
 git submodule update --init           # if MeshNetwork/ is empty
-./build.sh                            # configure (Release) + build into build/
-cmake --build build/ --target startNode   # or playground / LogicalLayer / MeshNetwork
+./build.sh                            # release preset: configure + build into build/release/
+cmake --build --preset release --target startNode   # or playground / LogicalLayer / MeshNetwork
 ```
 
-Outputs: `build/StartNode/startNode`, `build/Playground/playground`.
+`CMakePresets.json` has `debug` and `release` configure, build, test and
+workflow presets, each building into `build/<preset>/`. Outputs:
+`build/release/StartNode/startNode`, `build/release/Playground/playground`.
 
-Dependencies: CMake, a C++17 compiler, Boost. Code uses `asio`, `variant`,
-`algorithm/string` (header-only), `serialization`, and `system`
-(`error_code`). Timers are `asio::steady_timer` with `std::chrono`.
+Dependencies: CMake 3.25+, a C++20 compiler, and Boost 1.84+ (the first whose
+serialization handles `std::variant`) with the CMake package files it
+installs. Code uses `asio` (with C++20 coroutines), `algorithm/string`
+(header-only), `serialization`, and `system` (`error_code`). Timers are
+`asio::steady_timer` with `std::chrono`.
 
-Checked 2026-10-10 with CMake 4.4.3, Boost 1.92.0 and Apple clang 21: the
-build is clean apart from CMake's "Compatibility with CMake < 3.10" and policy
-`CMP0167` (FindBoost removed) warnings. The same day the `Dockerfile` image
-(Ubuntu 26.04.1 LTS, GCC 15.2, Boost 1.90, aarch64) built without compiler
-warnings and passed every test (`docker build -t asyncpubsub .`, then
-`docker run --rm asyncpubsub sh -c 'cd build && ctest'`). The `Dockerfile`
-uses `ubuntu:latest`, so that result can change.
+The `Dockerfile` builds the release preset with GCC on `ubuntu:latest`. Check
+it with `docker build -t asyncpubsub .` and then
+`docker run --rm asyncpubsub ctest --preset release`. `ubuntu:latest` moves, so
+its results can change.
+
+Checked 2026-10-14 on Linux x86_64, not yet on macOS since the C++20 and CMake
+changes: Clang 18 with Boost 1.84 and 1.92, and GCC 15.2 and Clang 21 with
+Boost 1.90 in the `Dockerfile`'s Ubuntu 26.04.1 image, build without CMake or
+compiler warnings (also under the `debug` preset's warnings-as-errors) and
+pass every test. CMake 3.25.2, 3.28, 4.2.3 and 4.4.3 configure cleanly; Boost
+1.83 (Ubuntu 24.04's apt) is rejected at configure time.
 
 Do not trust an old binary after a Boost upgrade: executables link Boost
 dynamically from `/opt/homebrew/opt/boost/lib`, so a binary built against an
@@ -120,7 +128,8 @@ older Boost runs against the new dylibs. Rebuild.
 ## Tests
 
 ```bash
-cmake --build build && (cd build && ctest -j 8)
+cmake --workflow --preset debug       # configure, build and run every test
+ctest --preset debug -R '^mesh\.'      # after a build, rerun a subset
 ```
 
 - `MeshNetwork/tests/` (`mesh.*`): `Node`/`Connection` behavior. Each test
@@ -158,10 +167,10 @@ keep adding flags there, not via `boost::program_options`):
 A publisher matches a subscription when its identity set is a superset of the
 subscription set.
 
-### Smoke test (verified 2026-10-10)
+### Smoke test (verified 2026-10-14 on Linux)
 
 ```bash
-N=build/StartNode/startNode
+N=build/release/StartNode/startNode
 stdbuf -oL $N --name broker --accept 7777 --as broker --logger > broker.log 2>&1 &
 stdbuf -oL $N --name publisher --connect-reconnect localhost 7777 --as publisher --publish dummyData --interval 1000 > pub.log 2>&1 &
 stdbuf -oL $N --name subscriber --connect-reconnect localhost 7777 --as subscriber --subscription dummyData > sub.log 2>&1 &
@@ -183,7 +192,7 @@ Fixed ports 8888 (logger) and 7777 (broker). Commands on stdin: `start`,
 sleeps. Closing stdin acts as `exit`.
 
 ```bash
-(sleep 3; echo remove; sleep 3; echo add; sleep 5; echo exit) | stdbuf -oL build/Playground/playground
+(sleep 3; echo remove; sleep 3; echo add; sleep 5; echo exit) | stdbuf -oL build/release/Playground/playground
 ```
 
 ### Reconnection
@@ -197,11 +206,15 @@ works" needs an observed run, not a reading of the code.
 - **Framing:** 4-byte big-endian length + body (`MeshNetwork/inc/message.hpp`),
   at most 16 MiB (`Message::eMaxBodyLength`). A frame that is too large or
   doesn't decode closes that connection only. Body is a `boost::archive::binary_oarchive` of
-  `NetworkLayer::MessageVariant` = `boost::variant<RoutingMessage, DataMessage,
+  `NetworkLayer::MessageVariant` = `std::variant<RoutingMessage, DataMessage,
   DataMessageAck, LogMessage, Handshake, HandshakeReply>`
   (`MeshNetwork/inc/allMessages.hpp`).
 - **Connection setup:** connector sends `Handshake`; acceptor replies
   `HandshakeReply`; both then send a `RoutingMessage` with their table.
+- **Coroutines:** `Node`'s accept and connect loops and each `Connection`'s
+  read and write loops are C++20 coroutines started with `co_spawn`
+  (`MeshNetwork/src/coroutines.hpp`). An exception that escapes one
+  propagates out of `io_context::run()`, as from a plain handler.
 - **Routing:** path-vector. `Node::routes` maps each destination to its hop
   list (next hop first) and the next-hop `Connection`. `RoutingMessage` carries
   `RouteAdvert`s (sender first) and `failedNodes` withdrawals. A node ignores
@@ -219,7 +232,7 @@ works" needs an observed run, not a reading of the code.
   `eNoPath` if there is no route, a hop has none, or the route is withdrawn
   while waiting (the message may still have been delivered);
   `eMessageTooLarge` above the frame limit. Message IDs are a per-node counter.
-- **Logical layer:** `LogicalLayer::MessageVariant` = `boost::variant<
+- **Logical layer:** `LogicalLayer::MessageVariant` = `std::variant<
   BrokerIdentity, AddRemoveSubscriptionMessage, PublisherIdentityMessage,
   StartPublish, StopPublish, SubscriptionData>`, binary-serialized into
   `DataMessage`'s buffer. Flow: broker sends `BrokerIdentity` to every node it
@@ -246,14 +259,16 @@ code and observed runs establish current behavior.
    bodies.
 3. **Adding a message** (either layer): define the type with a `serialize()`
    template; append it to the **end** of the relevant `MessageVariant`; add a
-   `handleMessage<T>` specialization for every visitor target (`Node`, or
-   each of `Broker`, `Publisher`, `Subscriber`). A missing specialization
-   shows up as an undefined-symbol **link** error. Never dispatch with
+   `handleMessage` overload to every visitor target (`Node`, or each of
+   `Broker`, `Publisher`, `Subscriber`). A missing overload is a compile
+   error at the `std::visit` that dispatches to it. Never dispatch with
    `dynamic_cast`/RTTI.
 4. **Wire compatibility.** Boost serializes a variant as its index then the
-   value, so reordering or inserting alternatives breaks running nodes. Binary
-   archives are not portable across architectures; treat a mesh as needing
-   identical builds.
+   value, so reordering or inserting alternatives breaks running nodes. For
+   `std::variant` that needs `boost/serialization/variant.hpp`, which writes
+   an `int` index as for `boost::variant`; `std_variant.hpp` writes a `size_t`
+   and changes the format. Binary archives are not portable across
+   architectures; treat a mesh as needing identical builds.
 5. **No `std::cout` in library code.** Use `Node::log()`. MeshNetwork still
    prints connection events and errors (`connection.cpp`, `node.cpp`), and the
    logger node prints received logs; don't add more. CLI front-ends may print.
@@ -265,6 +280,11 @@ code and observed runs establish current behavior.
 - `.clang-format`: Google base, 4-space indent, 80 columns,
   `PointerAlignment: Left`, `AllowShortIfStatementsOnASingleLine: Never`. Run
   `clang-format -i` on touched files.
+- Every target compiles with `-Wall -Wextra -Wpedantic` (`AsyncPubSubWarnings`,
+  `MeshNetworkWarnings`). The `debug` preset makes warnings errors
+  (`CMAKE_COMPILE_WARNING_AS_ERROR`); `release` and the `Dockerfile` only warn,
+  so a newer compiler cannot break them. Unused parameters get commented-out
+  names (`/*version*/`).
 - Braces on every `if` is a project convention; clang-format does not enforce
   it (`InsertBraces` is unset) and a few existing `if`s lack them.
 - Naming: `PascalCase` types, `camelCase` functions/members/files

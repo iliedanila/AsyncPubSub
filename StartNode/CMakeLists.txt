@@ -1,31 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
-
-set (CMAKE_CXX_STANDARD 17)
-
-project(startNode)
-
-find_package(Boost REQUIRED serialization)
-include_directories(${Boost_INCLUDE_DIR})
-link_directories(${Boost_LIBRARY_DIR})
-
-include_directories(inc)
-include_directories(../MeshNetwork/inc)
-include_directories(../LogicalLayer/inc)
-
-# sources
-file (GLOB SOURCES "src/*.cpp")
-
-# execs
-add_executable(startNode ${SOURCES})
-
-# libraries
-target_link_libraries(startNode LogicalLayer MeshNetwork)
-
-if(UNIX)
-    target_link_libraries(startNode Boost::serialization)
-    target_link_libraries(startNode pthread)
-endif()
-
+add_executable(startNode
+    src/arguments.cpp
+    src/main.cpp
+    inc/arguments.hpp
+)
+target_include_directories(startNode PRIVATE inc)
+target_link_libraries(startNode
+    PRIVATE LogicalLayer Boost::headers AsyncPubSubWarnings)
 
 if(BUILD_TESTING)
     add_test(NAME cli.missingFlagValue COMMAND startNode --accept 47300 --name)

@@ -2,7 +2,6 @@
 #define _LOGICAL_LAYER_PUBLISHER_HPP_
 
 #include "common.hpp"
-#include "messageVisitor.hpp"
 #include "sendError.hpp"
 
 #include <boost/asio/steady_timer.hpp>
@@ -17,6 +16,13 @@ class Node;
 
 namespace LogicalLayer {
 
+class BrokerIdentity;
+class AddRemoveSubscriptionMessage;
+class PublisherIdentityMessage;
+class StartPublish;
+class StopPublish;
+class SubscriptionData;
+
 class Publisher {
    public:
     explicit Publisher(NetworkLayer::Node& node,
@@ -29,7 +35,6 @@ class Publisher {
     const std::string& getName() const;
 
    private:
-    friend struct MessageVisitor<Publisher>;
     void handleIncomingMessage(NetworkLayer::DataMessage& message);
 
     void handleNewNodeStatus(std::string nodeName, bool isAlive);
@@ -37,8 +42,14 @@ class Publisher {
     void defaultHandleAck(const std::string nodeName,
                           NetworkLayer::SendError error) const;
 
-    template <typename MessageT>
-    void handleMessage(MessageT& message);
+    // One handler per MessageVariant alternative. handleIncomingMessage
+    // dispatches with std::visit, so a missing one is a compile error.
+    void handleMessage(BrokerIdentity& message);
+    void handleMessage(AddRemoveSubscriptionMessage& message);
+    void handleMessage(PublisherIdentityMessage& message);
+    void handleMessage(StartPublish& message);
+    void handleMessage(StopPublish& message);
+    void handleMessage(SubscriptionData& message);
 
     void collectPublishData(boost::system::error_code error);
 

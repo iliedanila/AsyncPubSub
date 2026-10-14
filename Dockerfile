@@ -11,9 +11,10 @@ RUN apt update && apt install -y gcc g++ cmake libboost-all-dev
 COPY . /usr/src/asyncpubsub
 WORKDIR /usr/src/asyncpubsub
 
-# This command compiles your app using GCC, adjust for your source code
-RUN cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
-RUN cmake --build build/
+# Build the release preset into build/release/ with GCC. Run the tests with
+# `docker run --rm asyncpubsub ctest --preset release`.
+RUN cmake --preset release
+RUN cmake --build --preset release
 
 # This command runs your application, comment out this line to compile only
 # CMD ["./build/Playground/playground"]

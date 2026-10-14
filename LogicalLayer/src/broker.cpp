@@ -1,5 +1,5 @@
-#include <boost/serialization/variant.hpp>
 #include <iostream>
+#include <variant>
 
 // #include <boost/archive/text_iarchive.hpp>
 // #include <boost/archive/text_oarchive.hpp>
@@ -9,7 +9,6 @@
 #include "broker.hpp"
 #include "brokerIdentity.hpp"
 #include "messageDecoder.hpp"
-#include "messageVisitor.hpp"
 #include "node.hpp"
 
 //#include <boost/archive/text_iarchive.hpp>
@@ -40,7 +39,7 @@ void Broker::handleIncomingMessage(NetworkLayer::DataMessage& message) {
                  message.getSourceNodeName());
         return;
     }
-    boost::apply_visitor(MessageVisitor<Broker>(*this), *decoded);
+    std::visit([this](auto& message) { handleMessage(message); }, *decoded);
 }
 
 void Broker::broadcastIdentity() const {
@@ -65,8 +64,8 @@ void Broker::sendIdentity(std::string nodeName) const {
                       });
 }
 
-void Broker::defaultCallback(std::string nodeName,
-                             NetworkLayer::SendError error) const {
+void Broker::defaultCallback(std::string /*nodeName*/,
+                             NetworkLayer::SendError /*error*/) const {
     // TODO: add some implementation.
     // maybe log...
 }
@@ -165,12 +164,10 @@ void Broker::sendStopPublish(std::string publisher, std::string subscriberName,
                       });
 }
 
-template <>
 void Broker::handleMessage(BrokerIdentity& message) {
     node.log("Received BrokerIdentity: " + message.getBrokerName());
 }
 
-template <>
 void Broker::handleMessage(AddRemoveSubscriptionMessage& message) {
     node.log("Received subscription from " + message.getSubscriberName());
 
@@ -198,7 +195,6 @@ void Broker::handleMessage(AddRemoveSubscriptionMessage& message) {
     }
 }
 
-template <>
 void Broker::handleMessage(PublisherIdentityMessage& message) {
     node.log("Received PublisherIdentity: " + message.getPublisherName());
 
@@ -213,13 +209,10 @@ void Broker::handleMessage(PublisherIdentityMessage& message) {
     }
 }
 
-template <>
-void Broker::handleMessage(StartPublish& message) {}
+void Broker::handleMessage(StartPublish& /*message*/) {}
 
-template <>
-void Broker::handleMessage(StopPublish& message) {}
+void Broker::handleMessage(StopPublish& /*message*/) {}
 
-template <>
-void Broker::handleMessage(SubscriptionData& message) {}
+void Broker::handleMessage(SubscriptionData& /*message*/) {}
 
 }  // namespace LogicalLayer
