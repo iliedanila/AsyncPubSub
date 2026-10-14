@@ -101,7 +101,9 @@ cmake --build build/ --target startNode   # or playground / LogicalLayer / MeshN
 
 Outputs: `build/StartNode/startNode`, `build/Playground/playground`.
 
-Dependencies: CMake, a C++20 compiler, Boost. Code uses `asio`, `variant`,
+Dependencies: CMake 3.25+, a C++20 compiler, and Boost 1.84+ (the first whose
+serialization handles `std::variant`) with the CMake package files it
+installs. Code uses `asio` (with C++20 coroutines), `variant`,
 `algorithm/string` (header-only), `serialization`, and `system`
 (`error_code`). Timers are `asio::steady_timer` with `std::chrono`.
 
@@ -197,11 +199,15 @@ works" needs an observed run, not a reading of the code.
 - **Framing:** 4-byte big-endian length + body (`MeshNetwork/inc/message.hpp`),
   at most 16 MiB (`Message::eMaxBodyLength`). A frame that is too large or
   doesn't decode closes that connection only. Body is a `boost::archive::binary_oarchive` of
-  `NetworkLayer::MessageVariant` = `boost::variant<RoutingMessage, DataMessage,
+  `NetworkLayer::MessageVariant` = `std::variant<RoutingMessage, DataMessage,
   DataMessageAck, LogMessage, Handshake, HandshakeReply>`
   (`MeshNetwork/inc/allMessages.hpp`).
 - **Connection setup:** connector sends `Handshake`; acceptor replies
   `HandshakeReply`; both then send a `RoutingMessage` with their table.
+- **Coroutines:** `Node`'s accept and connect loops and each `Connection`'s
+  read and write loops are C++20 coroutines started with `co_spawn`
+  (`MeshNetwork/src/coroutines.hpp`). An exception that escapes one
+  propagates out of `io_context::run()`, as from a plain handler.
 - **Routing:** path-vector. `Node::routes` maps each destination to its hop
   list (next hop first) and the next-hop `Connection`. `RoutingMessage` carries
   `RouteAdvert`s (sender first) and `failedNodes` withdrawals. A node ignores
@@ -246,14 +252,17 @@ code and observed runs establish current behavior.
    bodies.
 3. **Adding a message** (either layer): define the type with a `serialize()`
    template; append it to the **end** of the relevant `MessageVariant`; add a
-   `handleMessage<T>` specialization for every visitor target (`Node`, or
-   each of `Broker`, `Publisher`, `Subscriber`). A missing specialization
-   shows up as an undefined-symbol **link** error. Never dispatch with
-   `dynamic_cast`/RTTI.
+   handler to every visitor target. `Node` takes a `handleMessage` overload,
+   and a missing one fails to compile at the `std::visit` in `Node::onRead`.
+   `Broker`, `Publisher` and `Subscriber` each take a `handleMessage<T>`
+   specialization, and a missing one shows up as an undefined-symbol **link**
+   error. Never dispatch with `dynamic_cast`/RTTI.
 4. **Wire compatibility.** Boost serializes a variant as its index then the
-   value, so reordering or inserting alternatives breaks running nodes. Binary
-   archives are not portable across architectures; treat a mesh as needing
-   identical builds.
+   value, so reordering or inserting alternatives breaks running nodes. For
+   `std::variant` that needs `boost/serialization/variant.hpp`, which writes
+   an `int` index as for `boost::variant`; `std_variant.hpp` writes a `size_t`
+   and changes the format. Binary archives are not portable across
+   architectures; treat a mesh as needing identical builds.
 5. **No `std::cout` in library code.** Use `Node::log()`. MeshNetwork still
    prints connection events and errors (`connection.cpp`, `node.cpp`), and the
    logger node prints received logs; don't add more. CLI front-ends may print.
